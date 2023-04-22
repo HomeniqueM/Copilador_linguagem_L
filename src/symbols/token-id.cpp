@@ -1,7 +1,7 @@
-#include <string>
+#ifndef SYMBOL_TOKEN_ID
+#define SYMBOL_TOKEN_ID
 
-#ifndef SYMBOL_TOKEN_ID_CPP
-#define SYMBOL_TOKEN_ID_CPP
+#include <string>
 
 enum TokenID
 {
@@ -41,6 +41,7 @@ enum TokenID
 
     TOKEN_ID_CONSTANT,   // constant
     TOKEN_ID_IDENTIFIER, // identifier
+    TOKEN_ID_NULL,       // null
 
     TOKEN_ID_SEMICOLON, // ;
     TOKEN_ID_FALSE,     // false
@@ -49,7 +50,6 @@ enum TokenID
     TOKEN_ID_END,       // end
     TOKEN_ID_WRITE,     // write
     TOKEN_ID_WRITELN,   // writeln
-
     TOKEN_ID_READLN // readln
 };
 
