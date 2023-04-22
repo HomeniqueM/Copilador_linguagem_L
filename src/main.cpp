@@ -2,6 +2,7 @@
 #include <iostream>
 int main(int argc, char const *argv[])
 {
+
     
     // Trata a entrada de arquivo  
 
