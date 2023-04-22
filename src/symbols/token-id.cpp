@@ -39,7 +39,7 @@ enum TokenID
     TOKEN_ID_MULTIPLICATION,    // *
     TOKEN_ID_MODULO,            // mod
 
-    TOKEN_ID_CONSTANT,   // constant
+    TOKEN_ID_CONSTANT,   // constant 
     TOKEN_ID_IDENTIFIER, // identifier
     TOKEN_ID_NULL,       // null
 
@@ -50,7 +50,8 @@ enum TokenID
     TOKEN_ID_END,       // end
     TOKEN_ID_WRITE,     // write
     TOKEN_ID_WRITELN,   // writeln
-    TOKEN_ID_READLN // readln
+    TOKEN_ID_READLN,    // readln
+    TOKEN_ID_EOF        // \0
 };
 
 std::string tokenToString(TokenID token)

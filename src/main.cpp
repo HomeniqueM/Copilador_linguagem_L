@@ -1,4 +1,4 @@
-#include "symbols/token/token_id.cpp"
+
 #include <iostream>
 int main(int argc, char const *argv[])
 {

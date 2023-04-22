@@ -1,7 +1,7 @@
 class Lerro
 {
 private:
-    /* data */
+   int line;
 public:
     Lerro(/* args */);
     ~Lerro();
@@ -14,3 +14,5 @@ Lerro::Lerro(/* args */)
 Lerro::~Lerro()
 {
 }
+
+
