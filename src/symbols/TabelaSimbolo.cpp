@@ -1,28 +1,49 @@
-#include "TabeladeSimbolo.h"
-#include "Simbolo.h"
+#include <unordered_map>
+#include <string>
+#include "token.cpp"
+
+using std::unordered_map;
+using std::string;
+
+
+// tabela de símbolos
+class SymbolTable
+{
+private: 
+   	unordered_map<string,Token> table;    
+   	SymbolTable * prev;   
+
+public:
+	SymbolTable();
+	SymbolTable(SymbolTable * t);
+	
+	bool Insert(string s, Token symb);
+	Token * Find(string s); 
+};
+
 
 // construtor para a primeira tabela
-TabeladeSimbolo::TabeladeSimbolo() : prev(nullptr)
+SymbolTable::SymbolTable() : prev(nullptr)
 {
 }
 
 // construtor para novas tabelas
-TabeladeSimbolo::TabeladeSimbolo(TabeladeSimbolo * t) : prev(t)
+SymbolTable::SymbolTable(SymbolTable * t) : prev(t)
 {		
 }
 
 // insere um símbolo na tabela
-bool TabeladeSimbolo::Insert(string s, Simbolo symb) 
+bool SymbolTable::Insert(string s, Token symb) 
 { 
-	const auto& [pos, success] = table.insert({s,symb});
+	const auto& [c, success] = table.insert({s,symb});
 	return success;
 }
 
 // busca um símbolo na tabela atual 
 // se não encontrado, busca nas tabelas dos escopos envolventes
-Simbolo * TabeladeSimbolo::Find(string s) 
+Token * SymbolTable::Find(string s) 
 {
-	for (TabeladeSimbolo * st = this; st != nullptr; st = st->prev) 
+	for (SymbolTable * st = this; st != nullptr; st = st->prev) 
 	{
         auto found = st->table.find(s);
         if (found != st->table.end()) 
