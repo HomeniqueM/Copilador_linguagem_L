@@ -11,6 +11,39 @@ public:
     virtual std::string getIdentifier() const = 0;
 };
 
+class IdentifierState : public State
+{
+public:
+    void handle(char c) override
+    {
+        std::cout << "IdentifierState" << std::endl;
+        if (isalpha(c) || isdigit(c) || c == '_')
+        {
+            identifier += c;
+            completed = false;
+        }
+        else
+        {
+            completed = true;
+        }
+    }
+    bool isComplete() override
+    {
+        return completed;
+    }
+    State *getNextState() override
+    {
+        return nullptr;
+    }
+    std::string getIdentifier() const override
+    {
+        return identifier;
+    }
+
+private:
+    std::string identifier;
+    bool completed;
+};
 
 class StartState : public State
 {
@@ -55,42 +88,6 @@ private:
     std::string identifier;
     bool completed;
     State *nextState = nullptr;
-};
-
-
-
-class IdentifierState : public State
-{
-public:
-    void handle(char c) override
-    {
-        std::cout << "IdentifierState" << std::endl;
-        if (isalpha(c) || isdigit(c) || c == '_')
-        {
-            identifier += c;
-            completed = false;
-        }
-        else
-        {
-            completed = true;
-        }
-    }
-    bool isComplete() override
-    {
-        return completed;
-    }
-    State *getNextState() override
-    {
-        return nullptr;
-    }
-    std::string getIdentifier() const override
-    {
-        return identifier;
-    }
-
-private:
-    std::string identifier;
-    bool completed;
 };
 
 class Lexer
