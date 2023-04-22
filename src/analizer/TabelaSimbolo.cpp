@@ -1,6 +1,6 @@
 #include "TabeladeSimbolo.h"
 #include "Simbolo.h"
-
+//
 // construtor para a primeira tabela
 TabeladeSimbolo::TabeladeSimbolo() : prev(nullptr)
 {
