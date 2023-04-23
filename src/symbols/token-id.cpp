@@ -22,7 +22,7 @@ enum TokenID
 
     TOKEN_ID_EQUALITY,         // ==
     TOKEN_ID_ASSIGNMENT,       // =
-    TOKEN_ID_BIGGER_THEN,      // >
+    TOKEN_ID_GREATER_THEN,     // >
     TOKEN_ID_GREATER_EQUAL_TO, // >=
     TOKEN_ID_LESS_THAN,        // <
     TOKEN_ID_LESS_EQUAL_TO,    // <=
@@ -44,6 +44,7 @@ enum TokenID
     TOKEN_ID_NULL,       // null
 
     TOKEN_ID_SEMICOLON, // ;
+    TOKEN_ID_COLON,     // :
     TOKEN_ID_FALSE,     // false
     TOKEN_ID_TRUE,      // true
     TOKEN_ID_BEGIN,     // begin
@@ -85,7 +86,7 @@ std::string tokenToString(TokenID token)
         return "==";
     case TOKEN_ID_ASSIGNMENT:
         return "=";
-    case TOKEN_ID_BIGGER_THEN:
+    case TOKEN_ID_GREATER_THEN:
         return ">";
     case TOKEN_ID_GREATER_EQUAL_TO:
         return ">=";
@@ -121,6 +122,8 @@ std::string tokenToString(TokenID token)
         return "identifier";
     case TOKEN_ID_SEMICOLON:
         return ";";
+    case TOKEN_ID_COLON:
+        return ":";
     case TOKEN_ID_FALSE:
         return "false";
     case TOKEN_ID_TRUE:
@@ -138,6 +141,88 @@ std::string tokenToString(TokenID token)
     default:
         return "NULL";
     }
+}
+
+TokenID stringToTokenId(std::string s){
+
+    if (s.compare("true")==0)
+        return TOKEN_ID_TRUE;
+    if (s.compare("false")==0)
+        return TOKEN_ID_FALSE;
+    if (s.compare("boolean")==0)
+        return TOKEN_ID_BOOLEAN;
+    if (s.compare("mod")==0)
+        return TOKEN_ID_MODULO;
+    if(s.compare("string")==0)
+        return TOKEN_ID_STRING;
+    if(s.compare("write")==0)
+        return TOKEN_ID_WRITE;
+    if(s.compare("writeln")==0)
+        return TOKEN_ID_WRITELN;
+    if(s.compare("readln")==0)
+        return TOKEN_ID_READLN;
+    if(s.compare("div")==0)
+        return TOKEN_ID_DIVISION;
+    if(s.compare("end")==0)
+        return TOKEN_ID_END;
+    if(s.compare("begin")==0)
+        return TOKEN_ID_BEGIN;
+    if(s.compare("and")==0)
+        return TOKEN_ID_AND;
+    if(s.compare("or")==0)
+        return TOKEN_ID_OR;
+    if(s.compare("not")==0)
+        return TOKEN_ID_NOT;
+    if(s.compare("else")==0)
+        return TOKEN_ID_ELSE;
+    if(s.compare("real")==0)
+        return TOKEN_ID_REAL;
+    if(s.compare("if")==0)
+        return TOKEN_ID_IF;
+    if(s.compare("for")==0)
+        return TOKEN_ID_FOR;
+    if(s.compare("char")==0)
+        return TOKEN_ID_CHAR;
+    if(s.compare("integer")==0)
+        return TOKEN_ID_INTEGER;
+    if(s.compare("final")==0)
+        return TOKEN_ID_FINAL;
+    if(s.compare("(")==0)
+        return TOKEN_ID_OPEN_PARANTHESES;
+    if(s.compare(")")==0)
+        return TOKEN_ID_CLOSE_PARANTHESES;
+    if(s.compare("[")==0)
+        return TOKEN_ID_OPEN_BRACKET;
+    if(s.compare("]")==0)
+        return TOKEN_ID_CLOSE_BRACKET;
+    if(s.compare("+")==0)
+        return TOKEN_ID_ADDITION;
+    if(s.compare("-")==0)
+        return TOKEN_ID_SUBTRACTION;
+    if(s.compare("*")==0)
+        return TOKEN_ID_MULTIPLICATION;
+    if(s.compare("/")==0)
+        return TOKEN_ID_DIVISION;
+    if(s.compare(";")==0)
+        return TOKEN_ID_SEMICOLON;
+    if(s.compare(":")==0)
+        return TOKEN_ID_COLON;
+    if(s.compare(",")==0)
+        return TOKEN_ID_COMMA;
+    if(s.compare("=")==0)
+        return TOKEN_ID_ASSIGNMENT;
+    if(s.compare("==")==0)
+        return TOKEN_ID_EQUALITY;
+    if(s.compare("<")==0)
+        return TOKEN_ID_LESS_THAN;
+    if(s.compare("<=")==0)
+        return TOKEN_ID_LESS_EQUAL_TO;
+    if(s.compare(">")==0)
+        return TOKEN_ID_GREATER_THEN;
+    if(s.compare(">=")==0)
+        return TOKEN_ID_GREATER_EQUAL_TO;
+    if(s.compare("<>")==0)
+        return TOKEN_ID_DIFFERENT; 
 }
 
 #endif
