@@ -202,7 +202,7 @@ int main(int argc, char const *argv[])
     try
     {
 
-        LexerAnalysis la("{aabb1111cc}{aassadad}");
+        LexerAnalysis la("${aabb1111cc}{aassadad}");
 
         la.getNextToken();
     }

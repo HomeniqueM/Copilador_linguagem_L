@@ -32,6 +32,7 @@ public:
  */
 SymbolTable::SymbolTable() : prev(nullptr)
 {
+	// passar para a classe lexeme
 	std::vector<std::string> init={
 		"true","false","boolean","mod","string","write","writeln","readln","div","end",
 		"begin","and","or","not","else","real","if","for","char","integer","final",
@@ -57,8 +58,13 @@ SymbolTable::SymbolTable(SymbolTable * t) : prev(t)
 
 }
 
-// insere um símbolo na tabela
+// 
 // retorna se o símbolo foi inserido na tabela
+
+/**
+ * @brief insere um símbolo na tabela
+ * @bug retorn sempre true 
+*/
 bool SymbolTable::Insert(std::string lexem, Token tok) 
 { 
 	//const auto& [c, success] = table.insert({s,symb});
