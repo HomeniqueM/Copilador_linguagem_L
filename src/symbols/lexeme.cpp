@@ -8,7 +8,10 @@
 /**
  * @brief todos os simbolos unicos validos dentro do analisador lexico
  */
-const std::vector<char> VALID_UNARY_SYMBOLS{
+const char LEXEME_UNDERSCORE = '_';
+const char LEXEME_EOF = '\0';
+
+const std::vector<char> LEXEME_VALID_UNARY_SYMBOLS{
     '(',
     ')',
     '[',
@@ -20,7 +23,7 @@ const std::vector<char> VALID_UNARY_SYMBOLS{
     '*',
     '/'};
 
-const std::vector<char> VALID_SYMBOLS{
+const std::vector<char> LEXEME_VALID_SYMBOLS{
     ' ',
     '_',
     '.',
@@ -49,10 +52,9 @@ const std::vector<char> VALID_SYMBOLS{
     '=',
     '\n',
     '\r',
-    '\0'
-    };
+    '\0'};
 
-const std::vector<char> VALID_ALPHABET_HEXA_SYMBOLS{
+const std::vector<char> LEXEME_VALID_ALPHABET_HEXA_SYMBOLS{
     'A',
     'B',
     'C',
@@ -64,16 +66,16 @@ const std::vector<char> VALID_ALPHABET_HEXA_SYMBOLS{
     'c',
     'd',
     'e',
-    'f'
-};
-
-const char LEXEME_EOF(){
-    return '\0';
-}
+    'f'};
 
 bool isItaAlphabetHexa(char c)
 {
-    return std::find(VALID_ALPHABET_HEXA_SYMBOLS.begin(), VALID_ALPHABET_HEXA_SYMBOLS.end(), c) != VALID_ALPHABET_HEXA_SYMBOLS.end();
+    return std::find(LEXEME_VALID_ALPHABET_HEXA_SYMBOLS.begin(), LEXEME_VALID_ALPHABET_HEXA_SYMBOLS.end(), c) != LEXEME_VALID_ALPHABET_HEXA_SYMBOLS.end();
+}
+
+bool isAValidUnitarySymbol(char c)
+{
+    return std::find(LEXEME_VALID_UNARY_SYMBOLS.begin(), LEXEME_VALID_UNARY_SYMBOLS.end(), c) != LEXEME_VALID_UNARY_SYMBOLS.end();
 }
 
 #endif
