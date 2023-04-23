@@ -69,12 +69,10 @@ const std::vector<char> LEXEME_VALID_ALPHABET_HEXA_SYMBOLS{
     'e',
     'f'};
 
-const std::vector<char> LEXEME_SPACE_OR_LINE_BREAK{
+const std::vector<char> LEXEME_DELIMITER{
     ' ',
     '\n',
-    '\t',
-    '\r',
-    '\0'};
+};
 bool isItaAlphabetHexa(char c)
 {
     return std::find(LEXEME_VALID_ALPHABET_HEXA_SYMBOLS.begin(), LEXEME_VALID_ALPHABET_HEXA_SYMBOLS.end(), c) != LEXEME_VALID_ALPHABET_HEXA_SYMBOLS.end();
@@ -89,9 +87,9 @@ bool isAValidUnitarySymbol(char c)
 /**
  * @brief verifica se é o char c é uma quebra de linha o espaço
  */
-bool isASpaceOrLineBreak(char c)
+bool isALexemeDelimiter(char c)
 {
-    return std::find(LEXEME_SPACE_OR_LINE_BREAK.begin(), LEXEME_SPACE_OR_LINE_BREAK.end(), c) != LEXEME_SPACE_OR_LINE_BREAK.end();
+    return std::find(LEXEME_DELIMITER.begin(), LEXEME_DELIMITER.end(), c) != LEXEME_DELIMITER.end();
 }
 
 #endif

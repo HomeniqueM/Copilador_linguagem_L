@@ -39,13 +39,132 @@ class StartState : public State
 public:
     StatePackage handle(char c) override;
 };
-// Estado final do analisador léxico
-class FinalState : public State
+
+// ==================================================================================================================================
+/**
+ * @brief classe para tratar do simbolo  de igual(=) [s18]
+ */
+class State18 : public State
 {
 public:
-    StatePackage handle(char c) override;
+    StatePackage handle(char c) override
+    {
+        StatePackage package;
+        if (c == '=')
+        {
+            package.identifier = +c;
+        }
+
+        this->completed = true;
+
+        return package;
+    }
 };
-// ==================================================================================================================================
+
+/**
+ * @brief classe para tratar do simbolo  de menor que(<) [s17]
+ */
+class State17 : public State
+{
+public:
+    StatePackage handle(char c) override
+    {
+        StatePackage package;
+        if (c == '=' | c == '>')
+        {
+            package.identifier = +c;
+        }
+        this->completed = true;
+
+        return package;
+    }
+};
+
+/**
+ * @brief classe para tratar do simbolo  de menor que(>) [s22]
+ */
+class State22 : public State
+{
+public:
+    StatePackage handle(char c) override
+    {
+        StatePackage package;
+        if (c == '=')
+        {
+            package.identifier = +c;
+        }
+        this->completed = true;
+
+        return package;
+    }
+};
+/**
+ * @brief classe ao receber um Apostrophe espera um caracter mesmo vazio e avança para o estado s20[s19]
+ */
+class State20 : public State
+{
+public:
+    StatePackage handle(char c) override
+    {
+        StatePackage package;
+        if (c == '\'')
+        {
+            package.identifier = +c;
+            this->completed = true;
+        }
+        else
+        {
+            std::string msg = ": Erra esperado \' porém veio " + c;
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER, 0, msg);
+        }
+        return package;
+    }
+};
+/**
+ * @brief classe ao receber um aspas vai ler caracteres  até encontrar aspas [s21]
+ */
+class State21 : public State
+{
+public:
+    StatePackage handle(char c) override
+    {
+        StatePackage package;
+        if (c == '"')
+        {
+            package.identifier = +c;
+            this->completed = true;
+        }
+        else
+        {
+            package.identifier = +c;
+            package.tokenType = TOKEN_TYPE_STRING;
+            nextState = std::make_shared<State21>();
+        }
+
+        return package;
+    }
+};
+
+/**
+ * @brief classe ao receber um Apostrophe espera um caracter mesmo vazio e avança para o estado s20[s19]
+ */
+class State19 : public State
+{
+public:
+    StatePackage handle(char c) override
+    {
+        StatePackage package;
+
+        package.identifier = +c;
+        nextState = std::make_shared<State20>();
+
+        return package;
+    }
+};
+
+/**
+ * @brief classe representa o primeiro estado do automato [s21]
+ */
 class CommentState : public State
 {
 public:
@@ -54,12 +173,10 @@ public:
         StatePackage package;
         if (c == '}')
         {
-
             nextState = std::make_shared<StartState>();
         }
         else
         {
-            std::cout << c;
             nextState = std::make_shared<CommentState>();
         }
 
@@ -76,25 +193,51 @@ StatePackage StartState::handle(char c)
 
     StatePackage package;
 
-    if (isASpaceOrLineBreak(c))
+    if (isALexemeDelimiter(c))
     {
+
         nextState = std::make_shared<StartState>();
     }
-    if (isAValidUnitarySymbol(c))
+    else if (isAValidUnitarySymbol(c))
     {
-        std::cout << "isAValidUnitarySymbol: ";
+
         package.identifier = +c;
         package.tokenType = TOKEN_TYPE_CHAR;
         this->completed = true;
-        nextState = std::make_shared<StartState>();
-    }
-    else if (c == '{')
-    {
-        std::cout << "Comentario: ";
-        nextState = std::make_shared<CommentState>();
-        std::cout << std::endl;
+        //
     }
 
+    else if (c == '{')
+    {
+
+        nextState = std::make_shared<CommentState>();
+    }
+    else if (c == '<')
+    {
+        package.identifier = +c;
+        nextState = std::make_shared<State17>();
+    }
+    else if (c == '=')
+    {
+        package.identifier = +c;
+        nextState = std::make_shared<State18>();
+    }
+    else if (c == '\'')
+    {
+        package.identifier = +c;
+        nextState = std::make_shared<State19>();
+    }
+    else if (c == '>')
+    {
+        package.identifier = +c;
+        nextState = std::make_shared<State22>();
+    }
+
+    else if (c == '"')
+    {
+        package.identifier = +c;
+        nextState = std::make_shared<State21>();
+    }
     else if (std::isalpha(c) || c == '_')
     {
         if (isItaAlphabetHexa(c))
@@ -106,8 +249,12 @@ StatePackage StartState::handle(char c)
         }
     }
 
-    else{
-        package.erro = true;
+    else
+    {
+        // Tratativa a ser feita
+
+        std::string str(1, c);
+        throw LException(ErrorCode::UNEXPECTED_CHARACTER, __LINE__, str);
     }
     return package;
 }
@@ -135,23 +282,29 @@ public:
      */
     Token getNextToken()
     {
+        currentState = std::make_shared<StartState>();
         std::string lexeme = "";
         char cc;
-        while (currentState->isComplete() || !isEndFile())
+        while (!currentState->isComplete() || isEndFile() == true)
         {
+
             cc = getNextChar();
+
+            // Pensar em alguma logica onde o
 
             if (symboltable->isItAValidChar(cc))
             {
-
                 StatePackage result = currentState->handle(cc);
-
                 if (result.returnChar)
                 {
                     pushBackCurrentChar();
                 }
                 lexeme += result.identifier;
-                currentState = currentState->nextState;
+
+                if (currentState->isComplete() == false)
+                {
+                    currentState = currentState->nextState;
+                }
             }
 
             else
@@ -173,14 +326,16 @@ public:
         // verificar se e eh constante
         // verificar se e palavra reservada
         // se nao for nenhum dos dois entao ele eh identificador
-        return Token(TOKEN_ID_ADDITION);
+        return token;
     };
 
     void pushBackCurrentChar()
     {
         file_point--;
     }
-
+    /**
+     * @brief retorna o proximo char caso o arquivo não tenha terminado caso contrario retorna \0
+     */
     char getNextChar()
     {
 
@@ -191,10 +346,12 @@ public:
 
         return this->file[this->file_point++];
     }
-
+    /**
+     * @brief verifica se foi encontrado o fim do arquivo
+     */
     bool isEndFile()
     {
-        return this->file_point >= this->file.size();
+        return this->file_point > this->file.size();
     }
 };
 int main(int argc, char const *argv[])
@@ -202,8 +359,9 @@ int main(int argc, char const *argv[])
     try
     {
 
-        LexerAnalysis la("${aabb1111cc}{aassadad}");
+        LexerAnalysis la("\"> >=   \"{sdsada} <> (    )");
 
+        la.getNextToken();
         la.getNextToken();
     }
     catch (const LException &e)

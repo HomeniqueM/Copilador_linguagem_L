@@ -90,7 +90,7 @@ bool SymbolTable::isItAValidChar(char c)
 }
 
 #endif
-
+/*
 int main(){
 	SymbolTable symtable;
 	Token symbl;
@@ -100,3 +100,4 @@ int main(){
 	std::cout << symtable.Find("integer");
 	return 0;
 }
+*/
