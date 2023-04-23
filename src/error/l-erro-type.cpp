@@ -1,9 +1,0 @@
-#ifndef L_ERRO_TYPE
-#define L_ERRO_TYPE
-
-enum LErroType{
-    L_ERRO_TYPE_INVALID_CHARACTER,
-    L_ERRO_TYPE_END_OF_FILE_NOT_EXPECTED
-};
-
-#endif

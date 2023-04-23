@@ -149,7 +149,7 @@ char Lexer::nextChar()
         return '\0';
     }
 
-    return this->file[this->file_point];
+    return this->file[this->file_point++];
 }
 
 bool Lexer::isEndFile()
