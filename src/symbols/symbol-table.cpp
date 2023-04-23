@@ -1,3 +1,5 @@
+#ifndef SYMBOLS_SYMBOLS_TABLE
+#define SYMBOLS_SYMBOLS_TABLE
 #include <unordered_map>
 #include <string>
 #include <algorithm>
@@ -18,7 +20,7 @@ public:
 	SymbolTable();
 	SymbolTable(SymbolTable *t);
 	bool isItAValidChar(char c);
-	bool isItaAlphabetHexa(char c); 
+	bool isItaAlphabetHexa(char c);
 	bool Insert(string s, Token symb);
 	Token *Find(string s);
 };
@@ -61,9 +63,9 @@ Token *SymbolTable::Find(string s)
 
 bool SymbolTable::isItAValidChar(char c)
 {
-	return std::isalnum(c) || std::isalpha(c) ;
-//	return std::isalnum(c) || std::isalpha(c) || (std::find(VALID_SYMBOLS.begin(), VALID_SYMBOLS.end(), c) != VALID_UNARY_SYMBOLS.end());
 
-
+	//	return std::isalnum(c) || std::isalpha(c) ;
+	return std::isalnum(c) || std::isalpha(c) || (std::find(LEXEME_VALID_SYMBOLS.begin(), LEXEME_VALID_SYMBOLS.end(), c) != LEXEME_VALID_SYMBOLS.end());
 }
 
+#endif
