@@ -22,8 +22,10 @@ private:
     void productionA();
     void productionR();
     void productionT();
+    void productionT1();
     void productionL();
     void productionE();
+    void productionE1();
     void productionExp();
 public:
     SyntaticAnalysis(/* args */);
@@ -181,39 +183,96 @@ void SyntaticAnalysis::productionCMD(){
     if(token.getTokenid() == TOKEN_ID_IDENTIFIER){
         productionA();
     }
-    productionR();
-    productionT();
-    productionL();
-    productionE();
+    else if(token.getTokenid() == TOKEN_ID_FOR)
+    {
+        productionR();
+    }else if(token.getTokenid() == TOKEN_ID_IF){
+        productionT();
+    }else if(token.getTokenid() == TOKEN_ID_READLN){
+        productionL();
+    }else if(token.getTokenid() == TOKEN_ID_WRITE || token.getTokenid() ==  TOKEN_ID_WRITELN){
+        productionE();
+    }
 
+    matchToken(TOKEN_ID_SEMICOLON);
 }
 
-
+//A ->  id = Exp 
 void SyntaticAnalysis::productionA(){
     matchToken(TOKEN_ID_IDENTIFIER);
     productionExp();
 
 }
 
+// R -> for ( { R1 } ; Exp ; { R1 } ) ( [Cmd] | begin {Cmd} end )
+// ERROR VERIFICAR DPS
 void SyntaticAnalysis::productionR(){
-  
+    matchToken(TOKEN_ID_FOR);
+    matchToken(TOKEN_ID_OPEN_PARANTHESES);
+}
+
+
+//T -> if ( Exp ) T1 [ else T1 ]
+void SyntaticAnalysis::productionT()
+{
+    matchToken(TOKEN_ID_IF);
+    matchToken(TOKEN_ID_OPEN_PARANTHESES);
+    productionExp();
+    matchToken(TOKEN_ID_CLOSE_PARANTHESES);
+    productionT1();
+    if(token.getTokenid() == TOKEN_ID_ELSE){
+        matchToken(TOKEN_ID_ELSE);
+        productionT1();
+    }
 
 }
 
-void SyntaticAnalysis::productionT(){
-  
-
+// T1 -> ( Cmd | begin {Cmd} end ) 
+void SyntaticAnalysis::productionT1()
+{
+    if (token.getTokenid() == TOKEN_ID_BEGIN)
+    {
+        matchToken(TOKEN_ID_BEGIN);
+        while(token.getTokenid() == TOKEN_ID_END)
+        {
+            productionCMD();
+        }
+        matchToken(TOKEN_ID_END);
+    }
+    
 }
 
+// L -> readln ( id )
 void SyntaticAnalysis::productionL(){
-  
-
+    matchToken(TOKEN_ID_READLN);
+    matchToken(TOKEN_ID_OPEN_PARANTHESES);
+    matchToken(TOKEN_ID_IDENTIFIER);
+    matchToken(TOKEN_ID_CLOSE_PARANTHESES);
 }
 
+// E -> ( write( E1 ) | writeln( E1 ) ) 
 void SyntaticAnalysis::productionE(){
-  
-
+    if(token.getTokenid() == TOKEN_ID_WRITE){
+        matchToken(TOKEN_ID_WRITE);
+    }
+    else{
+          matchToken(TOKEN_ID_WRITELN);
+    }
+    matchToken(TOKEN_ID_OPEN_PARANTHESES);
+    productionE1();
+    matchToken(TOKEN_ID_CLOSE_PARANTHESES);
 }
+
+// E1 -> Exp { , Exp }
+void SyntaticAnalysis::productionE1(){
+    productionExp();
+    while (token.getTokenid() == TOKEN_ID_COMMA)
+    {
+        matchToken(TOKEN_ID_COMMA);
+        productionExp();
+    }
+}
+
 
 void SyntaticAnalysis::productionExp(){
   
