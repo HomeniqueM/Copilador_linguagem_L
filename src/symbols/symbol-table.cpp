@@ -21,29 +21,28 @@ public:
 	SymbolTable();
 	bool isItAValidChar(char c);
 	bool Insert(std::string lexem, Token tok);
-	Token * Find(std::string lexem);
+	Token *Find(std::string lexem);
 };
-
 
 /**
  * @brief construtor para a primeira tabela de escopo mais abrangente
- * 
+ *
  */
 SymbolTable::SymbolTable()
 {
 	// passar para a classe lexeme
-	std::vector<std::string> init={
-		"true","false","boolean","mod","string","write","writeln","readln","div","end",
-		"begin","and","or","not","else","real","if","for","char","integer","final",
-		"(",")","[","]","+","-","*","/",";",":",",","=","==","<","<=",">",">=","<>"
-	};
+	std::vector<std::string> init = {
+		"true", "false", "boolean", "mod", "string", "write", "writeln", "readln", "div", "end",
+		"begin", "and", "or", "not", "else", "real", "if", "for", "char", "integer", "final",
+		"(", ")", "[", "]", "+", "-", "*", "/", ";", ":", ",", "=", "==", "<", "<=", ">", ">=", "<>"};
 
 	Token symbl;
 	TokenID id;
-	for(std::string s=init.back();!init.empty();init.pop_back(),s=init.back()){
-		id=stringToTokenId(s);
+	for (std::string s = init.back(); !init.empty(); init.pop_back(), s = init.back())
+	{
+		id = stringToTokenId(s);
 		symbl.setTokenID(id);
-		this->Insert(s,symbl);
+		this->Insert(s, symbl);
 
 		/*std::cout <<"inserted " +s+" at ";
 		std::cout << this->Find(s);
@@ -53,14 +52,13 @@ SymbolTable::SymbolTable()
 
 
 /**
- * @brief insere um símbolo na tabela e retorna se o símbolo foi inserido na tabela
- * @bug retorno sempre true 
-*/
-bool SymbolTable::Insert(std::string lexem, Token tok) 
-{ 
-	//const auto& [c, success] = table.insert({s,symb});
-	table.insert({lexem,tok});
-	return true;
+ * @brief insere um símbolo na tabela
+ */
+bool SymbolTable::Insert(std::string lexem, Token tok)
+{
+	const auto& [c,success] = table.insert({lexem,tok});
+	//table.insert({lexem, tok});
+	return success;
 }
 /**
  * @brief busca um símbolo na tabela atual e retorna o endereço do registro
@@ -82,10 +80,9 @@ bool SymbolTable::isItAValidChar(char c)
 	return std::isalnum(c) || std::isalpha(c) || (std::find(LEXEME_VALID_SYMBOLS.begin(), LEXEME_VALID_SYMBOLS.end(), c) != LEXEME_VALID_SYMBOLS.end());
 }
 
-
 #endif
 
-/*int main(){
+int main(){
 	SymbolTable symtable;
 	Token symbl;
 	TokenID id = TOKEN_ID_INTEGER;
@@ -93,4 +90,4 @@ bool SymbolTable::isItAValidChar(char c)
 	symtable.Insert("integer",symbl);
 	std::cout << symtable.Find("integer");
 	return 0;
-}*/
+}
