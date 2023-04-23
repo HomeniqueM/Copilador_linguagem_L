@@ -139,6 +139,8 @@ std::string tokenToString(TokenID token)
         return "writeln";
     case TOKEN_ID_READLN:
         return "readln";
+    case TOKEN_ID_EOF:
+        return "/0";
     default:
         return "NULL";
     }
