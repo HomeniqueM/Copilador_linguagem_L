@@ -1,71 +1,89 @@
-#ifndef SYMBOLS_SYMBOLS_TABLE
-#define SYMBOLS_SYMBOLS_TABLE
+#ifndef SYMBOLS_SYMBOL_TABLE
+#define SYMBOLS_SYMBOL_TABLE
+#include <iostream>
 #include <unordered_map>
 #include <string>
-#include <algorithm>
+#include <vector>
 #include "token.cpp"
-#include "lexeme.cpp"
+#include "token-id.cpp"
 
-using std::string;
-using std::unordered_map;
 
-// tabela de símbolos
+// classe tabela de símbolos
 class SymbolTable
 {
 private:
-	unordered_map<string, Token> table;
-	SymbolTable *prev;
+   	std::unordered_map<std::string,Token> table;    
+   	SymbolTable * prev;   
 
 public:
 	SymbolTable();
-	SymbolTable(SymbolTable *t);
-	bool isItAValidChar(char c);
-	bool isItaAlphabetHexa(char c);
-	bool Insert(string s, Token symb);
-	Token *Find(string s);
+	SymbolTable(SymbolTable * t);
+	
+	bool Insert(std::string lexem, Token tok);
+	Token * Find(std::string lexem);
 };
 
-// construtor para a primeira tabela
+
+// construtor para a primeira tabela de escopo mais abrangente
 SymbolTable::SymbolTable() : prev(nullptr)
 {
+	std::vector<std::string> init={
+		"true","false","boolean","mod","string","write","writeln","readln","div","end",
+		"begin","and","or","not","else","real","if","for","char","integer","final",
+		"(",")","[","]","+","-","*","/",";",":",",","=","==","<","<=",">",">=","<>"
+	};
+
+	Token symbl;
+	TokenID id;
+	for(std::string s=init.back();!init.empty();init.pop_back(),s=init.back()){
+		id=stringToTokenId(s);
+		symbl.setTokenID(id);
+		this->Insert(s,symbl);
+
+		/*std::cout <<"inserted " +s+" at ";
+		std::cout << this->Find(s);
+		std::cout << "\n";*/
+	}
 }
 
-// construtor para novas tabelas
-SymbolTable::SymbolTable(SymbolTable *t) : prev(t)
-{
+// construtor para novas tabelas criadas quando temos novos escopos
+SymbolTable::SymbolTable(SymbolTable * t) : prev(t)
+{		
+
 }
 
 // insere um símbolo na tabela
-bool SymbolTable::Insert(string s, Token symb)
-{
-	// const auto& [c, success] = table.insert({s,symb});
-	// return success;
+// retorna se o símbolo foi inserido na tabela
+bool SymbolTable::Insert(std::string lexem, Token tok) 
+{ 
+	//const auto& [c, success] = table.insert({s,symb});
+	table.insert({lexem,tok});
 	return true;
 }
 
-// busca um símbolo na tabela atual
+// busca um símbolo na tabela atual e retorna o endereço do registro
 // se não encontrado, busca nas tabelas dos escopos envolventes
-Token *SymbolTable::Find(string s)
+// caso não encontre em nenhuma tabela de nenhum escopo envolvente retorna um endereço nulo
+Token * SymbolTable::Find(std::string lexem) 
 {
-	for (SymbolTable *st = this; st != nullptr; st = st->prev)
+	for (SymbolTable * st = this; st != nullptr; st = st->prev) 
 	{
-		auto found = st->table.find(s);
-		if (found != st->table.end())
+        auto found = st->table.find(lexem);
+        if (found != st->table.end()) 
 			return &found->second;
-	}
+    }
 
-	return nullptr;
+    return nullptr;
 }
-/**
- * @brief Dado um char c, é verificado se o mesmo é numérico ou letra, ou está contido na lista de símbolos válidos.
- * 		Caso contrário, retorna false.
- */
 
-bool SymbolTable::isItAValidChar(char c)
-{
-
-	//	return std::isalnum(c) || std::isalpha(c) ;
-	return std::isalnum(c) || std::isalpha(c) || (std::find(LEXEME_VALID_SYMBOLS.begin(), LEXEME_VALID_SYMBOLS.end(), c) != LEXEME_VALID_SYMBOLS.end());
-}
+/*int main(){
+	SymbolTable symtable;
+	Token symbl;
+	TokenID id = TOKEN_ID_INTEGER;
+	symbl.setTokenID(id);
+	symtable.Insert("integer",symbl);
+	std::cout << symtable.Find("integer");
+	return 0;
+}*/
 
 #endif
