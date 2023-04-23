@@ -14,11 +14,17 @@ private:
     Token token;
     void setToken(Token token);
     void matchToken(TokenID expectedToken);
-    void producaoS();
-    void producaoD();
-    void producaoD1();
-    void producaoC();
-    void producaoCMD();
+    void productionS();
+    void productionD();
+    void productionD1();
+    void productionC();
+    void productionCMD();
+    void productionA();
+    void productionR();
+    void productionT();
+    void productionL();
+    void productionE();
+    void productionExp();
 public:
     SyntaticAnalysis(/* args */);
     ~SyntaticAnalysis();
@@ -38,7 +44,7 @@ void SyntaticAnalysis::Start(Token token)
  // Pedir um token pro amigo
  // Set token
     setToken(token);
-    producaoS();
+    productionS();
 
 }
 
@@ -66,7 +72,7 @@ void  SyntaticAnalysis::matchToken(TokenID expectedToken){
 }
 
 // S -> { ( D | Cmd) } fim_arquivo
-void SyntaticAnalysis::producaoS()
+void SyntaticAnalysis::productionS()
 {
     while (token.getTokenid() !=  TOKEN_ID_EOF)
     {
@@ -80,21 +86,19 @@ void SyntaticAnalysis::producaoS()
 
         if(declaration){
             std::cout << "declaration" << std::endl;
-            producaoD();
+            productionD();
         }
         else{
-            producaoCMD();
+            productionCMD();
         }
         
         this->token.setTokenID(TOKEN_ID_EOF);
     }
-
     
-
 }
 
 // D -> D1 C { ,C } ; | final id = [-] const ;
-void SyntaticAnalysis::producaoD(){
+void SyntaticAnalysis::productionD(){
     if(token.getTokenid() == TOKEN_ID_FINAL){
         matchToken(TOKEN_ID_FINAL);
         matchToken(TOKEN_ID_IDENTIFIER);
@@ -106,12 +110,12 @@ void SyntaticAnalysis::producaoD(){
         matchToken(TOKEN_ID_CONSTANT);
     }
     else{
-        producaoD1();
-        producaoC();
+        productionD1();
+        productionC();
         while (token.getTokenid() == TOKEN_ID_COMMA)
         {
             matchToken(TOKEN_ID_COMMA);
-            producaoC();
+            productionC();
         }
         matchToken(TOKEN_ID_SEMICOLON);
     }
@@ -119,7 +123,7 @@ void SyntaticAnalysis::producaoD(){
 }
 
 // D1 -> ( char | integer | real | boolean | string )
-void SyntaticAnalysis::producaoD1()
+void SyntaticAnalysis::productionD1()
 {
 
     switch (token.getTokenid())
@@ -145,7 +149,7 @@ void SyntaticAnalysis::producaoD1()
 }
 
 //C -> id [ ( = [ - ] const | [ ( id | num ) ] ) ]
-void SyntaticAnalysis::producaoC()
+void SyntaticAnalysis::productionC()
 {
     matchToken(TOKEN_ID_IDENTIFIER);
     if(token.getTokenid() == TOKEN_ID_ASSIGNMENT) 
@@ -172,8 +176,47 @@ void SyntaticAnalysis::producaoC()
     }
 }
 
+// Cmd ->  [ ( A | R | T | L | E ) ] ;
+void SyntaticAnalysis::productionCMD(){
+    if(token.getTokenid() == TOKEN_ID_IDENTIFIER){
+        productionA();
+    }
+    productionR();
+    productionT();
+    productionL();
+    productionE();
 
-void SyntaticAnalysis::producaoCMD(){
+}
+
+
+void SyntaticAnalysis::productionA(){
+    matchToken(TOKEN_ID_IDENTIFIER);
+    productionExp();
+
+}
+
+void SyntaticAnalysis::productionR(){
+  
+
+}
+
+void SyntaticAnalysis::productionT(){
+  
+
+}
+
+void SyntaticAnalysis::productionL(){
+  
+
+}
+
+void SyntaticAnalysis::productionE(){
+  
+
+}
+
+void SyntaticAnalysis::productionExp(){
+  
 
 }
 
