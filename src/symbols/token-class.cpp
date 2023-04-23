@@ -1,0 +1,5 @@
+#ifndef SYMBOL_TOKEN_CLASS
+#define SYMBOL_TOKEN_CLASS
+
+
+#endif
