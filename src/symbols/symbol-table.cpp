@@ -64,7 +64,6 @@ SymbolTable::SymbolTable(SymbolTable *t) : prev(t)
 bool SymbolTable::Insert(std::string lexem, Token tok)
 {
 	const auto& [c,success] = table.insert({lexem,tok});
-	//table.insert({lexem, tok});
 	return success;
 }
 

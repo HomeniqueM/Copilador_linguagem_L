@@ -2,7 +2,7 @@
 #define SYMBOL_TOKEN_ID
 
 #include <string>
-
+#include <map>
 enum TokenID
 {
     TOKEN_ID_FINAL,   // Final
@@ -39,7 +39,7 @@ enum TokenID
     TOKEN_ID_MULTIPLICATION,    // *
     TOKEN_ID_MODULO,            // mod
 
-    TOKEN_ID_CONSTANT,   // constant 
+    TOKEN_ID_CONSTANT,   // constant
     TOKEN_ID_IDENTIFIER, // identifier
     TOKEN_ID_NULL,       // null
 
@@ -144,89 +144,55 @@ std::string tokenToString(TokenID token)
     }
 }
 
-TokenID stringToTokenId(std::string s){
+TokenID stringToTokenId(std::string s)
+{
+    static const std::map<std::string, TokenID> tokenMap = {
+        {"true", TOKEN_ID_TRUE},
+        {"false", TOKEN_ID_FALSE},
+        {"boolean", TOKEN_ID_BOOLEAN},
+        {"mod", TOKEN_ID_MODULO},
+        {"string", TOKEN_ID_STRING},
+        {"write", TOKEN_ID_WRITE},
+        {"writeln", TOKEN_ID_WRITELN},
+        {"readln", TOKEN_ID_READLN},
+        {"div", TOKEN_ID_DIVISION},
+        {"end", TOKEN_ID_END},
+        {"begin", TOKEN_ID_BEGIN},
+        {"and", TOKEN_ID_AND},
+        {"or", TOKEN_ID_OR},
+        {"not", TOKEN_ID_NOT},
+        {"else", TOKEN_ID_ELSE},
+        {"real", TOKEN_ID_REAL},
+        {"if", TOKEN_ID_IF},
+        {"for", TOKEN_ID_FOR},
+        {"char", TOKEN_ID_CHAR},
+        {"integer", TOKEN_ID_INTEGER},
+        {"final", TOKEN_ID_FINAL},
+        {"(", TOKEN_ID_OPEN_PARANTHESES},
+        {")", TOKEN_ID_CLOSE_PARANTHESES},
+        {"[", TOKEN_ID_OPEN_BRACKET},
+        {"]", TOKEN_ID_CLOSE_BRACKET},
+        {"+", TOKEN_ID_ADDITION},
+        {"-", TOKEN_ID_SUBTRACTION},
+        {"*", TOKEN_ID_MULTIPLICATION},
+        {"/", TOKEN_ID_DIVISION},
+        {";", TOKEN_ID_SEMICOLON},
+        {":", TOKEN_ID_COLON},
+        {",", TOKEN_ID_COMMA},
+        {"=", TOKEN_ID_ASSIGNMENT},
+        {"==", TOKEN_ID_EQUALITY},
+        {"<", TOKEN_ID_LESS_THAN},
+        {"<=", TOKEN_ID_LESS_EQUAL_TO},
+        {">", TOKEN_ID_GREATER_THEN},
+        {">=", TOKEN_ID_GREATER_EQUAL_TO},
+        {"<>", TOKEN_ID_DIFFERENT}};
 
-    if (s.compare("true")==0)
-        return TOKEN_ID_TRUE;
-    if (s.compare("false")==0)
-        return TOKEN_ID_FALSE;
-    if (s.compare("boolean")==0)
-        return TOKEN_ID_BOOLEAN;
-    if (s.compare("mod")==0)
-        return TOKEN_ID_MODULO;
-    if(s.compare("string")==0)
-        return TOKEN_ID_STRING;
-    if(s.compare("write")==0)
-        return TOKEN_ID_WRITE;
-    if(s.compare("writeln")==0)
-        return TOKEN_ID_WRITELN;
-    if(s.compare("readln")==0)
-        return TOKEN_ID_READLN;
-    if(s.compare("div")==0)
-        return TOKEN_ID_DIVISION;
-    if(s.compare("end")==0)
-        return TOKEN_ID_END;
-    if(s.compare("begin")==0)
-        return TOKEN_ID_BEGIN;
-    if(s.compare("and")==0)
-        return TOKEN_ID_AND;
-    if(s.compare("or")==0)
-        return TOKEN_ID_OR;
-    if(s.compare("not")==0)
-        return TOKEN_ID_NOT;
-    if(s.compare("else")==0)
-        return TOKEN_ID_ELSE;
-    if(s.compare("real")==0)
-        return TOKEN_ID_REAL;
-    if(s.compare("if")==0)
-        return TOKEN_ID_IF;
-    if(s.compare("for")==0)
-        return TOKEN_ID_FOR;
-    if(s.compare("char")==0)
-        return TOKEN_ID_CHAR;
-    if(s.compare("integer")==0)
-        return TOKEN_ID_INTEGER;
-    if(s.compare("final")==0)
-        return TOKEN_ID_FINAL;
-    if(s.compare("(")==0)
-        return TOKEN_ID_OPEN_PARANTHESES;
-    if(s.compare(")")==0)
-        return TOKEN_ID_CLOSE_PARANTHESES;
-    if(s.compare("[")==0)
-        return TOKEN_ID_OPEN_BRACKET;
-    if(s.compare("]")==0)
-        return TOKEN_ID_CLOSE_BRACKET;
-    if(s.compare("+")==0)
-        return TOKEN_ID_ADDITION;
-    if(s.compare("-")==0)
-        return TOKEN_ID_SUBTRACTION;
-    if(s.compare("*")==0)
-        return TOKEN_ID_MULTIPLICATION;
-    if(s.compare("/")==0)
-        return TOKEN_ID_DIVISION;
-    if(s.compare(";")==0)
-        return TOKEN_ID_SEMICOLON;
-    if(s.compare(":")==0)
-        return TOKEN_ID_COLON;
-    if(s.compare(",")==0)
-        return TOKEN_ID_COMMA;
-    if(s.compare("=")==0)
-        return TOKEN_ID_ASSIGNMENT;
-    if(s.compare("==")==0)
-        return TOKEN_ID_EQUALITY;
-    if(s.compare("<")==0)
-        return TOKEN_ID_LESS_THAN;
-    if(s.compare("<=")==0)
-        return TOKEN_ID_LESS_EQUAL_TO;
-    if(s.compare(">")==0)
-        return TOKEN_ID_GREATER_THEN;
-    if(s.compare(">=")==0)
-        return TOKEN_ID_GREATER_EQUAL_TO;
-    if(s.compare("<>")==0)
-        return TOKEN_ID_DIFFERENT; 
+    auto it = tokenMap.find(s);
+    if (it != tokenMap.end())
+    {
+        return it->second;
+    }
+    return TOKEN_ID_NULL;
 }
 
 #endif
-
-
-
