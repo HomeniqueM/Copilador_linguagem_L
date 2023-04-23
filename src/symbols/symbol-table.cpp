@@ -9,17 +9,16 @@
 #include "token-id.cpp"
 #include "lexeme.cpp"
 
-
-// classe tabela de símbolos
+/**
+ * @brief classe tabela de símbolos
+*/
 class SymbolTable
 {
 private:
-   	std::unordered_map<std::string,Token> table;    
-   	SymbolTable * prev;   
+   	std::unordered_map<std::string,Token> table;       
 
 public:
 	SymbolTable();
-	SymbolTable(SymbolTable * t);
 	bool isItAValidChar(char c);
 	bool Insert(std::string lexem, Token tok);
 	Token * Find(std::string lexem);
@@ -30,7 +29,7 @@ public:
  * @brief construtor para a primeira tabela de escopo mais abrangente
  * 
  */
-SymbolTable::SymbolTable() : prev(nullptr)
+SymbolTable::SymbolTable()
 {
 	// passar para a classe lexeme
 	std::vector<std::string> init={
@@ -52,18 +51,10 @@ SymbolTable::SymbolTable() : prev(nullptr)
 	}
 }
 
-// construtor para novas tabelas criadas quando temos novos escopos
-SymbolTable::SymbolTable(SymbolTable * t) : prev(t)
-{		
-
-}
-
-// 
-// retorna se o símbolo foi inserido na tabela
 
 /**
- * @brief insere um símbolo na tabela
- * @bug retorn sempre true 
+ * @brief insere um símbolo na tabela e retorna se o símbolo foi inserido na tabela
+ * @bug retorno sempre true 
 */
 bool SymbolTable::Insert(std::string lexem, Token tok) 
 { 
@@ -71,19 +62,16 @@ bool SymbolTable::Insert(std::string lexem, Token tok)
 	table.insert({lexem,tok});
 	return true;
 }
-
-// busca um símbolo na tabela atual e retorna o endereço do registro
-// se não encontrado, busca nas tabelas dos escopos envolventes
-// caso não encontre em nenhuma tabela de nenhum escopo envolvente retorna um endereço nulo
+/**
+ * @brief busca um símbolo na tabela atual e retorna o endereço do registro
+ * @if se não encontrado, busca nas tabelas dos escopos envolventes
+ * @else caso não encontre em nenhuma tabela de nenhum escopo envolvente retorna um endereço nulo
+*/
 Token * SymbolTable::Find(std::string lexem) 
 {
-	for (SymbolTable * st = this; st != nullptr; st = st->prev) 
-	{
-        auto found = st->table.find(lexem);
-        if (found != st->table.end()) 
-			return &found->second;
-    }
-
+    auto found = this->table.find(lexem);
+    if (found != this->table.end()) 
+		return &found->second;
     return nullptr;
 }
 
