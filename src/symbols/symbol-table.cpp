@@ -3,9 +3,11 @@
 #include <iostream>
 #include <unordered_map>
 #include <string>
+#include <algorithm>
 #include <vector>
 #include "token.cpp"
 #include "token-id.cpp"
+#include "lexeme.cpp"
 
 
 // classe tabela de símbolos
@@ -18,13 +20,16 @@ private:
 public:
 	SymbolTable();
 	SymbolTable(SymbolTable * t);
-	
+	bool isItAValidChar(char c);
 	bool Insert(std::string lexem, Token tok);
 	Token * Find(std::string lexem);
 };
 
 
-// construtor para a primeira tabela de escopo mais abrangente
+/**
+ * @brief construtor para a primeira tabela de escopo mais abrangente
+ * 
+ */
 SymbolTable::SymbolTable() : prev(nullptr)
 {
 	std::vector<std::string> init={
@@ -76,6 +81,16 @@ Token * SymbolTable::Find(std::string lexem)
     return nullptr;
 }
 
+bool SymbolTable::isItAValidChar(char c)
+{
+
+	//	return std::isalnum(c) || std::isalpha(c) ;
+	return std::isalnum(c) || std::isalpha(c) || (std::find(LEXEME_VALID_SYMBOLS.begin(), LEXEME_VALID_SYMBOLS.end(), c) != LEXEME_VALID_SYMBOLS.end());
+}
+
+
+#endif
+
 /*int main(){
 	SymbolTable symtable;
 	Token symbl;
@@ -85,5 +100,3 @@ Token * SymbolTable::Find(std::string lexem)
 	std::cout << symtable.Find("integer");
 	return 0;
 }*/
-
-#endif
