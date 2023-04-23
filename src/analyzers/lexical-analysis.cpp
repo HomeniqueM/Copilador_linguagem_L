@@ -14,6 +14,8 @@ typedef struct StatePackage
 {
     bool returnChar = false; // deve voltar um char
     std::string identifier;  // onde o lexima é montado
+    TokenType tokenType = TOKEN_TYPE_UNDEFINED;
+    bool erro = false;
 } StatePackage;
 
 /**
@@ -37,7 +39,12 @@ class StartState : public State
 public:
     StatePackage handle(char c) override;
 };
-
+// Estado final do analisador léxico
+class FinalState : public State
+{
+public:
+    StatePackage handle(char c) override;
+};
 // ==================================================================================================================================
 class CommentState : public State
 {
@@ -47,7 +54,7 @@ public:
         StatePackage package;
         if (c == '}')
         {
-            std::cout << "\n voltando para o StartState" << std::endl;
+
             nextState = std::make_shared<StartState>();
         }
         else
@@ -66,16 +73,26 @@ public:
 
 StatePackage StartState::handle(char c)
 {
-    std::cout << "StartState " << std::endl;
 
     StatePackage package;
+
+    if (isASpaceOrLineBreak(c))
+    {
+        nextState = std::make_shared<StartState>();
+    }
     if (isAValidUnitarySymbol(c))
     {
+        std::cout << "isAValidUnitarySymbol: ";
+        package.identifier = +c;
+        package.tokenType = TOKEN_TYPE_CHAR;
+        this->completed = true;
+        nextState = std::make_shared<StartState>();
     }
     else if (c == '{')
     {
-        std::cout << "CommentState " << std::endl;
+        std::cout << "Comentario: ";
         nextState = std::make_shared<CommentState>();
+        std::cout << std::endl;
     }
 
     else if (std::isalpha(c) || c == '_')
@@ -87,6 +104,10 @@ StatePackage StartState::handle(char c)
         else
         {
         }
+    }
+
+    else{
+        package.erro = true;
     }
     return package;
 }
@@ -141,6 +162,8 @@ public:
             }
         }
         Token token = Token();
+
+        std::cout << "\nToken encontrado: " << lexeme << std::endl;
         // Token t = Token(lexema);
 
         // adicionar o token
@@ -179,7 +202,7 @@ int main(int argc, char const *argv[])
     try
     {
 
-        LexerAnalysis la("{aabb1111cc}");
+        LexerAnalysis la("{aabb1111cc}{aassadad}");
 
         la.getNextToken();
     }
