@@ -66,10 +66,11 @@ bool SymbolTable::Insert(std::string lexem, Token tok)
 	const auto& [c,success] = table.insert({lexem,tok});
 	return success;
 }
-
-// busca um símbolo na tabela atual e retorna o endereço do registro
-// se não encontrado, busca nas tabelas dos escopos envolventes
-// caso não encontre em nenhuma tabela de nenhum escopo envolvente retorna um endereço nulo
+/**
+ * busca um símbolo na tabela atual e retorna o endereço do registro
+ * se não encontrado, busca nas tabelas dos escopos envolventes
+ * caso não encontre em nenhuma tabela de nenhum escopo envolvente retorna um endereço nulo
+ */
 Token *SymbolTable::Find(std::string lexem)
 {
 	for (SymbolTable *st = this; st != nullptr; st = st->prev)

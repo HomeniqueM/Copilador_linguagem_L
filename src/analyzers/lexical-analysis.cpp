@@ -42,6 +42,340 @@ public:
 
 // ==================================================================================================================================
 /**
+ * ===========================================================================
+ * @brief Enquanto o
+ * @category State para tratar Identificador
+ * ===========================================================================
+ */
+class State03 : public State
+{
+    StatePackage handle(char c) override
+    {
+        StatePackage package;
+        if (isalpha(c) || isalnum(c) || c == '_')
+        {
+            package.identifier = +c;
+            nextState = std::make_shared<State03>();
+        }
+        else
+        {
+            this->completed = true;
+            package.returnChar = true;
+        }
+
+        return package;
+    }
+};
+
+/**
+ * ===========================================================================
+ * @param c verifica se ele não possui nenhuma letra, digito ou underline caso
+ *          não Finaliza esse estado encontra uma HEXA cas
+ * @brief Estado 6 caso entre mais um caracterer é entendido que ele vai virar
+ *        um indetificador
+ * ===========================================================================
+ */
+
+class State06 : public State
+{
+    StatePackage handle(char c) override
+    {
+        StatePackage package;
+        if (isalpha(c) || isalnum(c) || c == '_')
+        {
+            package.identifier = +c;
+            nextState = std::make_shared<State03>();
+        }
+        else
+        {
+            package.returnChar = true;
+            this->completed = true;
+        }
+
+        return package;
+    }
+};
+/**
+ * ===========================================================================
+ * @param c verifica se ele não possui nenhuma letra, digito ou underline caso
+ *          não Finaliza esse estado encontra uma HEXA cas
+ * @brief Estado 5 caso entre mais um caracterer é entendido que ele vai virar
+ *        um indetificador
+ * ===========================================================================
+ */
+class State05 : public State
+{
+    StatePackage handle(char c) override
+    {
+        StatePackage package;
+        if (c == 'h')
+        {
+            package.identifier = +c;
+            nextState = std::make_shared<State06>();
+        }
+        else if (isalpha(c) || isalnum(c) || c == '_')
+        {
+            package.identifier = +c;
+            nextState = std::make_shared<State03>();
+        }
+        else
+        {
+            package.returnChar = true;
+            this->completed = true;
+        }
+
+        return package;
+    }
+};
+/**
+ * ===========================================================================
+ * @param Numerica
+ * ===========================================================================
+ */
+class State16 : public State
+{
+    StatePackage handle(char c) override
+    {
+        StatePackage package;
+        if (isalnum(c))
+        {
+            package.identifier = +c;
+            nextState = std::make_shared<State16>();
+        }
+        else
+        {
+            package.returnChar = true;
+            this->completed = true;
+        }
+
+        return package;
+    }
+};
+
+class State15 : public State
+{
+    StatePackage handle(char c) override
+    {
+        StatePackage package;
+        if (isalnum(c))
+        {
+            package.identifier = +c;
+            nextState = std::make_shared<State16>();
+        }
+        else
+        {
+            std::string msg = "Erra esperando um valor numerico porém foi lido " + c;
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER, 0, msg);
+        }
+
+        return package;
+    }
+};
+
+class State14 : public State
+{
+    StatePackage handle(char c) override
+    {
+        StatePackage package;
+        if (isalnum(c))
+        {
+            package.identifier = +c;
+            nextState = std::make_shared<State16>();
+        }
+        else if (c == '+' || c == '-')
+        {
+            package.identifier = +c;
+            nextState = std::make_shared<State15>();
+        }
+        else
+        {
+            std::string msg = "Erra esperando um valor numerico ou simbolo[+ ou -] porém foi lido " + c;
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER, 0, msg);
+        }
+
+        return package;
+    }
+};
+
+class State13 : public State
+{
+    StatePackage handle(char c) override
+    {
+        StatePackage package;
+        if (isalnum(c))
+        {
+            package.identifier = +c;
+            nextState = std::make_shared<State13>();
+        }
+        else if (c == 'e')
+        {
+            package.identifier = +c;
+            nextState = std::make_shared<State14>();
+        }
+        else
+        {
+            package.returnChar = true;
+            this->completed = true;
+        }
+
+        return package;
+    }
+};
+class State12 : public State
+{
+    StatePackage handle(char c) override
+    {
+        StatePackage package;
+        if (isalnum(c))
+        {
+            package.identifier = +c;
+            nextState = std::make_shared<State13>();
+        }
+        else
+        {
+            std::string msg = "Erra esperando um valor numerico porém foi lido " + c;
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER, 0, msg);
+        }
+
+        return package;
+    }
+};
+
+class State11 : public State
+{
+    StatePackage handle(char c) override
+    {
+        StatePackage package;
+        if (isalnum(c))
+        {
+            package.identifier = +c;
+            nextState = std::make_shared<State11>();
+        }
+        else if (c == '.')
+        {
+            package.identifier = +c;
+            nextState = std::make_shared<State12>();
+        }
+        else
+        {
+            package.returnChar = true;
+            this->completed = true;
+        }
+
+        return package;
+    }
+};
+
+class State09 : public State
+{
+    StatePackage handle(char c) override
+    {
+        StatePackage package;
+        if (c == 'h')
+        {
+            package.identifier = +c;
+            this->completed = true;
+        }
+        else
+        {
+            std::string msg = "Erra esperando a letra a h porém o que foi lido foi " + c;
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER, 0, msg);
+        }
+
+        return package;
+    }
+};
+
+class State08 : public State
+{
+    StatePackage handle(char c) override
+    {
+        StatePackage package;
+        if (c == 'h')
+        {
+            package.identifier = +c;
+            this->completed = true;
+        }
+        else if (isalnum(c))
+        {
+            package.identifier = +c;
+            nextState = std::make_shared<State11>();
+        }
+        else if (c == '.')
+        {
+            package.identifier = +c;
+            nextState = std::make_shared<State12>();
+        }
+
+        else
+        {
+            package.returnChar = true;
+            this->completed = true;
+        }
+
+        return package;
+    }
+};
+
+class State07 : public State
+{
+    StatePackage handle(char c) override
+    {
+        StatePackage package;
+        if (isalnum(c))
+        {
+            package.identifier = +c;
+            nextState = std::make_shared<State08>();
+        }
+        else if (isItaAlphabetHexa(c))
+        {
+            package.identifier = +c;
+            nextState = std::make_shared<State09>();
+        }
+        else if (c == '.')
+        {
+            package.identifier = +c;
+            nextState = std::make_shared<State12>();
+        }
+        else
+        {
+            package.returnChar = true;
+            this->completed = true;
+        }
+
+        return package;
+    }
+};
+
+/**
+ *
+ */
+class State04 : public State
+{
+    StatePackage handle(char c) override
+    {
+        StatePackage package;
+        if (isItaAlphabetHexa(c) || isalnum(c))
+        {
+            nextState = std::make_shared<State05>();
+            package.identifier = +c;
+        }
+        else if (isalpha(c) || isalnum(c) || c == '_')
+        {
+            package.identifier = +c;
+            nextState = std::make_shared<State03>();
+        }
+        else
+        {
+            package.returnChar = true;
+            this->completed = true;
+        }
+
+        return package;
+    }
+};
+
+/**
  * @brief classe para tratar do simbolo  de igual(=) [s18]
  */
 class State18 : public State
@@ -209,7 +543,6 @@ StatePackage StartState::handle(char c)
 
     else if (c == '{')
     {
-
         nextState = std::make_shared<CommentState>();
     }
     else if (c == '<')
@@ -225,28 +558,42 @@ StatePackage StartState::handle(char c)
     else if (c == '\'')
     {
         package.identifier = +c;
+        package.tokenType = TOKEN_TYPE_CHAR;
         nextState = std::make_shared<State19>();
+    }
+    else if (c == '"')
+    {
+        package.identifier = +c;
+        package.tokenType = TOKEN_TYPE_STRING;
+        nextState = std::make_shared<State21>();
     }
     else if (c == '>')
     {
         package.identifier = +c;
         nextState = std::make_shared<State22>();
     }
-
-    else if (c == '"')
-    {
-        package.identifier = +c;
-        nextState = std::make_shared<State21>();
-    }
     else if (std::isalpha(c) || c == '_')
     {
         if (isItaAlphabetHexa(c))
         {
-            // chamada para para estado do de possivel valor HEXA
+            package.identifier = +c;
+            nextState = std::make_shared<State04>();
         }
         else
         {
+            package.identifier = +c;
+            nextState = std::make_shared<State03>();
         }
+    }
+    else if (isalnum(c))
+    {
+        package.identifier = +c;
+        nextState = std::make_shared<State07>();
+    }
+    else if (c == '.')
+    {
+        package.identifier = +c;
+        nextState = std::make_shared<State12>();
     }
 
     else
@@ -284,6 +631,7 @@ public:
     {
         currentState = std::make_shared<StartState>();
         std::string lexeme = "";
+        TokenType tokentype = TOKEN_TYPE_UNDEFINED;
         char cc;
         while (!currentState->isComplete() || isEndFile() == true)
         {
@@ -295,12 +643,15 @@ public:
             if (symboltable->isItAValidChar(cc))
             {
                 StatePackage result = currentState->handle(cc);
+                lexeme += result.identifier;
                 if (result.returnChar)
                 {
                     pushBackCurrentChar();
                 }
-                lexeme += result.identifier;
-
+                if (result.tokenType != TOKEN_TYPE_UNDEFINED)
+                {
+                    tokentype = result.tokenType;
+                }
                 if (currentState->isComplete() == false)
                 {
                     currentState = currentState->nextState;
@@ -315,11 +666,14 @@ public:
             }
         }
         Token token = Token();
+        token.setLexeme(lexeme);
 
         std::cout << "\nToken encontrado: " << lexeme << std::endl;
         // Token t = Token(lexema);
 
         // adicionar o token
+
+        // Tabela de simbolo relaciona o Token
         // tabela_simbolos.tratar_token(t);
 
         // Token class
@@ -358,8 +712,7 @@ int main(int argc, char const *argv[])
 {
     try
     {
-
-        LexerAnalysis la("\"> >=   \"{sdsada} <> (    )");
+        LexerAnalysis la("00.1e fdsf {} (    )");
 
         la.getNextToken();
         la.getNextToken();
