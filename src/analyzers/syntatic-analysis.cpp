@@ -227,11 +227,26 @@ void SyntaticAnalysis::productionA()
 }
 
 // R -> for ( { R1 } ; Exp ; { R1 } ) ( [Cmd] | begin {Cmd} end )
-// ERROR VERIFICAR DPS
 void SyntaticAnalysis::productionR()
 {
     matchToken(TOKEN_ID_FOR);
     matchToken(TOKEN_ID_OPEN_PARANTHESES);
+    productionR1();
+    productionExp();
+    productionR1();
+    matchToken(TOKEN_ID_CLOSE_PARANTHESES);
+    productionT1();
+}
+
+// R1-> Cmd { ,Cmd }
+void SyntaticAnalysis::productionR1()
+{
+    productionCMD();
+    while (token.getTokenid() == TOKEN_ID_COMMA)
+    {
+        matchToken(TOKEN_ID_COMMA);
+        productionCMD();
+    }
 }
 
 // T -> if ( Exp ) T1 [ else T1 ]
@@ -350,11 +365,11 @@ void SyntaticAnalysis::productionExp1()
     }
 }
 
-//Exp2 -> Exp3 { ( *  | mod | div| and ) Exp3}
+// Exp2 -> Exp3 { ( *  | mod | div| and ) Exp3}
 void SyntaticAnalysis::productionExp2()
 {
     productionExp3();
-    while (token.getTokenid() == TOKEN_ID_MULTIPLICATION ||  token.getTokenid() == TOKEN_ID_DIVISION || token.getTokenid() == TOKEN_ID_MODULO || token.getTokenid() == TOKEN_ID_AND)
+    while (token.getTokenid() == TOKEN_ID_MULTIPLICATION || token.getTokenid() == TOKEN_ID_DIVISION || token.getTokenid() == TOKEN_ID_MODULO || token.getTokenid() == TOKEN_ID_AND)
     {
         if (token.getTokenid() == TOKEN_ID_MULTIPLICATION)
             matchToken(TOKEN_ID_MULTIPLICATION);
