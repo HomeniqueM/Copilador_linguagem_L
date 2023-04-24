@@ -87,7 +87,7 @@ bool SymbolTable::isItAValidChar(char c)
 {
 
 	//	return std::isalnum(c) || std::isalpha(c) ;
-	return std::isalnum(c) || std::isalpha(c) || (std::find(LEXEME_VALID_SYMBOLS.begin(), LEXEME_VALID_SYMBOLS.end(), c) != LEXEME_VALID_SYMBOLS.end());
+	return std::isdigit(c) || std::isalpha(c) || (std::find(LEXEME_VALID_SYMBOLS.begin(), LEXEME_VALID_SYMBOLS.end(), c) != LEXEME_VALID_SYMBOLS.end());
 }
 
 #endif

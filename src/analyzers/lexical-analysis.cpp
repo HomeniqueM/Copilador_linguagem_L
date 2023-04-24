@@ -52,7 +52,7 @@ class State03 : public State
     StatePackage handle(char c) override
     {
         StatePackage package;
-        if (isalpha(c) || isalnum(c) || c == '_')
+        if (isalpha(c) || isdigit(c) || c == '_')
         {
             package.identifier = +c;
             nextState = std::make_shared<State03>();
@@ -81,7 +81,7 @@ class State06 : public State
     StatePackage handle(char c) override
     {
         StatePackage package;
-        if (isalpha(c) || isalnum(c) || c == '_')
+        if (isalpha(c) || isdigit(c) || c == '_')
         {
             package.identifier = +c;
             nextState = std::make_shared<State03>();
@@ -113,7 +113,7 @@ class State05 : public State
             package.identifier = +c;
             nextState = std::make_shared<State06>();
         }
-        else if (isalpha(c) || isalnum(c) || c == '_')
+        else if (isalpha(c) || isdigit(c) || c == '_')
         {
             package.identifier = +c;
             nextState = std::make_shared<State03>();
@@ -137,7 +137,7 @@ class State16 : public State
     StatePackage handle(char c) override
     {
         StatePackage package;
-        if (isalnum(c))
+        if (isdigit(c))
         {
             package.identifier = +c;
             nextState = std::make_shared<State16>();
@@ -157,7 +157,7 @@ class State15 : public State
     StatePackage handle(char c) override
     {
         StatePackage package;
-        if (isalnum(c))
+        if (isdigit(c))
         {
             package.identifier = +c;
             nextState = std::make_shared<State16>();
@@ -177,7 +177,7 @@ class State14 : public State
     StatePackage handle(char c) override
     {
         StatePackage package;
-        if (isalnum(c))
+        if (isdigit(c))
         {
             package.identifier = +c;
             nextState = std::make_shared<State16>();
@@ -202,7 +202,7 @@ class State13 : public State
     StatePackage handle(char c) override
     {
         StatePackage package;
-        if (isalnum(c))
+        if (isdigit(c))
         {
             package.identifier = +c;
             nextState = std::make_shared<State13>();
@@ -226,7 +226,7 @@ class State12 : public State
     StatePackage handle(char c) override
     {
         StatePackage package;
-        if (isalnum(c))
+        if (isdigit(c))
         {
             package.identifier = +c;
             nextState = std::make_shared<State13>();
@@ -246,7 +246,7 @@ class State11 : public State
     StatePackage handle(char c) override
     {
         StatePackage package;
-        if (isalnum(c))
+        if (isdigit(c))
         {
             package.identifier = +c;
             nextState = std::make_shared<State11>();
@@ -296,7 +296,7 @@ class State08 : public State
             package.identifier = +c;
             this->completed = true;
         }
-        else if (isalnum(c))
+        else if (isdigit(c))
         {
             package.identifier = +c;
             nextState = std::make_shared<State11>();
@@ -322,7 +322,7 @@ class State07 : public State
     StatePackage handle(char c) override
     {
         StatePackage package;
-        if (isalnum(c))
+        if (isdigit(c))
         {
             package.identifier = +c;
             nextState = std::make_shared<State08>();
@@ -355,12 +355,12 @@ class State04 : public State
     StatePackage handle(char c) override
     {
         StatePackage package;
-        if (isItaAlphabetHexa(c) || isalnum(c))
+        if (isItaAlphabetHexa(c) || isdigit(c))
         {
             nextState = std::make_shared<State05>();
             package.identifier = +c;
         }
-        else if (isalpha(c) || isalnum(c) || c == '_')
+        else if (isalpha(c) || isdigit(c) || c == '_')
         {
             package.identifier = +c;
             nextState = std::make_shared<State03>();
@@ -585,7 +585,7 @@ StatePackage StartState::handle(char c)
             nextState = std::make_shared<State03>();
         }
     }
-    else if (isalnum(c))
+    else if (isdigit(c))
     {
         package.identifier = +c;
         nextState = std::make_shared<State07>();
@@ -712,7 +712,7 @@ int main(int argc, char const *argv[])
 {
     try
     {
-        LexerAnalysis la("00.1e fdsf {} (    )");
+        LexerAnalysis la("00.1e+1 fdsf {} (    )");
 
         la.getNextToken();
         la.getNextToken();
