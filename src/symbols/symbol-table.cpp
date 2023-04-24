@@ -57,7 +57,6 @@ SymbolTable::SymbolTable()
 bool SymbolTable::Insert(std::string lexem, Token tok)
 {
 	const auto& [c,success] = table.insert({lexem,tok});
-	//table.insert({lexem, tok});
 	return success;
 }
 /**
@@ -77,11 +76,11 @@ bool SymbolTable::isItAValidChar(char c)
 {
 
 	//	return std::isalnum(c) || std::isalpha(c) ;
-	return std::isalnum(c) || std::isalpha(c) || (std::find(LEXEME_VALID_SYMBOLS.begin(), LEXEME_VALID_SYMBOLS.end(), c) != LEXEME_VALID_SYMBOLS.end());
+	return std::isdigit(c) || std::isalpha(c) || (std::find(LEXEME_VALID_SYMBOLS.begin(), LEXEME_VALID_SYMBOLS.end(), c) != LEXEME_VALID_SYMBOLS.end());
 }
 
 #endif
-
+/*
 int main(){
 	SymbolTable symtable;
 	Token symbl;
@@ -91,3 +90,4 @@ int main(){
 	std::cout << symtable.Find("integer");
 	return 0;
 }
+*/

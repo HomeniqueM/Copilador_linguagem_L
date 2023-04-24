@@ -1,5 +1,11 @@
 #ifndef SYMBOL_TOKEN_CLASS
 #define SYMBOL_TOKEN_CLASS
 
+enum TokenClass
+{
+    TOKEN_CLASS_VARIEBLE,
+    TOKEN_CLASS_CONSTANT,
+    TOKEN_CLASS_UNKNOWN
+};
 
 #endif

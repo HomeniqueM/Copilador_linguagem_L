@@ -5,6 +5,8 @@
 enum class ErrorCode
 {
     INVALIDCHARACTER,
+    UNEXPECTED_CHARACTER,
+    UNEXPECTED_END_OFFILE,
     UNKNOWN
 };
 
@@ -38,6 +40,8 @@ private:
         case ErrorCode::INVALIDCHARACTER:
             oss << "character não é valido";
             break;
+        case ErrorCode::UNEXPECTED_CHARACTER:
+            oss << "character não era esperado ";
         default:
             oss << "Unknown error";
             break;
