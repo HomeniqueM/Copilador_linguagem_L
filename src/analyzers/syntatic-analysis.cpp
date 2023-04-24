@@ -302,20 +302,123 @@ void SyntaticAnalysis::productionE1()
 // Exp -> Exp1 { ( == | < | <= | > | >= ) Exp1 }
 void SyntaticAnalysis::productionExp()
 {
+    productionExp1();
+    while (token.getTokenid() == TOKEN_ID_EQUALITY || token.getTokenid() == TOKEN_ID_GREATER_THEN || token.getTokenid() == TOKEN_ID_GREATER_EQUAL_TO || token.getTokenid() == TOKEN_ID_LESS_THAN || token.getTokenid() == TOKEN_ID_LESS_EQUAL_TO)
+    {
+        if (token.getTokenid() == TOKEN_ID_EQUALITY)
+        {
+            matchToken(TOKEN_ID_EQUALITY);
+        }
+        else if (token.getTokenid() == TOKEN_ID_GREATER_THEN)
+        {
+            matchToken(TOKEN_ID_GREATER_THEN);
+        }
+        else if (token.getTokenid() == TOKEN_ID_GREATER_EQUAL_TO)
+        {
+            matchToken(TOKEN_ID_GREATER_EQUAL_TO);
+        }
+        else if (token.getTokenid() == TOKEN_ID_LESS_THAN)
+        {
+            matchToken(TOKEN_ID_LESS_THAN);
+        }
+        else
+        {
+            matchToken(TOKEN_ID_LESS_EQUAL_TO);
+        }
+        productionExp1();
+    }
 }
 
 // Exp1 -> [ - ] Exp2 { ( + | - | or ) Exp2 }
-void SyntaticAnalysis::productionExp1() {}
-// Exp2 -> Exp3 { ( * | / | mod | div| and ) Exp3}
-void SyntaticAnalysis::productionExp2() {}
+void SyntaticAnalysis::productionExp1()
+{
+    if (token.getTokenid() == TOKEN_ID_SUBTRACTION)
+    {
+        matchToken(TOKEN_ID_SUBTRACTION);
+    }
+    productionExp2();
+
+    while (token.getTokenid() == TOKEN_ID_ADDITION || token.getTokenid() == TOKEN_ID_SUBTRACTION || token.getTokenid() == TOKEN_ID_OR)
+    {
+        if (token.getTokenid() == TOKEN_ID_ADDITION)
+            matchToken(TOKEN_ID_ADDITION);
+        else if (token.getTokenid() == TOKEN_ID_SUBTRACTION)
+            matchToken(TOKEN_ID_SUBTRACTION);
+        else
+            matchToken(TOKEN_ID_OR);
+        productionExp2();
+    }
+}
+
+//Exp2 -> Exp3 { ( *  | mod | div| and ) Exp3}
+void SyntaticAnalysis::productionExp2()
+{
+    productionExp3();
+    while (token.getTokenid() == TOKEN_ID_MULTIPLICATION ||  token.getTokenid() == TOKEN_ID_DIVISION || token.getTokenid() == TOKEN_ID_MODULO || token.getTokenid() == TOKEN_ID_AND)
+    {
+        if (token.getTokenid() == TOKEN_ID_MULTIPLICATION)
+            matchToken(TOKEN_ID_MULTIPLICATION);
+        else if (token.getTokenid() == TOKEN_ID_DIVISION)
+            matchToken(TOKEN_ID_DIVISION);
+        else if (token.getTokenid() == TOKEN_ID_MODULO)
+            matchToken(TOKEN_ID_MODULO);
+        else
+            matchToken(TOKEN_ID_AND);
+        productionExp3();
+    }
+}
+
 // Exp3 -> Exp4 | not Exp4
-void SyntaticAnalysis::productionExp3() {}
+void SyntaticAnalysis::productionExp3()
+{
+    if (token.getTokenid() == TOKEN_ID_NOT)
+    {
+        matchToken(TOKEN_ID_NOT);
+    }
+    productionExp4();
+}
+
 // Exp4 -> Exp5 | real(Exp5) | integer(Exp5)
-void SyntaticAnalysis::productionExp4() {}
+void SyntaticAnalysis::productionExp4()
+{
+    if (token.getTokenid() != TOKEN_ID_INTEGER && token.getTokenid() != TOKEN_ID_REAL)
+    {
+        productionExp5();
+    }
+    else
+    {
+        if (token.getTokenid() == TOKEN_ID_INTEGER)
+        {
+            matchToken(TOKEN_ID_INTEGER);
+        }
+        else
+        {
+            matchToken(TOKEN_ID_REAL);
+        }
+        matchToken(TOKEN_ID_OPEN_PARANTHESES);
+        productionExp5();
+        matchToken(TOKEN_ID_CLOSE_PARANTHESES);
+    }
+}
+
 // Exp5 -> ( Exp6 )
-void SyntaticAnalysis::productionExp5() {}
+void SyntaticAnalysis::productionExp5()
+{
+    matchToken(TOKEN_ID_OPEN_PARANTHESES);
+    productionExp6();
+    matchToken(TOKEN_ID_CLOSE_PARANTHESES);
+}
+
 // Exp6 -> const | id | Exp
-void SyntaticAnalysis::productionExp6() {}
+void SyntaticAnalysis::productionExp6()
+{
+    if (token.getTokenid() == TOKEN_ID_CONSTANT)
+        matchToken(TOKEN_ID_CONSTANT);
+    else if (token.getTokenid() == TOKEN_ID_INTEGER)
+        matchToken(TOKEN_ID_IDENTIFIER);
+    else
+        productionExp();
+}
 
 int main()
 {
