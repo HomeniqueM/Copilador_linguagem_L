@@ -1,3 +1,5 @@
+#ifndef ERROR_ERROR_CODE
+#define ERROR_ERROR_CODE
 #include <string>
 #include <exception>
 #include <sstream>
@@ -64,3 +66,4 @@ private:
         return oss.str();
     }
 };
+#endif
