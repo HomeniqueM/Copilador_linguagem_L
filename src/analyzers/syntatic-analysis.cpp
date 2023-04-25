@@ -21,6 +21,7 @@ private:
     void productionCMD();
     void productionA();
     void productionR();
+    void productionR1();
     void productionT();
     void productionT1();
     void productionL();
@@ -74,11 +75,11 @@ void SyntaticAnalysis::matchToken(TokenID expectedToken)
     {
         if (token.getTokenid() == TOKEN_ID_EOF)
         {
-            // Gerar erro de Fim de arquivo não esperado.
+            throw LException(ErrorCode::UNEXPECTED_END_OFFILE, 0, "msg");
         }
         else
         {
-            // Gerar erro de Token não esperado.
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER, 0, "msg");
         }
     }
 }
