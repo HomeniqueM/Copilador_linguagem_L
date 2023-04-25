@@ -20,7 +20,7 @@ private:
 public:
 	SymbolTable();
 	bool isItAValidChar(char c);
-	bool Insert(std::string lexem, Token tok);
+	Token *Insert(std::string lexem, Token tok);
 	Token *Find(std::string lexem);
 };
 
@@ -54,10 +54,16 @@ SymbolTable::SymbolTable()
 /**
  * @brief insere um símbolo na tabela
  */
-bool SymbolTable::Insert(std::string lexem, Token tok)
+Token * SymbolTable::Insert(std::string lexem, Token tok)
 {
 	const auto& [c,success] = table.insert({lexem,tok});
-	return success;
+	
+	if(success){
+		Token * res=this->Find(lexem);
+		return res;
+	}else{
+		return nullptr;
+	}
 }
 /**
  * @brief busca um símbolo na tabela atual e retorna o endereço do registro
@@ -80,7 +86,7 @@ bool SymbolTable::isItAValidChar(char c)
 }
 
 #endif
-/*
+
 int main(){
 	SymbolTable symtable;
 	Token symbl;
@@ -90,4 +96,4 @@ int main(){
 	std::cout << symtable.Find("integer");
 	return 0;
 }
-*/
+

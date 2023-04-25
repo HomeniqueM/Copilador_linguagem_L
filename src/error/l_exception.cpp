@@ -7,6 +7,7 @@ enum class ErrorCode
     INVALIDCHARACTER,
     UNEXPECTED_CHARACTER,
     UNEXPECTED_END_OFFILE,
+    NO_FILE_PATH_FOUND,
     UNKNOWN
 };
 
@@ -42,6 +43,10 @@ private:
             break;
         case ErrorCode::UNEXPECTED_CHARACTER:
             oss << "character não era esperado ";
+            break;
+        case ErrorCode::NO_FILE_PATH_FOUND:
+            oss << "caminho do arquivo fonte nao encontrado";
+            break;
         default:
             oss << "Unknown error";
             break;
