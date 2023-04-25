@@ -46,7 +46,7 @@ private:
             oss << "character não era esperado ";
             break;
         case ErrorCode::UNEXPECTED_TOKEN:
-            oss << "token não esperado";
+            oss << "token nao esperado";
             break;
         case ErrorCode::UNEXPECTED_TOKEN_EOF:
             oss << "fim de arquivo nao esperado";

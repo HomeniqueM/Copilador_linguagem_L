@@ -75,11 +75,11 @@ void SyntaticAnalysis::matchToken(TokenID expectedToken)
     {
         if (token.getTokenid() == TOKEN_ID_EOF)
         {
-            throw LException(ErrorCode::UNEXPECTED_END_OFFILE, 0, "msg");
+            throw LException(ErrorCode::UNEXPECTED_TOKEN_EOF, 0, "msg");
         }
         else
         {
-            throw LException(ErrorCode::UNEXPECTED_CHARACTER, 0, "msg");
+            throw LException(ErrorCode::UNEXPECTED_TOKEN, 0, "" );
         }
     }
 }
