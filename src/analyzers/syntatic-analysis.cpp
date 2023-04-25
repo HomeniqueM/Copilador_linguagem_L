@@ -19,6 +19,7 @@ private:
     void productionD1();
     void productionC();
     void productionCMD();
+    void productionCMD1();
     void productionA();
     void productionR();
     void productionR1();
@@ -221,6 +222,31 @@ void SyntaticAnalysis::productionCMD()
     matchToken(TOKEN_ID_SEMICOLON);
 }
 
+// Cmd1 ->  [ ( A | R | T | L | E ) ] ;
+void SyntaticAnalysis::productionCMD1()
+{
+    if (token.getTokenid() == TOKEN_ID_IDENTIFIER)
+    {
+        productionA();
+    }
+    else if (token.getTokenid() == TOKEN_ID_FOR)
+    {
+        productionR();
+    }
+    else if (token.getTokenid() == TOKEN_ID_IF)
+    {
+        productionT();
+    }
+    else if (token.getTokenid() == TOKEN_ID_READLN)
+    {
+        productionL();
+    }
+    else if (token.getTokenid() == TOKEN_ID_WRITE || token.getTokenid() == TOKEN_ID_WRITELN)
+    {
+        productionE();
+    }
+}
+
 // A ->  id = Exp
 void SyntaticAnalysis::productionA()
 {
@@ -246,11 +272,11 @@ void SyntaticAnalysis::productionR()
 // R1-> Cmd { ,Cmd }
 void SyntaticAnalysis::productionR1()
 {
-    productionCMD();
+    productionCMD1();
     while (token.getTokenid() == TOKEN_ID_COMMA)
     {
         matchToken(TOKEN_ID_COMMA);
-        productionCMD();
+        productionCMD1();
     }
 }
 
