@@ -101,7 +101,6 @@ void SyntaticAnalysis::productionS()
 
         if (declaration)
         {
-            std::cout << "declaration" << std::endl;
             productionD();
         }
         else
@@ -226,6 +225,7 @@ void SyntaticAnalysis::productionCMD()
 void SyntaticAnalysis::productionA()
 {
     matchToken(TOKEN_ID_IDENTIFIER);
+    matchToken(TOKEN_ID_ASSIGNMENT);
     productionExp();
 }
 
@@ -235,7 +235,9 @@ void SyntaticAnalysis::productionR()
     matchToken(TOKEN_ID_FOR);
     matchToken(TOKEN_ID_OPEN_PARANTHESES);
     productionR1();
+    matchToken(TOKEN_ID_SEMICOLON);
     productionExp();
+    matchToken(TOKEN_ID_SEMICOLON);
     productionR1();
     matchToken(TOKEN_ID_CLOSE_PARANTHESES);
     productionT1();
@@ -278,6 +280,10 @@ void SyntaticAnalysis::productionT1()
             productionCMD();
         }
         matchToken(TOKEN_ID_END);
+    }
+    else 
+    {
+        productionCMD();
     }
 }
 
