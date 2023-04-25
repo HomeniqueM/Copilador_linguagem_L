@@ -50,6 +50,7 @@ private:
             break;
         case ErrorCode::UNEXPECTED_TOKEN_EOF:
             oss << "fim de arquivo nao esperado";
+            break;
         default:
             oss << "Unknown error";
             break;

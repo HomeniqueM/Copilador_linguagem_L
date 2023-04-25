@@ -69,17 +69,19 @@ void SyntaticAnalysis::matchToken(TokenID expectedToken)
     {
         // Pedir o prx token
         Token nextToken;
+        nextToken.setTokenID(TOKEN_ID_EOF);
+        nextToken.setLexeme("ssss");
         setToken(nextToken);
     }
     else
     {
         if (token.getTokenid() == TOKEN_ID_EOF)
         {
-            throw LException(ErrorCode::UNEXPECTED_TOKEN_EOF, 0, "msg");
+            throw LException(ErrorCode::UNEXPECTED_TOKEN_EOF, 0, "");
         }
         else
         {
-            throw LException(ErrorCode::UNEXPECTED_TOKEN, 0, "" );
+            throw LException(ErrorCode::UNEXPECTED_TOKEN, 0, token.getLexeme());
         }
     }
 }
@@ -443,8 +445,6 @@ int main()
     SyntaticAnalysis *sintatico = new SyntaticAnalysis();
     Token *token = new Token();
     token->setTokenID(TOKEN_ID_CHAR);
-    std::string a = tokenToString(token->getTokenid());
-    std::cout << a;
-
+    token->setLexeme("Cosso");
     sintatico->Start(*token);
 }
