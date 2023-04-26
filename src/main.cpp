@@ -16,10 +16,12 @@ int main(int argc, char const *argv[])
 {
     try
     {
-        //LexerAnalysis la("int a = 4;");
-
-      //  la.getNextToken();
-       // la.getNextToken();
+        // Problema ver Com o home
+        std::cout << "dhdid";
+        LexerAnalysis la("int a = 4;");
+        std::cout << "sssokso";
+        //std:: cout <<  la.getNextToken();
+        //Token a = la.getNextToken();
     }
     catch (const LException &e)
     {

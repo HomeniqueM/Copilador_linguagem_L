@@ -1,3 +1,5 @@
+#ifndef ERROR_ERROR_CODE
+#define ERROR_ERROR_CODE
 #include <string>
 #include <exception>
 #include <sstream>
@@ -37,6 +39,7 @@ private:
     {
         std::ostringstream oss;
         oss << "Error: ";
+        oss << " [" << line_ << "] ";
         switch (code_)
         {
         case ErrorCode::INVALIDCHARACTER:
@@ -57,10 +60,9 @@ private:
         }
         if (!mOptional_.empty())
         {
-
             oss << " - " << mOptional_;
         }
-        oss << " (linha " << line_ << ")";
         return oss.str();
     }
 };
+#endif
