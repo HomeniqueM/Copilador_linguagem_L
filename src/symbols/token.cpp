@@ -6,7 +6,6 @@
 class Token
 {
 private:
-private:
     std::string _lexeme;
     TokenID _id;
     // lexema

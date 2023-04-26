@@ -11,6 +11,7 @@ enum class ErrorCode
     UNEXPECTED_TOKEN,
     UNEXPECTED_TOKEN_EOF,
     UNEXPECTED_END_OFFILE,
+    NO_FILE_PATH_FOUND,
     UNKNOWN
 };
 
@@ -53,6 +54,9 @@ private:
             break;
         case ErrorCode::UNEXPECTED_TOKEN_EOF:
             oss << "fim de arquivo nao esperado";
+            break;
+        case ErrorCode::NO_FILE_PATH_FOUND:
+            oss << "caminho do arquivo fonte nao encontrado";
             break;
         default:
             oss << "Unknown error";

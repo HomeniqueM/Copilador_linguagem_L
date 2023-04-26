@@ -12,10 +12,15 @@
 #include "../src/symbols/token-type.cpp"
 #include "../src/analyzers/lexical-analysis.cpp"
 
+#include "utils/arg-handler.cpp"
+#include <string>
+
 int main(int argc, char const *argv[])
 {
     try
     {
+        ArgHandler handler;
+        std::string path = handler.handleArgs(argc,argv);
         // Problema ver Com o home
         std::cout << "dhdid";
         LexerAnalysis la("int a = 4;");
@@ -24,8 +29,7 @@ int main(int argc, char const *argv[])
         //Token a = la.getNextToken();
     }
     catch (const LException &e)
-    {
-
+    {    
         std::cerr << e.what() << std::endl;
     }
 
