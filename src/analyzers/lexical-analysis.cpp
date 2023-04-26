@@ -117,7 +117,7 @@ class State05 : public State
         }
         else if (isalpha(c) || isdigit(c) || c == '_')
         {
-            package.tokenclass = TOKEN_CLASS_VARIEBLE;
+            package.tokenclass = TOKEN_CLASS_VARIABLE;
             package.tokenType = TOKEN_TYPE_STRING;
             package.identifier = +c;
             nextState = std::make_shared<State03>();
@@ -369,7 +369,7 @@ class State04 : public State
         }
         else if (isalpha(c) || isdigit(c) || c == '_')
         {
-            package.tokenclass = TOKEN_CLASS_VARIEBLE;
+            package.tokenclass = TOKEN_CLASS_VARIABLE;
             package.tokenType = TOKEN_TYPE_STRING;
             package.identifier = +c;
             nextState = std::make_shared<State03>();
@@ -602,7 +602,7 @@ StatePackage StartState::handle(char c)
         else
         {
             package.identifier = +c;
-            package.tokenclass = TOKEN_CLASS_VARIEBLE;
+            package.tokenclass = TOKEN_CLASS_VARIABLE;
             package.tokenType = TOKEN_TYPE_STRING;
             nextState = std::make_shared<State03>();
         }

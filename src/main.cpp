@@ -19,8 +19,8 @@ int main(int argc, char const *argv[])
 {
     try
     {
-        ArgHandler handler;
-        std::string path = handler.handleArgs(argc,argv);
+       // ArgHandler handler;
+       // std::string path = handler.handleArgs(argc,argv);
         // Problema ver Com o home
         std::cout << "dhdid";
         LexerAnalysis la("int a = 4;");
