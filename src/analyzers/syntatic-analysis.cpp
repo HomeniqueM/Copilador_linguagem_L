@@ -19,8 +19,10 @@ private:
     void productionD1();
     void productionC();
     void productionCMD();
+    void productionCMD1();
     void productionA();
     void productionR();
+    void productionR1();
     void productionT();
     void productionT1();
     void productionL();
@@ -68,17 +70,19 @@ void SyntaticAnalysis::matchToken(TokenID expectedToken)
     {
         // Pedir o prx token
         Token nextToken;
+        nextToken.setTokenID(TOKEN_ID_EOF);
+        nextToken.setLexeme("ssss");
         setToken(nextToken);
     }
     else
     {
         if (token.getTokenid() == TOKEN_ID_EOF)
         {
-            // Gerar erro de Fim de arquivo não esperado.
+            throw LException(ErrorCode::UNEXPECTED_TOKEN_EOF, 0, "");
         }
         else
         {
-            // Gerar erro de Token não esperado.
+            throw LException(ErrorCode::UNEXPECTED_TOKEN, 0, token.getLexeme());
         }
     }
 }
@@ -98,7 +102,6 @@ void SyntaticAnalysis::productionS()
 
         if (declaration)
         {
-            std::cout << "declaration" << std::endl;
             productionD();
         }
         else
@@ -219,10 +222,36 @@ void SyntaticAnalysis::productionCMD()
     matchToken(TOKEN_ID_SEMICOLON);
 }
 
+// Cmd1 ->  [ ( A | R | T | L | E ) ] ;
+void SyntaticAnalysis::productionCMD1()
+{
+    if (token.getTokenid() == TOKEN_ID_IDENTIFIER)
+    {
+        productionA();
+    }
+    else if (token.getTokenid() == TOKEN_ID_FOR)
+    {
+        productionR();
+    }
+    else if (token.getTokenid() == TOKEN_ID_IF)
+    {
+        productionT();
+    }
+    else if (token.getTokenid() == TOKEN_ID_READLN)
+    {
+        productionL();
+    }
+    else if (token.getTokenid() == TOKEN_ID_WRITE || token.getTokenid() == TOKEN_ID_WRITELN)
+    {
+        productionE();
+    }
+}
+
 // A ->  id = Exp
 void SyntaticAnalysis::productionA()
 {
     matchToken(TOKEN_ID_IDENTIFIER);
+    matchToken(TOKEN_ID_ASSIGNMENT);
     productionExp();
 }
 
@@ -232,7 +261,9 @@ void SyntaticAnalysis::productionR()
     matchToken(TOKEN_ID_FOR);
     matchToken(TOKEN_ID_OPEN_PARANTHESES);
     productionR1();
+    matchToken(TOKEN_ID_SEMICOLON);
     productionExp();
+    matchToken(TOKEN_ID_SEMICOLON);
     productionR1();
     matchToken(TOKEN_ID_CLOSE_PARANTHESES);
     productionT1();
@@ -241,11 +272,11 @@ void SyntaticAnalysis::productionR()
 // R1-> Cmd { ,Cmd }
 void SyntaticAnalysis::productionR1()
 {
-    productionCMD();
+    productionCMD1();
     while (token.getTokenid() == TOKEN_ID_COMMA)
     {
         matchToken(TOKEN_ID_COMMA);
-        productionCMD();
+        productionCMD1();
     }
 }
 
@@ -275,6 +306,10 @@ void SyntaticAnalysis::productionT1()
             productionCMD();
         }
         matchToken(TOKEN_ID_END);
+    }
+    else 
+    {
+        productionCMD();
     }
 }
 
@@ -442,8 +477,6 @@ int main()
     SyntaticAnalysis *sintatico = new SyntaticAnalysis();
     Token *token = new Token();
     token->setTokenID(TOKEN_ID_CHAR);
-    std::string a = tokenToString(token->getTokenid());
-    std::cout << a;
-
+    token->setLexeme("Cosso");
     sintatico->Start(*token);
 }

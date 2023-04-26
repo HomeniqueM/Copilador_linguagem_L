@@ -1,17 +1,31 @@
 
 #include <iostream>
+#include <string>
+#include <vector>
+#include <functional>
+#include <memory>
+#include <algorithm>
+
+#include "../src/symbols/symbol-table.cpp"
+#include "../src/symbols/token.cpp"
+#include "../src/error/l_exception.cpp"
+#include "../src/symbols/token-type.cpp"
+#include "../src/analyzers/lexical-analysis.cpp"
+
 int main(int argc, char const *argv[])
 {
+    try
+    {
+        //LexerAnalysis la("int a = 4;");
 
-    
-    // Trata a entrada de arquivo  
+      //  la.getNextToken();
+       // la.getNextToken();
+    }
+    catch (const LException &e)
+    {
 
-    // Carrega a tabela de Simbolo 
-   
-  
-    // inicia o analisar Lexico 
+        std::cerr << e.what() << std::endl;
+    }
 
-    // Incia o parce 
-   
     return 0;
 }

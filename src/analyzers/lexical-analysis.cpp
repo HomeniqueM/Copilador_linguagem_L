@@ -708,20 +708,3 @@ public:
         return this->file_point > this->file.size();
     }
 };
-int main(int argc, char const *argv[])
-{
-    try
-    {
-        LexerAnalysis la("00.1e+1 fdsf {} (    )");
-
-        la.getNextToken();
-        la.getNextToken();
-    }
-    catch (const LException &e)
-    {
-
-        std::cerr << e.what() << std::endl;
-    }
-
-    return 0;
-}

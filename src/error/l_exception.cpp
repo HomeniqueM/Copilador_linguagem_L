@@ -6,6 +6,8 @@ enum class ErrorCode
 {
     INVALIDCHARACTER,
     UNEXPECTED_CHARACTER,
+    UNEXPECTED_TOKEN,
+    UNEXPECTED_TOKEN_EOF,
     UNEXPECTED_END_OFFILE,
     UNKNOWN
 };
@@ -42,6 +44,13 @@ private:
             break;
         case ErrorCode::UNEXPECTED_CHARACTER:
             oss << "character não era esperado ";
+            break;
+        case ErrorCode::UNEXPECTED_TOKEN:
+            oss << "token nao esperado";
+            break;
+        case ErrorCode::UNEXPECTED_TOKEN_EOF:
+            oss << "fim de arquivo nao esperado";
+            break;
         default:
             oss << "Unknown error";
             break;
