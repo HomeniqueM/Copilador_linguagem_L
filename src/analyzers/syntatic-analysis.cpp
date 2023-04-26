@@ -201,6 +201,7 @@ void SyntaticAnalysis::productionCMD()
     if (token.getTokenid() == TOKEN_ID_IDENTIFIER)
     {
         productionA();
+        matchToken(TOKEN_ID_SEMICOLON);
     }
     else if (token.getTokenid() == TOKEN_ID_FOR)
     {
@@ -213,13 +214,15 @@ void SyntaticAnalysis::productionCMD()
     else if (token.getTokenid() == TOKEN_ID_READLN)
     {
         productionL();
+        matchToken(TOKEN_ID_SEMICOLON);
     }
     else if (token.getTokenid() == TOKEN_ID_WRITE || token.getTokenid() == TOKEN_ID_WRITELN)
     {
         productionE();
+        matchToken(TOKEN_ID_SEMICOLON);
     }
 
-    matchToken(TOKEN_ID_SEMICOLON);
+   
 }
 
 // Cmd1 ->  [ ( A | R | T | L | E ) ] ;
