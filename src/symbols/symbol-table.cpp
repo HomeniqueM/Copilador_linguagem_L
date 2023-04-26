@@ -11,11 +11,11 @@
 
 /**
  * @brief classe tabela de símbolos
-*/
+ */
 class SymbolTable
 {
 private:
-   	std::unordered_map<std::string,Token> table;       
+	std::unordered_map<std::string, Token> table;
 
 public:
 	SymbolTable();
@@ -26,6 +26,7 @@ public:
 
 /**
  * @brief construtor para a primeira tabela de escopo mais abrangente
+ *
  *
  */
 SymbolTable::SymbolTable()
@@ -38,7 +39,9 @@ SymbolTable::SymbolTable()
 
 	Token symbl;
 	TokenID id;
-	for (std::string s = init.back(); !init.empty(); init.pop_back(), s = init.back())
+
+	for (auto &s : init)
+	// for (std::string s = init.back(); !init.empty(); init.pop_back(), s = init.back())
 	{
 		id = stringToTokenId(s);
 		symbl.setTokenID(id);
@@ -50,26 +53,25 @@ SymbolTable::SymbolTable()
 	}
 }
 
-
 /**
  * @brief insere um símbolo na tabela
  */
 bool SymbolTable::Insert(std::string lexem, Token tok)
 {
-	const auto& [c,success] = table.insert({lexem,tok});
+	const auto &[c, success] = table.insert({lexem, tok});
 	return success;
 }
 /**
  * @brief busca um símbolo na tabela atual e retorna o endereço do registro
  * @if se não encontrado, busca nas tabelas dos escopos envolventes
  * @else caso não encontre em nenhuma tabela de nenhum escopo envolvente retorna um endereço nulo
-*/
-Token * SymbolTable::Find(std::string lexem) 
+ */
+Token *SymbolTable::Find(std::string lexem)
 {
-    auto found = this->table.find(lexem);
-    if (found != this->table.end()) 
+	auto found = this->table.find(lexem);
+	if (found != this->table.end())
 		return &found->second;
-    return nullptr;
+	return nullptr;
 }
 
 bool SymbolTable::isItAValidChar(char c)

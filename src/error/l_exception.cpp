@@ -42,6 +42,7 @@ private:
             break;
         case ErrorCode::UNEXPECTED_CHARACTER:
             oss << "character não era esperado ";
+            break;
         default:
             oss << "Unknown error";
             break;

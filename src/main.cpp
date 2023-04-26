@@ -1,17 +1,23 @@
 
 #include <iostream>
+
 int main(int argc, char const *argv[])
 {
 
-    
-    // Trata a entrada de arquivo  
+     
+    /*/
+    try
+    {
 
-    // Carrega a tabela de Simbolo 
-   
-  
-    // inicia o analisar Lexico 
 
-    // Incia o parce 
-   
+        la.getNextToken();
+        la.getNextToken();
+    }
+    catch (const LException &e)
+    {
+
+        std::cerr << e.what() << std::endl;
+    }
+*/
     return 0;
 }

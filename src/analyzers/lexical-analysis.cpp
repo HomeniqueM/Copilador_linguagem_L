@@ -673,7 +673,7 @@ public:
 
             cc = getNextChar();
 
-            std::cout << (cc == LEXEME_EOF) << std::endl;
+           
             // Pensar em alguma logica onde o
 
             if (symboltable->isItAValidChar(cc))
@@ -748,20 +748,4 @@ public:
         return this->file_point >= this->file.size();
     }
 };
-int main(int argc, char const *argv[])
-{
-    try
-    {
-        LexerAnalysis la("FF");
 
-        la.getNextToken();
-        la.getNextToken();
-    }
-    catch (const LException &e)
-    {
-
-        std::cerr << e.what() << std::endl;
-    }
-
-    return 0;
-}
