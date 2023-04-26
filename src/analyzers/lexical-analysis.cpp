@@ -9,12 +9,14 @@
 #include "../symbols/token.cpp"
 #include "../error/l_exception.cpp"
 #include "../symbols/token-type.cpp"
+#include "../symbols/token-class.cpp"
 
 typedef struct StatePackage
 {
     bool returnChar = false; // deve voltar um char
     std::string identifier;  // onde o lexima é montado
     TokenType tokenType = TOKEN_TYPE_UNDEFINED;
+    TokenClass tokenclass = TOKEN_CLASS_UNDEFINED;
     bool erro = false;
 } StatePackage;
 
@@ -115,6 +117,8 @@ class State05 : public State
         }
         else if (isalpha(c) || isdigit(c) || c == '_')
         {
+            package.tokenclass = TOKEN_CLASS_VARIEBLE;
+            package.tokenType = TOKEN_TYPE_STRING;
             package.identifier = +c;
             nextState = std::make_shared<State03>();
         }
@@ -165,7 +169,7 @@ class State15 : public State
         else
         {
             std::string msg = "Erra esperando um valor numerico porém foi lido " + c;
-            throw LException(ErrorCode::UNEXPECTED_CHARACTER, 0, msg);
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER, __LINE__, msg);
         }
 
         return package;
@@ -190,7 +194,7 @@ class State14 : public State
         else
         {
             std::string msg = "Erra esperando um valor numerico ou simbolo[+ ou -] porém foi lido " + c;
-            throw LException(ErrorCode::UNEXPECTED_CHARACTER, 0, msg);
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER, __LINE__, msg);
         }
 
         return package;
@@ -298,6 +302,7 @@ class State08 : public State
         }
         else if (isdigit(c))
         {
+            package.tokenType = TOKEN_TYPE_REAL;
             package.identifier = +c;
             nextState = std::make_shared<State11>();
         }
@@ -334,6 +339,8 @@ class State07 : public State
         }
         else if (c == '.')
         {
+
+            package.tokenType = TOKEN_TYPE_REAL;
             package.identifier = +c;
             nextState = std::make_shared<State12>();
         }
@@ -362,6 +369,8 @@ class State04 : public State
         }
         else if (isalpha(c) || isdigit(c) || c == '_')
         {
+            package.tokenclass = TOKEN_CLASS_VARIEBLE;
+            package.tokenType = TOKEN_TYPE_STRING;
             package.identifier = +c;
             nextState = std::make_shared<State03>();
         }
@@ -518,8 +527,8 @@ public:
     }
 };
 /**
- *
  * @brief classe representa o primeiro estado do automato [>s0]
+ *
  */
 
 StatePackage StartState::handle(char c)
@@ -543,21 +552,27 @@ StatePackage StartState::handle(char c)
 
     else if (c == '{')
     {
+
         nextState = std::make_shared<CommentState>();
     }
     else if (c == '<')
     {
         package.identifier = +c;
+        package.tokenclass = TOKEN_CLASS_CONSTANT;
+        package.tokenType = TOKEN_TYPE_BOOLEAN;
         nextState = std::make_shared<State17>();
     }
     else if (c == '=')
     {
         package.identifier = +c;
+        package.tokenclass = TOKEN_CLASS_CONSTANT;
+        package.tokenType = TOKEN_TYPE_BOOLEAN;
         nextState = std::make_shared<State18>();
     }
     else if (c == '\'')
     {
         package.identifier = +c;
+        package.tokenclass = TOKEN_CLASS_CONSTANT;
         package.tokenType = TOKEN_TYPE_CHAR;
         nextState = std::make_shared<State19>();
     }
@@ -565,11 +580,14 @@ StatePackage StartState::handle(char c)
     {
         package.identifier = +c;
         package.tokenType = TOKEN_TYPE_STRING;
+        package.tokenclass = TOKEN_CLASS_CONSTANT;
         nextState = std::make_shared<State21>();
     }
     else if (c == '>')
     {
         package.identifier = +c;
+        package.tokenclass = TOKEN_CLASS_CONSTANT;
+        package.tokenType = TOKEN_TYPE_BOOLEAN;
         nextState = std::make_shared<State22>();
     }
     else if (std::isalpha(c) || c == '_')
@@ -577,25 +595,40 @@ StatePackage StartState::handle(char c)
         if (isItaAlphabetHexa(c))
         {
             package.identifier = +c;
+            package.tokenclass = TOKEN_CLASS_CONSTANT;
+            package.tokenType = TOKEN_TYPE_CHAR;
             nextState = std::make_shared<State04>();
         }
         else
         {
             package.identifier = +c;
+            package.tokenclass = TOKEN_CLASS_VARIEBLE;
+            package.tokenType = TOKEN_TYPE_STRING;
             nextState = std::make_shared<State03>();
         }
     }
     else if (isdigit(c))
     {
         package.identifier = +c;
+        package.tokenclass = TOKEN_CLASS_CONSTANT;
+        package.tokenType = TOKEN_TYPE_INTEGER;
         nextState = std::make_shared<State07>();
     }
     else if (c == '.')
     {
+        package.tokenclass = TOKEN_CLASS_CONSTANT;
+        package.tokenType = TOKEN_TYPE_REAL;
         package.identifier = +c;
         nextState = std::make_shared<State12>();
     }
-
+    // Token Especial para informar o fim do arquivo
+    else if (c == LEXEME_EOF)
+    {
+        package.identifier = +c;
+        this->completed = true;
+        package.tokenclass = TOKEN_CLASS_CONSTANT;
+        package.tokenType = TOKEN_TYPE_CHAR;
+    }
     else
     {
         // Tratativa a ser feita
@@ -632,12 +665,15 @@ public:
         currentState = std::make_shared<StartState>();
         std::string lexeme = "";
         TokenType tokentype = TOKEN_TYPE_UNDEFINED;
+        TokenClass tokenclas = TOKEN_CLASS_UNDEFINED;
         char cc;
-        while (!currentState->isComplete() || isEndFile() == true)
+
+        while (!currentState->isComplete())
         {
 
             cc = getNextChar();
 
+           
             // Pensar em alguma logica onde o
 
             if (symboltable->isItAValidChar(cc))
@@ -651,6 +687,10 @@ public:
                 if (result.tokenType != TOKEN_TYPE_UNDEFINED)
                 {
                     tokentype = result.tokenType;
+                }
+                if (result.tokenclass != TOKEN_CLASS_UNDEFINED)
+                {
+                    tokenclas = result.tokenclass;
                 }
                 if (currentState->isComplete() == false)
                 {
@@ -705,6 +745,6 @@ public:
      */
     bool isEndFile()
     {
-        return this->file_point > this->file.size();
+        return this->file_point >= this->file.size();
     }
 };

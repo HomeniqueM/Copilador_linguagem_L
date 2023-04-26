@@ -5,7 +5,8 @@ enum TokenClass
 {
     TOKEN_CLASS_VARIABLE,
     TOKEN_CLASS_CONSTANT,
-    TOKEN_CLASS_UNKNOWN
+    TOKEN_CLASS_UNDEFINED
 };
+
 
 #endif
