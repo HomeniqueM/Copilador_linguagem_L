@@ -7,10 +7,12 @@
 #include "../symbols/token.cpp"
 #include "../error/l_exception.cpp"
 #include "../symbols/token-type.cpp"
+#include "../analyzers/lexical-analysis.cpp"
 
 class SyntaticAnalysis
 {
 private:
+    LexerAnalysis *la;
     Token token;
     void setToken(Token token);
     void matchToken(TokenID expectedToken);
@@ -37,17 +39,13 @@ private:
     void productionExp6();
 
 public:
-    SyntaticAnalysis(/* args */);
-    ~SyntaticAnalysis();
+    SyntaticAnalysis(LexerAnalysis *la);
     void Start(Token token);
 };
 
-SyntaticAnalysis::SyntaticAnalysis(/* args */)
+SyntaticAnalysis::SyntaticAnalysis(LexerAnalysis *la)
 {
-}
-
-SyntaticAnalysis::~SyntaticAnalysis()
-{
+    this->la = la;
 }
 
 void SyntaticAnalysis::Start(Token token)

@@ -11,6 +11,7 @@
 #include "../src/error/l_exception.cpp"
 #include "../src/symbols/token-type.cpp"
 #include "../src/analyzers/lexical-analysis.cpp"
+#include "../src/analyzers/syntatic-analysis.cpp"
 
 #include "utils/arg-handler.cpp"
 #include <string>
@@ -24,9 +25,8 @@ int main(int argc, char const *argv[])
         // Problema ver Com o home
         std::cout << "dhdid";
         LexerAnalysis la("int a = 4;");
-        std::cout << "sssokso";
-        //std:: cout <<  la.getNextToken();
-        //Token a = la.getNextToken();
+        SyntaticAnalysis sa = SyntaticAnalysis(&la);
+        sa.Start(la.getNextToken());
     }
     catch (const LException &e)
     {    
