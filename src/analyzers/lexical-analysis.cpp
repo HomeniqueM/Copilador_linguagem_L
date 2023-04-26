@@ -1,3 +1,6 @@
+#ifndef ANALYZERS_LEXICAL_ANALYSIS 
+#define ANALYZERS_LEXICAL_ANALYSIS
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -748,3 +751,5 @@ public:
         return this->file_point >= this->file.size();
     }
 };
+
+#endif

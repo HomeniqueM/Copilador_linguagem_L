@@ -1,3 +1,5 @@
+#ifndef ANALYZERS_SYNTATIC_ANALYSIS 
+#define ANALYZERS_SYNTATIC_ANALYSIS
 #include <iostream>
 #include <string>
 #include <vector>
@@ -471,13 +473,5 @@ void SyntaticAnalysis::productionExp6()
         productionExp();
 }
 
-int main()
-{
 
-    std::cout << "Inicio do teste" << std::endl;
-    SyntaticAnalysis *sintatico = new SyntaticAnalysis();
-    Token *token = new Token();
-    token->setTokenID(TOKEN_ID_CHAR);
-    token->setLexeme("Cosso");
-    sintatico->Start(*token);
-}
+#endif
