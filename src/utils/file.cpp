@@ -4,7 +4,9 @@
 #include <fstream>
 #include <string>
 #include <map>
-
+/**
+ * @brief Classe do utilitario de leitura do arquivo do programa fonte a ser compilado
+*/
 class FileHandler{
     private:
         std::map<int,std::string> arq;
@@ -16,7 +18,10 @@ class FileHandler{
 FileHandler::FileHandler(){
 
 }
-
+/**
+ * @brief metodo que faz a leitura do arquivo do programa fonte e mapeia em um map com as linhas do arquivo
+ * @return map com as linhas do arquivo
+*/
 std::map<int,std::string> FileHandler::mapFile(std::string path){
     std::ifstream arqf;
     std::string s;
