@@ -41,7 +41,6 @@ enum TokenID
 
     TOKEN_ID_CONSTANT,   // constant
     TOKEN_ID_IDENTIFIER, // identifier
-    TOKEN_ID_NULL,       // null
 
     TOKEN_ID_SEMICOLON, // ;
     TOKEN_ID_COLON,     // :
@@ -52,7 +51,9 @@ enum TokenID
     TOKEN_ID_WRITE,     // write
     TOKEN_ID_WRITELN,   // writeln
     TOKEN_ID_READLN,    // readln
-    TOKEN_ID_EOF        // \0
+    TOKEN_ID_EOF,        // \0
+
+    TOKEN_ID_NULL       // null
 };
 
 std::string tokenToString(TokenID token)

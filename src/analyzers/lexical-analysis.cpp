@@ -20,7 +20,7 @@ typedef struct StatePackage
     std::string identifier;  // onde o lexima é montado
     TokenType tokenType = TOKEN_TYPE_UNDEFINED;
     TokenClass tokenclass = TOKEN_CLASS_UNDEFINED;
-    bool erro = false;
+    TokenID tokenId = TOKEN_ID_NULL;
 } StatePackage;
 
 /**
@@ -416,10 +416,14 @@ public:
     StatePackage handle(char c) override
     {
         StatePackage package;
-        if (c == '=' | c == '>')
+        if (c == '=' )
         {
+            package.tokenId = TOKEN_ID_LESS_EQUAL_TO;
             package.identifier = +c;
+        }else if (c == '>'){
+            
         }
+
         this->completed = true;
 
         return package;
@@ -563,6 +567,8 @@ StatePackage StartState::handle(char c)
         package.identifier = +c;
         package.tokenclass = TOKEN_CLASS_CONSTANT;
         package.tokenType = TOKEN_TYPE_BOOLEAN;
+        package.tokenId = TOKEN_ID_LESS_THAN;
+
         nextState = std::make_shared<State17>();
     }
     else if (c == '=')
@@ -669,6 +675,8 @@ public:
         std::string lexeme = "";
         TokenType tokentype = TOKEN_TYPE_UNDEFINED;
         TokenClass tokenclas = TOKEN_CLASS_UNDEFINED;
+        TokenID tokenId = TOKEN_ID_NULL;
+
         char cc;
 
         while (!currentState->isComplete())
@@ -695,6 +703,9 @@ public:
                 {
                     tokenclas = result.tokenclass;
                 }
+                if(result.tokenId != TOKEN_ID_NULL){
+                    tokenId = result.tokenId;
+                }
                 if (currentState->isComplete() == false)
                 {
                     currentState = currentState->nextState;
@@ -710,6 +721,7 @@ public:
         }
         Token token = Token();
         token.setLexeme(lexeme);
+
 
         std::cout << "\nToken encontrado: " << lexeme << std::endl;
         // Token t = Token(lexema);
