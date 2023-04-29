@@ -27,7 +27,7 @@ int main(int argc, char const *argv[])
         // std::string path = handler.handleArgs(argc,argv);
         // Problema ver Com o home
         std::cout << "dhdid";
-        LexerAnalysis la("int a = 4;");
+        LexerAnalysis la("integer a = 4;");
         SyntaticAnalysis sa = SyntaticAnalysis(&la);
         sa.Start(la.getNextToken());
     }

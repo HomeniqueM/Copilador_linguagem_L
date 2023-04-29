@@ -761,14 +761,10 @@ public:
         std::cout << "\nToken encontrado: " << lexeme << std::endl;
         if (TOKEN_ID_IDENTIFIER == tokenId)
         {
-            std::string tmp = tokenToString(tokenId);
-            if (tmp == "NULL")
+            TokenID tmpID = stringToTokenId(lexeme);
+            if (tmpID != TOKEN_ID_NULL)
             {
-                token.setTokenID(TOKEN_ID_IDENTIFIER);
-            }
-            else
-            {
-                token.setTokenID(tokenId);
+                token.setTokenID(tmpID);
             }
         }
         else
@@ -787,6 +783,7 @@ public:
         // verificar se e eh constante
         // verificar se e palavra reservada
         // se nao for nenhum dos dois entao ele eh identificador
+        std::cout << tokenToString(token.getTokenid()) << std::endl;
         return token;
     };
 
