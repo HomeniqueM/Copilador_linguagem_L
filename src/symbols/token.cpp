@@ -11,7 +11,6 @@ class Token
 private:
     std::string _lexeme;
     TokenID _id;
-    TokenClass _tokenClass;
     TokenType _tokenType;
 
 public:
@@ -19,11 +18,9 @@ public:
 
     void setTokenID(TokenID id);
     void setLexeme(std::string lexeme);
-    void setTokenClass(TokenClass tokenType);
     void setTokenType(TokenType tokenType);
 
     TokenID getTokenid();
-    TokenClass getTokenClass();
     TokenType getTokenType();
     std::string getLexeme();
 };
@@ -38,10 +35,6 @@ void Token::setLexeme(std::string lexeme)
     this->_lexeme = lexeme;
 }
 
-void Token::setTokenClass(TokenClass tokenClass)
-{
-    this->_tokenClass = tokenClass;
-}
 
 void Token::setTokenType(TokenType tokenType)
 {
@@ -51,11 +44,6 @@ void Token::setTokenType(TokenType tokenType)
 TokenID Token::getTokenid()
 {
     return _id;
-}
-
-TokenClass Token::getTokenClass()
-{
-    return _tokenClass;
 }
 
 TokenType Token::getTokenType()

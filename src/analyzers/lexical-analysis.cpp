@@ -253,6 +253,9 @@ class State12 : public State
         StatePackage package;
         if (isdigit(c))
         {
+            package.tokenType = TOKEN_TYPE_REAL;
+            package.tokenId = TOKEN_ID_CONSTANT;
+            package.tokenclass = TOKEN_CLASS_CONSTANT;
             package.identifier = +c;
             nextState = std::make_shared<State13>();
         }
@@ -283,6 +286,7 @@ class State11 : public State
         }
         else
         {
+            package.tokenId = TOKEN_ID_CONSTANT;
             package.returnChar = true;
             this->completed = true;
         }
@@ -391,13 +395,16 @@ class State04 : public State
         else if (isalpha(c) || isdigit(c) || c == '_')
         {
             package.tokenclass = TOKEN_CLASS_CONSTANT;
-            package.tokenType = TOKEN_TYPE_STRING;
+            package.tokenType = TOKEN_TYPE_UNDEFINED;
             package.tokenId = TOKEN_ID_IDENTIFIER;
             package.identifier = +c;
             nextState = std::make_shared<State03>();
         }
         else
         {
+            package.tokenclass = TOKEN_CLASS_CONSTANT;
+            package.tokenType = TOKEN_TYPE_UNDEFINED;
+            package.tokenId = TOKEN_ID_IDENTIFIER;
             package.returnChar = true;
             this->completed = true;
         }
@@ -686,7 +693,50 @@ private:
     int file_point;                      // possição atual do char a ser tratado
     std::shared_ptr<State> currentState; // Validar necessidade
     SymbolTable *symboltable;
-    
+    Token makeAToken(std::string lexeme, TokenType tokentype, TokenClass tokenclas, TokenID tokenId)
+    {
+        // Token t = Token(lexema);
+        // No codigo todo só é inserido id
+
+        // adicionar o token
+
+        // Tabela de simbolo relaciona o Token
+        // tabela_simbolos.tratar_token(t);
+
+        // Token class
+
+        // verificar se e palavra reservada
+        // se nao for nenhum dos dois entao ele eh identificador
+
+        Token token = Token();
+        token.setLexeme(lexeme);
+
+        token.setLexeme(lexeme);
+        // verificar se e eh constante
+        if (tokenId == TOKEN_ID_CONSTANT)
+        {
+            // Verifica se o Tamanho é maior
+            if (TOKEN_ID_IDENTIFIER == tokenId)
+            {
+                TokenID tmpID = stringToTokenId(lexeme);
+                if (tmpID != TOKEN_ID_NULL)
+                {
+                    token.setTokenID(tmpID);
+                }
+                else
+                {
+                    token.setTokenID(tokenId);
+                }
+            }
+        }
+        else if (tokenclas == TOKEN_CLASS_VARIABLE)
+        {
+        }
+        else
+        {
+        }
+        return token;
+    }
 
 public:
     LexerAnalysis(std::string file) : currentState(std::make_shared<StartState>())
@@ -748,42 +798,8 @@ public:
                 throw LException(ErrorCode::INVALIDCHARACTER, file_point, str);
             }
         }
-        Token token = Token();
-        token.setLexeme(lexeme);
 
-        token.setLexeme(lexeme);
-        std::cout << "\nToken encontrado: " << lexeme << std::endl;
-        if (TOKEN_ID_IDENTIFIER == tokenId)
-        {
-            TokenID tmpID = stringToTokenId(lexeme);
-            if (tmpID != TOKEN_ID_NULL)
-            {
-                token.setTokenID(tmpID);
-            }
-            else
-            {
-                token.setTokenID(tokenId);
-            }
-        }
-        else
-        {
-            token.setTokenID(tokenId);
-        }
-
-        // Token t = Token(lexema);
-        // No codigo todo só é inserido id
-
-        // adicionar o token
-
-        // Tabela de simbolo relaciona o Token
-        // tabela_simbolos.tratar_token(t);
-
-        // Token class
-        // verificar se e eh constante
-        // verificar se e palavra reservada
-        // se nao for nenhum dos dois entao ele eh identificador
-        std::cout << tokenToString(token.getTokenid()) << std::endl;
-        return token;
+        return makeAToken(lexeme, tokentype, tokenclas, tokenId);
     };
 
     void pushBackCurrentChar()
