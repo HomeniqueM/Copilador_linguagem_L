@@ -640,7 +640,7 @@ StatePackage StartState::handle(char c)
     {
         package.tokenclass = TOKEN_CLASS_CONSTANT;
         package.tokenType = TOKEN_TYPE_CHAR;
-        package.tokenId = TOKEN_ID_CHAR;
+        package.tokenId = TOKEN_ID_CONSTANT;
         package.identifier = +c;
         nextState = std::make_shared<State07>();
     }
