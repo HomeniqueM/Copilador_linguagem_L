@@ -757,7 +757,25 @@ public:
         Token token = Token();
         token.setLexeme(lexeme);
 
+        token.setLexeme(lexeme);
         std::cout << "\nToken encontrado: " << lexeme << std::endl;
+        if (TOKEN_ID_IDENTIFIER == tokenId)
+        {
+            std::string tmp = tokenToString(tokenId);
+            if (tmp == "NULL")
+            {
+                token.setTokenID(TOKEN_ID_IDENTIFIER);
+            }
+            else
+            {
+                token.setTokenID(tokenId);
+            }
+        }
+        else
+        {
+            token.setTokenID(tokenId);
+        }
+
         // Token t = Token(lexema);
 
         // adicionar o token
