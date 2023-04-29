@@ -1,4 +1,4 @@
-#ifndef ANALYZERS_LEXICAL_ANALYSIS 
+#ifndef ANALYZERS_LEXICAL_ANALYSIS
 #define ANALYZERS_LEXICAL_ANALYSIS
 
 #include <iostream>
@@ -14,6 +14,11 @@
 #include "../symbols/token-type.cpp"
 #include "../symbols/token-class.cpp"
 
+/** =========================================================
+ *
+ * @brief Pacote de retorno para cada estado
+ *
+ * ========================================================== */
 typedef struct StatePackage
 {
     bool returnChar = false; // deve voltar um char
@@ -23,10 +28,12 @@ typedef struct StatePackage
     TokenID tokenId = TOKEN_ID_NULL;
 } StatePackage;
 
-/**
- * @
+/** =========================================================
+ *
  * @brief classe abstrata para geração de estados
- */
+ *
+ * ========================================================== */
+
 class State
 {
 public:
@@ -37,21 +44,31 @@ public:
 protected:
     bool completed = false;
 };
-// ============================= [HEADER States] ====================================================================================
-// Estado inicial do analisador léxico
+
+/** =========================================================
+ *
+ * @brief Cabeçarios das classes
+ *
+ * ========================================================== */
 class StartState : public State
 {
 public:
     StatePackage handle(char c) override;
 };
 
-// ==================================================================================================================================
 /**
  * ===========================================================================
  * @brief Enquanto o
  * @category State para tratar Identificador
  * ===========================================================================
  */
+
+/** =========================================================
+ * @brief Represanta o estado (S3)
+ * @details State para trata idetificadores
+ * @category State para tratar Identificador
+ * @param c caracteres a ser analisado
+ * ========================================================== */
 class State03 : public State
 {
     StatePackage handle(char c) override
@@ -72,14 +89,14 @@ class State03 : public State
     }
 };
 
-/**
- * ===========================================================================
- * @param c verifica se ele não possui nenhuma letra, digito ou underline caso
- *          não Finaliza esse estado encontra uma HEXA cas
- * @brief Estado 6 caso entre mais um caracterer é entendido que ele vai virar
- *        um indetificador
- * ===========================================================================
- */
+/** =========================================================
+ * @brief Represanta o estado (S6)
+ * @details Estado trasitorio para o final de char hexa ou
+ *          transição para um indetificado
+ * @category State para tratar Final de um char hexa ou
+ *           Identificador
+ * @param c caracteres a ser analisado
+ * ========================================================== */
 
 class State06 : public State
 {
@@ -120,8 +137,9 @@ class State05 : public State
         }
         else if (isalpha(c) || isdigit(c) || c == '_')
         {
-            package.tokenclass = TOKEN_CLASS_VARIABLE;
+            package.tokenclass = TOKEN_CLASS_CONSTANT;
             package.tokenType = TOKEN_TYPE_STRING;
+            package.tokenId = TOKEN_ID_IDENTIFIER;
             package.identifier = +c;
             nextState = std::make_shared<State03>();
         }
@@ -372,8 +390,9 @@ class State04 : public State
         }
         else if (isalpha(c) || isdigit(c) || c == '_')
         {
-            package.tokenclass = TOKEN_CLASS_VARIABLE;
+            package.tokenclass = TOKEN_CLASS_CONSTANT;
             package.tokenType = TOKEN_TYPE_STRING;
+            package.tokenId = TOKEN_ID_IDENTIFIER;
             package.identifier = +c;
             nextState = std::make_shared<State03>();
         }
@@ -416,12 +435,13 @@ public:
     StatePackage handle(char c) override
     {
         StatePackage package;
-        if (c == '=' )
+        if (c == '=')
         {
             package.tokenId = TOKEN_ID_LESS_EQUAL_TO;
             package.identifier = +c;
-        }else if (c == '>'){
-            
+        }
+        else if (c == '>')
+        {
         }
 
         this->completed = true;
@@ -550,11 +570,10 @@ StatePackage StartState::handle(char c)
     }
     else if (isAValidUnitarySymbol(c))
     {
-
         package.identifier = +c;
         package.tokenType = TOKEN_TYPE_CHAR;
         this->completed = true;
-        //
+        package.tokenId = stringToTokenId(std::string(1, c));
     }
 
     else if (c == '{')
@@ -576,6 +595,7 @@ StatePackage StartState::handle(char c)
         package.identifier = +c;
         package.tokenclass = TOKEN_CLASS_CONSTANT;
         package.tokenType = TOKEN_TYPE_BOOLEAN;
+        package.tokenId = TOKEN_ID_ENQUALS;
         nextState = std::make_shared<State18>();
     }
     else if (c == '\'')
@@ -583,6 +603,7 @@ StatePackage StartState::handle(char c)
         package.identifier = +c;
         package.tokenclass = TOKEN_CLASS_CONSTANT;
         package.tokenType = TOKEN_TYPE_CHAR;
+        package.tokenId = TOKEN_ID_CHAR;
         nextState = std::make_shared<State19>();
     }
     else if (c == '"')
@@ -590,6 +611,7 @@ StatePackage StartState::handle(char c)
         package.identifier = +c;
         package.tokenType = TOKEN_TYPE_STRING;
         package.tokenclass = TOKEN_CLASS_CONSTANT;
+        package.tokenId = TOKEN_ID_STRING;
         nextState = std::make_shared<State21>();
     }
     else if (c == '>')
@@ -597,6 +619,7 @@ StatePackage StartState::handle(char c)
         package.identifier = +c;
         package.tokenclass = TOKEN_CLASS_CONSTANT;
         package.tokenType = TOKEN_TYPE_BOOLEAN;
+        package.tokenId = TOKEN_ID_GREATER_THEN;
         nextState = std::make_shared<State22>();
     }
     else if (std::isalpha(c) || c == '_')
@@ -613,20 +636,23 @@ StatePackage StartState::handle(char c)
             package.identifier = +c;
             package.tokenclass = TOKEN_CLASS_VARIABLE;
             package.tokenType = TOKEN_TYPE_STRING;
+            package.tokenId = TOKEN_ID_IDENTIFIER;
             nextState = std::make_shared<State03>();
         }
     }
     else if (isdigit(c))
     {
-        package.identifier = +c;
         package.tokenclass = TOKEN_CLASS_CONSTANT;
-        package.tokenType = TOKEN_TYPE_INTEGER;
+        package.tokenType = TOKEN_TYPE_CHAR;
+        package.tokenId = TOKEN_ID_CHAR;
+        package.identifier = +c;
         nextState = std::make_shared<State07>();
     }
     else if (c == '.')
     {
         package.tokenclass = TOKEN_CLASS_CONSTANT;
         package.tokenType = TOKEN_TYPE_REAL;
+        package.tokenId = TOKEN_ID_REAL;
         package.identifier = +c;
         nextState = std::make_shared<State12>();
     }
@@ -637,6 +663,7 @@ StatePackage StartState::handle(char c)
         this->completed = true;
         package.tokenclass = TOKEN_CLASS_CONSTANT;
         package.tokenType = TOKEN_TYPE_CHAR;
+        package.tokenId = TOKEN_ID_EOF;
     }
     else
     {
@@ -647,6 +674,14 @@ StatePackage StartState::handle(char c)
     }
     return package;
 }
+
+/** =========================================================
+ * @brief Represanta o estado (S1) ou estado final
+ * @details Estado para tratar a criação de token
+ * ========================================================== */
+class State01
+{
+};
 
 /**
  * @brief Classe principal do Análise léxica
@@ -684,7 +719,6 @@ public:
 
             cc = getNextChar();
 
-           
             // Pensar em alguma logica onde o
 
             if (symboltable->isItAValidChar(cc))
@@ -703,7 +737,8 @@ public:
                 {
                     tokenclas = result.tokenclass;
                 }
-                if(result.tokenId != TOKEN_ID_NULL){
+                if (result.tokenId != TOKEN_ID_NULL)
+                {
                     tokenId = result.tokenId;
                 }
                 if (currentState->isComplete() == false)
@@ -722,8 +757,21 @@ public:
         Token token = Token();
         token.setLexeme(lexeme);
 
-
+        token.setLexeme(lexeme);
         std::cout << "\nToken encontrado: " << lexeme << std::endl;
+        if (TOKEN_ID_IDENTIFIER == tokenId)
+        {
+            TokenID tmpID = stringToTokenId(lexeme);
+            if (tmpID != TOKEN_ID_NULL)
+            {
+                token.setTokenID(tmpID);
+            }
+        }
+        else
+        {
+            token.setTokenID(tokenId);
+        }
+
         // Token t = Token(lexema);
 
         // adicionar o token
@@ -735,6 +783,7 @@ public:
         // verificar se e eh constante
         // verificar se e palavra reservada
         // se nao for nenhum dos dois entao ele eh identificador
+        std::cout << tokenToString(token.getTokenid()) << std::endl;
         return token;
     };
 
