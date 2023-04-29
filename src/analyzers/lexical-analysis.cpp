@@ -253,6 +253,7 @@ class State12 : public State
         StatePackage package;
         if (isdigit(c))
         {
+            package.tokenId = TOKEN_ID_CONSTANT;
             package.identifier = +c;
             nextState = std::make_shared<State13>();
         }
@@ -283,6 +284,7 @@ class State11 : public State
         }
         else
         {
+            package.tokenId = TOKEN_ID_CONSTANT;
             package.returnChar = true;
             this->completed = true;
         }
@@ -398,6 +400,7 @@ class State04 : public State
         }
         else
         {
+            package.tokenId = TOKEN_ID_IDENTIFIER;
             package.returnChar = true;
             this->completed = true;
         }
@@ -752,7 +755,6 @@ public:
         token.setLexeme(lexeme);
 
         token.setLexeme(lexeme);
-        std::cout << "\nToken encontrado: " << lexeme << std::endl;
         if (TOKEN_ID_IDENTIFIER == tokenId)
         {
             TokenID tmpID = stringToTokenId(lexeme);
@@ -782,7 +784,6 @@ public:
         // verificar se e eh constante
         // verificar se e palavra reservada
         // se nao for nenhum dos dois entao ele eh identificador
-        std::cout << tokenToString(token.getTokenid()) << std::endl;
         return token;
     };
 
