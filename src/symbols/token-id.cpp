@@ -20,7 +20,7 @@ enum TokenID
     TOKEN_ID_OR,  // Or
     TOKEN_ID_NOT, // Not
 
-    TOKEN_ID_EQUALITY,         // ==
+    TOKEN_ID_ENQUALS,         // ==
     TOKEN_ID_ASSIGNMENT,       // =
     TOKEN_ID_GREATER_THEN,     // >
     TOKEN_ID_GREATER_EQUAL_TO, // >=
@@ -84,7 +84,7 @@ std::string tokenToString(TokenID token)
         return "or";
     case TOKEN_ID_NOT:
         return "not";
-    case TOKEN_ID_EQUALITY:
+    case TOKEN_ID_ENQUALS:
         return "==";
     case TOKEN_ID_ASSIGNMENT:
         return "=";
@@ -183,7 +183,7 @@ TokenID stringToTokenId(std::string s)
         {":", TOKEN_ID_COLON},
         {",", TOKEN_ID_COMMA},
         {"=", TOKEN_ID_ASSIGNMENT},
-        {"==", TOKEN_ID_EQUALITY},
+        {"==", TOKEN_ID_ENQUALS},
         {"<", TOKEN_ID_LESS_THAN},
         {"<=", TOKEN_ID_LESS_EQUAL_TO},
         {">", TOKEN_ID_GREATER_THEN},

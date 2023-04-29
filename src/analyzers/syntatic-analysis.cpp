@@ -356,11 +356,11 @@ void SyntaticAnalysis::productionE1()
 void SyntaticAnalysis::productionExp()
 {
     productionExp1();
-    while (token.getTokenid() == TOKEN_ID_EQUALITY || token.getTokenid() == TOKEN_ID_GREATER_THEN || token.getTokenid() == TOKEN_ID_GREATER_EQUAL_TO || token.getTokenid() == TOKEN_ID_LESS_THAN || token.getTokenid() == TOKEN_ID_LESS_EQUAL_TO)
+    while (token.getTokenid() == TOKEN_ID_ENQUALS || token.getTokenid() == TOKEN_ID_GREATER_THEN || token.getTokenid() == TOKEN_ID_GREATER_EQUAL_TO || token.getTokenid() == TOKEN_ID_LESS_THAN || token.getTokenid() == TOKEN_ID_LESS_EQUAL_TO)
     {
-        if (token.getTokenid() == TOKEN_ID_EQUALITY)
+        if (token.getTokenid() == TOKEN_ID_ENQUALS)
         {
-            matchToken(TOKEN_ID_EQUALITY);
+            matchToken(TOKEN_ID_ENQUALS);
         }
         else if (token.getTokenid() == TOKEN_ID_GREATER_THEN)
         {
