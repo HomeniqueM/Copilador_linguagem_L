@@ -21,7 +21,7 @@ private:
 public:
 	SymbolTable();
 	bool isItAValidChar(char c);
-	Token *Insert(std::string lexem, Token tok);
+	Token *Insert(Token token);
 	Token *Find(std::string lexem);
 };
 
@@ -46,7 +46,8 @@ SymbolTable::SymbolTable()
 	{
 		id = stringToTokenId(s);
 		symbl.setTokenID(id);
-		this->Insert(s, symbl);
+		symbl.setLexeme(s);
+		this->Insert(symbl);
 
 		/*std::cout <<"inserted " +s+" at ";
 		std::cout << this->Find(s);
@@ -58,17 +59,18 @@ SymbolTable::SymbolTable()
  * @brief insere um símbolo na tabela
  * @return retorna a posição de inserção do símbolo
  */
-Token * SymbolTable::Insert(std::string lexem, Token tok)
+Token *SymbolTable::Insert(Token token)
 {
-	std::pair<std::unordered_map<std::string,Token>::iterator,bool> rtn;
-	rtn = table.insert({lexem,tok});
-	
-	if(rtn.second){
-		Token * res=this->Find(lexem);
-		return res;
-	}else{
-		return nullptr;
+	Token *res = this->Find(token.getLexeme());
+	if (res == nullptr)
+	{
+
+		std::pair<std::unordered_map<std::string, Token>::iterator, bool> rtn;
+		rtn = this->table.insert({token.getLexeme(), token});
+		return &(rtn.first->second);
 	}
+
+	return res;
 }
 /**
  * @brief busca um símbolo na tabela atual e retorna o endereço do registro
@@ -78,8 +80,11 @@ Token * SymbolTable::Insert(std::string lexem, Token tok)
 Token *SymbolTable::Find(std::string lexem)
 {
 	auto found = this->table.find(lexem);
+
 	if (found != this->table.end())
+	{
 		return &found->second;
+	}
 	return nullptr;
 }
 
@@ -101,4 +106,3 @@ bool SymbolTable::isItAValidChar(char c)
 	std::cout << symtable.Find("integer");
 	return 0;
 }*/
-

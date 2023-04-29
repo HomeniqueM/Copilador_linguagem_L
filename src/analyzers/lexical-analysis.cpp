@@ -417,6 +417,7 @@ public:
         StatePackage package;
         if (c == '=')
         {
+            package.tokenId = TOKEN_ID_ENQUALS;
             package.identifier = +c;
         }
 
@@ -571,21 +572,17 @@ StatePackage StartState::handle(char c)
     else if (isAValidUnitarySymbol(c))
     {
         package.identifier = +c;
-        package.tokenType = TOKEN_TYPE_CHAR;
         this->completed = true;
         package.tokenId = stringToTokenId(std::string(1, c));
     }
 
     else if (c == '{')
     {
-
         nextState = std::make_shared<CommentState>();
     }
     else if (c == '<')
     {
         package.identifier = +c;
-        package.tokenclass = TOKEN_CLASS_CONSTANT;
-        package.tokenType = TOKEN_TYPE_BOOLEAN;
         package.tokenId = TOKEN_ID_LESS_THAN;
 
         nextState = std::make_shared<State17>();
@@ -593,9 +590,7 @@ StatePackage StartState::handle(char c)
     else if (c == '=')
     {
         package.identifier = +c;
-        package.tokenclass = TOKEN_CLASS_CONSTANT;
-        package.tokenType = TOKEN_TYPE_BOOLEAN;
-        package.tokenId = TOKEN_ID_ENQUALS;
+        package.tokenId = TOKEN_ID_ASSIGNMENT;
         nextState = std::make_shared<State18>();
     }
     else if (c == '\'')
@@ -617,8 +612,6 @@ StatePackage StartState::handle(char c)
     else if (c == '>')
     {
         package.identifier = +c;
-        package.tokenclass = TOKEN_CLASS_CONSTANT;
-        package.tokenType = TOKEN_TYPE_BOOLEAN;
         package.tokenId = TOKEN_ID_GREATER_THEN;
         nextState = std::make_shared<State22>();
     }
@@ -693,6 +686,7 @@ private:
     int file_point;                      // possição atual do char a ser tratado
     std::shared_ptr<State> currentState; // Validar necessidade
     SymbolTable *symboltable;
+    
 
 public:
     LexerAnalysis(std::string file) : currentState(std::make_shared<StartState>())
@@ -777,6 +771,7 @@ public:
         }
 
         // Token t = Token(lexema);
+        // No codigo todo só é inserido id
 
         // adicionar o token
 
