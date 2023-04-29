@@ -256,6 +256,7 @@ class State12 : public State
             package.tokenType = TOKEN_TYPE_REAL;
             package.tokenId = TOKEN_ID_CONSTANT;
             package.tokenclass = TOKEN_CLASS_CONSTANT;
+            package.tokenId = TOKEN_ID_CONSTANT;
             package.identifier = +c;
             nextState = std::make_shared<State13>();
         }
@@ -404,6 +405,7 @@ class State04 : public State
         {
             package.tokenclass = TOKEN_CLASS_CONSTANT;
             package.tokenType = TOKEN_TYPE_UNDEFINED;
+            package.tokenId = TOKEN_ID_IDENTIFIER;
             package.tokenId = TOKEN_ID_IDENTIFIER;
             package.returnChar = true;
             this->completed = true;
@@ -644,7 +646,7 @@ StatePackage StartState::handle(char c)
     {
         package.tokenclass = TOKEN_CLASS_CONSTANT;
         package.tokenType = TOKEN_TYPE_CHAR;
-        package.tokenId = TOKEN_ID_CHAR;
+        package.tokenId = TOKEN_ID_CONSTANT;
         package.identifier = +c;
         nextState = std::make_shared<State07>();
     }
