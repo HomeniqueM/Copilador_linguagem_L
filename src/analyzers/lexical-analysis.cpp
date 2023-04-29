@@ -766,6 +766,10 @@ public:
             {
                 token.setTokenID(tmpID);
             }
+            else
+            {
+                token.setTokenID(tokenId);
+            }
         }
         else
         {
