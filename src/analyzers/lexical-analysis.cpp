@@ -16,7 +16,6 @@
 #include "../utils/constants.cpp"
 #include "../utils/file.cpp"
 
-
 /** =========================================================
  *
  * @brief Pacote de retorno para cada estado
@@ -679,7 +678,7 @@ StatePackage StartState::handle(char c)
 class State01
 {
 public:
-    Token makeAToken(SymbolTable *st ,std::string lexeme, TokenType tokentype, TokenID tokenId, int currentLine)
+    Token makeAToken(SymbolTable *st, std::string lexeme, TokenType tokentype, TokenID tokenId, int currentLine)
     {
         // Token t = Token(lexema);
         // No codigo todo só é inserido id
@@ -736,6 +735,10 @@ public:
             else if (tokentype == TOKEN_TYPE_INTEGER)
             {
             }
+
+            token.setLexeme(lexeme);
+            token.setTokenType(tokentype);
+            token.setTokenID(tokenId);
         }
         else
         {
@@ -772,12 +775,12 @@ private:
 class LexerAnalysis
 {
 private:
-    FileHandler *fh;                    // String a ser tokenizada
+    FileHandler *fh;                     // String a ser tokenizada
     std::shared_ptr<State> currentState; // Validar necessidade
     SymbolTable *symboltable;
 
 public:
-    LexerAnalysis(FileHandler *fh,SymbolTable *symboltable) : currentState(std::make_shared<StartState>())
+    LexerAnalysis(FileHandler *fh, SymbolTable *symboltable) : currentState(std::make_shared<StartState>())
     {
         this->fh = fh;
         this->symboltable = symboltable;
@@ -828,11 +831,11 @@ public:
             {
                 std::string str(1, cc);
 
-                throw LException(ErrorCode::INVALIDCHARACTER,getCurrentLine(), str);
+                throw LException(ErrorCode::INVALIDCHARACTER, getCurrentLine(), str);
             }
         }
 
-        return State01().makeAToken(symboltable,lexeme, tokentype, tokenId, getCurrentLine());
+        return State01().makeAToken(symboltable, lexeme, tokentype, tokenId, getCurrentLine());
     };
 
     void pushBackCurrentChar()
@@ -847,16 +850,10 @@ public:
     {
         return fh->getNextFileChar();
     }
-    int getCurrentLine(){
-        return fh->getFileLine();
-    }
-    /**
-     * @brief Retorna a atual linha do arquivo
-     */
     int getCurrentLine()
     {
-        return file_point;
-    };
+        return fh->getFileLine();
+    }
 };
 
 #endif
