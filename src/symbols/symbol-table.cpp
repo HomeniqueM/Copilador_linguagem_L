@@ -38,7 +38,7 @@ SymbolTable::SymbolTable()
 		"begin", "and", "or", "not", "else", "real", "if", "for", "char", "integer", "final",
 		"(", ")", "[", "]", "+", "-", "*", "/", ";", ":", ",", "=", "==", "<", "<=", ">", ">=", "<>"};
 
-	Token symbl;
+	Token symbl = Token();
 	TokenID id;
 
 	for (auto &s : init)

@@ -3,7 +3,7 @@
 #include <string>
 #include <exception>
 #include <sstream>
-
+#include "../utils/constants.cpp"
 enum class ErrorCode
 {
     INVALIDCHARACTER,
@@ -12,6 +12,9 @@ enum class ErrorCode
     UNEXPECTED_TOKEN_EOF,
     UNEXPECTED_END_OFFILE,
     NO_FILE_PATH_FOUND,
+    ENCEEDED_LIMIT_IDENTIFIER_MAX_SIZE,
+    OVERFLOW_SIZE,
+    UNDERFLOW_SIZE,
     UNKNOWN
 };
 
@@ -57,6 +60,9 @@ private:
             break;
         case ErrorCode::NO_FILE_PATH_FOUND:
             oss << "caminho do arquivo fonte nao encontrado";
+            break;
+        case ErrorCode::ENCEEDED_LIMIT_IDENTIFIER_MAX_SIZE:
+            oss << "Identificadores podem somente possui " << Constants().IDENTIFIER_MAX_SIZE << " caracteres";
             break;
         default:
             oss << "Unknown error";

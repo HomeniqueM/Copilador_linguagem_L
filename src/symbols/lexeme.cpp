@@ -11,6 +11,7 @@
 const char LEXEME_UNDERSCORE = '_';
 const char LEXEME_EOF = '\0';
 
+
 const std::vector<char> LEXEME_VALID_UNARY_SYMBOLS{
     '(',
     ')',

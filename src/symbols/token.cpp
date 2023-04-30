@@ -5,20 +5,27 @@
 #include "token-class.cpp"
 #include "token-type.cpp"
 
-
 class Token
 {
 private:
     std::string _lexeme;
     TokenID _id;
     TokenType _tokenType;
+    int _tokenSize;
 
 public:
-    Token(TokenID id = TOKEN_ID_NULL, TokenClass tokenClass = TOKEN_CLASS_UNDEFINED, TokenType tokenType = TOKEN_TYPE_UNDEFINED, std::string lexeme = "") : _id(id), _tokenClass(tokenClass), _tokenType(tokenType), _lexeme(lexeme){};
+    Token(TokenID id = TOKEN_ID_NULL, TokenType tokenType = TOKEN_TYPE_UNDEFINED, std::string lexeme = "", int tokenSize = 0)
+    {
+        this->_id = id;
+        this->_tokenType = tokenType;
+        this->_lexeme = lexeme;
+        this->_tokenSize = tokenSize;
+    };
 
     void setTokenID(TokenID id);
     void setLexeme(std::string lexeme);
     void setTokenType(TokenType tokenType);
+    void setTokenSize(int tokenSize);
 
     TokenID getTokenid();
     TokenType getTokenType();
@@ -34,7 +41,6 @@ void Token::setLexeme(std::string lexeme)
 {
     this->_lexeme = lexeme;
 }
-
 
 void Token::setTokenType(TokenType tokenType)
 {
@@ -55,6 +61,5 @@ std::string Token::getLexeme()
 {
     return _lexeme;
 }
-
 
 #endif

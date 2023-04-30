@@ -13,6 +13,7 @@
 #include "../error/l_exception.cpp"
 #include "../symbols/token-type.cpp"
 #include "../symbols/token-class.cpp"
+#include "../utils/constants.cpp"
 
 /** =========================================================
  *
@@ -24,7 +25,6 @@ typedef struct StatePackage
     bool returnChar = false; // deve voltar um char
     std::string identifier;  // onde o lexima é montado
     TokenType tokenType = TOKEN_TYPE_UNDEFINED;
-    TokenClass tokenclass = TOKEN_CLASS_UNDEFINED;
     TokenID tokenId = TOKEN_ID_NULL;
 } StatePackage;
 
@@ -137,9 +137,8 @@ class State05 : public State
         }
         else if (isalpha(c) || isdigit(c) || c == '_')
         {
-            package.tokenclass = TOKEN_CLASS_CONSTANT;
             package.tokenType = TOKEN_TYPE_STRING;
-            package.tokenId = TOKEN_ID_IDENTIFIER;
+            package.tokenId = TOKEN_ID_CONSTANT;
             package.identifier = +c;
             nextState = std::make_shared<State03>();
         }
@@ -254,8 +253,6 @@ class State12 : public State
         if (isdigit(c))
         {
             package.tokenType = TOKEN_TYPE_REAL;
-            package.tokenId = TOKEN_ID_CONSTANT;
-            package.tokenclass = TOKEN_CLASS_CONSTANT;
             package.tokenId = TOKEN_ID_CONSTANT;
             package.identifier = +c;
             nextState = std::make_shared<State13>();
@@ -395,18 +392,15 @@ class State04 : public State
         }
         else if (isalpha(c) || isdigit(c) || c == '_')
         {
-            package.tokenclass = TOKEN_CLASS_CONSTANT;
-            package.tokenType = TOKEN_TYPE_UNDEFINED;
-            package.tokenId = TOKEN_ID_IDENTIFIER;
+
+            package.tokenId = TOKEN_ID_CONSTANT;
             package.identifier = +c;
             nextState = std::make_shared<State03>();
         }
         else
         {
-            package.tokenclass = TOKEN_CLASS_CONSTANT;
-            package.tokenType = TOKEN_TYPE_UNDEFINED;
             package.tokenId = TOKEN_ID_IDENTIFIER;
-            package.tokenId = TOKEN_ID_IDENTIFIER;
+
             package.returnChar = true;
             this->completed = true;
         }
@@ -452,6 +446,8 @@ public:
         }
         else if (c == '>')
         {
+            package.tokenId = TOKEN_ID_DIFFERENT;
+            package.identifier = +c;
         }
 
         this->completed = true;
@@ -518,6 +514,7 @@ public:
         {
             package.identifier = +c;
             package.tokenType = TOKEN_TYPE_STRING;
+
             nextState = std::make_shared<State21>();
         }
 
@@ -585,6 +582,7 @@ StatePackage StartState::handle(char c)
         package.tokenId = stringToTokenId(std::string(1, c));
     }
 
+    // Estado de comentario
     else if (c == '{')
     {
         nextState = std::make_shared<CommentState>();
@@ -605,17 +603,16 @@ StatePackage StartState::handle(char c)
     else if (c == '\'')
     {
         package.identifier = +c;
-        package.tokenclass = TOKEN_CLASS_CONSTANT;
+
         package.tokenType = TOKEN_TYPE_CHAR;
-        package.tokenId = TOKEN_ID_CHAR;
+        package.tokenId = TOKEN_ID_CONSTANT;
         nextState = std::make_shared<State19>();
     }
     else if (c == '"')
     {
         package.identifier = +c;
         package.tokenType = TOKEN_TYPE_STRING;
-        package.tokenclass = TOKEN_CLASS_CONSTANT;
-        package.tokenId = TOKEN_ID_STRING;
+        package.tokenId = TOKEN_ID_CONSTANT;
         nextState = std::make_shared<State21>();
     }
     else if (c == '>')
@@ -629,14 +626,13 @@ StatePackage StartState::handle(char c)
         if (isItaAlphabetHexa(c))
         {
             package.identifier = +c;
-            package.tokenclass = TOKEN_CLASS_CONSTANT;
             package.tokenType = TOKEN_TYPE_CHAR;
+            package.tokenId = TOKEN_ID_CONSTANT;
             nextState = std::make_shared<State04>();
         }
         else
         {
             package.identifier = +c;
-            package.tokenclass = TOKEN_CLASS_VARIABLE;
             package.tokenType = TOKEN_TYPE_STRING;
             package.tokenId = TOKEN_ID_IDENTIFIER;
             nextState = std::make_shared<State03>();
@@ -644,7 +640,6 @@ StatePackage StartState::handle(char c)
     }
     else if (isdigit(c))
     {
-        package.tokenclass = TOKEN_CLASS_CONSTANT;
         package.tokenType = TOKEN_TYPE_CHAR;
         package.tokenId = TOKEN_ID_CONSTANT;
         package.identifier = +c;
@@ -652,9 +647,8 @@ StatePackage StartState::handle(char c)
     }
     else if (c == '.')
     {
-        package.tokenclass = TOKEN_CLASS_CONSTANT;
         package.tokenType = TOKEN_TYPE_REAL;
-        package.tokenId = TOKEN_ID_REAL;
+        package.tokenId = TOKEN_ID_CONSTANT;
         package.identifier = +c;
         nextState = std::make_shared<State12>();
     }
@@ -663,7 +657,6 @@ StatePackage StartState::handle(char c)
     {
         package.identifier = +c;
         this->completed = true;
-        package.tokenclass = TOKEN_CLASS_CONSTANT;
         package.tokenType = TOKEN_TYPE_CHAR;
         package.tokenId = TOKEN_ID_EOF;
     }
@@ -683,19 +676,8 @@ StatePackage StartState::handle(char c)
  * ========================================================== */
 class State01
 {
-};
-
-/**
- * @brief Classe principal do Análise léxica
- */
-class LexerAnalysis
-{
-private:
-    std::string file;                    // String a ser tokenizada
-    int file_point;                      // possição atual do char a ser tratado
-    std::shared_ptr<State> currentState; // Validar necessidade
-    SymbolTable *symboltable;
-    Token makeAToken(std::string lexeme, TokenType tokentype, TokenClass tokenclas, TokenID tokenId)
+public:
+    Token makeAToken(std::string lexeme, TokenType tokentype, TokenID tokenId, int currentLine)
     {
         // Token t = Token(lexema);
         // No codigo todo só é inserido id
@@ -715,30 +697,50 @@ private:
 
         token.setLexeme(lexeme);
         // verificar se e eh constante
-        if (tokenId == TOKEN_ID_CONSTANT)
+        if (tokenId == TOKEN_ID_IDENTIFIER)
         {
             // Verifica se o Tamanho é maior
-            if (TOKEN_ID_IDENTIFIER == tokenId)
+            if (lexeme.size() > Constants().IDENTIFIER_MAX_SIZE)
             {
-                TokenID tmpID = stringToTokenId(lexeme);
-                if (tmpID != TOKEN_ID_NULL)
-                {
-                    token.setTokenID(tmpID);
-                }
-                else
-                {
-                    token.setTokenID(tokenId);
-                }
+                throw LException(ErrorCode::ENCEEDED_LIMIT_IDENTIFIER_MAX_SIZE, currentLine, "");
             }
+            token.setLexeme(lexeme);
+            token.setTokenType(tokentype);
+            token.setTokenID(tokenId);
+            // Aqui deve ser inserio o Token de identifier
+            token = *SymbolTable().Insert(token);
         }
-        else if (tokenclas == TOKEN_CLASS_VARIABLE)
+        else if (tokenId == TOKEN_ID_CONSTANT)
         {
+            if (tokentype == TOKEN_TYPE_REAL)
+            {
+            }
+            else if (tokentype == TOKEN_TYPE_INTEGER)
+            {
+            }
         }
         else
         {
+            token.setLexeme(lexeme);
+            token.setTokenType(tokentype);
+            token.setTokenID(tokenId);
         }
         return token;
     }
+
+private:
+};
+
+/**
+ * @brief Classe principal do Análise léxica
+ */
+class LexerAnalysis
+{
+private:
+    std::string file;                    // String a ser tokenizada
+    int file_point;                      // possição atual do char a ser tratado
+    std::shared_ptr<State> currentState; // Validar necessidade
+    SymbolTable *symboltable;
 
 public:
     LexerAnalysis(std::string file) : currentState(std::make_shared<StartState>())
@@ -755,7 +757,7 @@ public:
         currentState = std::make_shared<StartState>();
         std::string lexeme = "";
         TokenType tokentype = TOKEN_TYPE_UNDEFINED;
-        TokenClass tokenclas = TOKEN_CLASS_UNDEFINED;
+
         TokenID tokenId = TOKEN_ID_NULL;
 
         char cc;
@@ -779,10 +781,6 @@ public:
                 {
                     tokentype = result.tokenType;
                 }
-                if (result.tokenclass != TOKEN_CLASS_UNDEFINED)
-                {
-                    tokenclas = result.tokenclass;
-                }
                 if (result.tokenId != TOKEN_ID_NULL)
                 {
                     tokenId = result.tokenId;
@@ -801,7 +799,7 @@ public:
             }
         }
 
-        return makeAToken(lexeme, tokentype, tokenclas, tokenId);
+        return State01().makeAToken(lexeme, tokentype, tokenId);
     };
 
     void pushBackCurrentChar()
@@ -828,6 +826,13 @@ public:
     {
         return this->file_point >= this->file.size();
     }
+    /**
+     * @brief Retorna a atual linha do arquivo
+     */
+    int currentLine()
+    {
+        return file_point;
+    };
 };
 
 #endif
