@@ -138,8 +138,7 @@ class State05 : public State
         }
         else if (isalpha(c) || isdigit(c) || c == '_')
         {
-            package.tokenType = TOKEN_TYPE_STRING;
-            package.tokenId = TOKEN_ID_CONSTANT;
+            package.tokenId = TOKEN_ID_IDENTIFIER;
             package.identifier = +c;
             nextState = std::make_shared<State03>();
         }
@@ -394,7 +393,7 @@ class State04 : public State
         else if (isalpha(c) || isdigit(c) || c == '_')
         {
 
-            package.tokenId = TOKEN_ID_CONSTANT;
+            package.tokenId = TOKEN_ID_IDENTIFIER;
             package.identifier = +c;
             nextState = std::make_shared<State03>();
         }
