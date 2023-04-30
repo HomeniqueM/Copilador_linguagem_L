@@ -23,7 +23,6 @@ int main(int argc, char const *argv[])
 {
     try
     {
-        
         ArgHandler handler;
         FileHandler fh(handler.handleArgs(argc,argv));
         SymbolTable st = SymbolTable();
