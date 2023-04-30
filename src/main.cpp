@@ -26,7 +26,7 @@ int main(int argc, char const *argv[])
         
         ArgHandler handler;
         FileHandler fh(handler.handleArgs(argc,argv));
-        SymbolTable st();
+        SymbolTable st = SymbolTable();
         LexerAnalysis la(&fh,&st);
         SyntaticAnalysis sa = SyntaticAnalysis(&la);
         sa.Start(la.getNextToken());

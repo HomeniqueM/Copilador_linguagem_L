@@ -747,7 +747,7 @@ public:
             {
                 std::string str(1, cc);
 
-                throw LException(ErrorCode::INVALIDCHARACTER, file_point, str);
+                throw LException(ErrorCode::INVALIDCHARACTER,getCurrentLine(), str);
             }
         }
         Token token = Token();
@@ -789,7 +789,7 @@ public:
     void pushBackCurrentChar()
     {
         // call FileHandler setPrevChar()
-        fh.setPrevChar();
+        fh->setPrevChar();
     }
     /**
      * @brief retorna o proximo char caso o arquivo não tenha terminado caso contrario retorna \0
@@ -797,7 +797,10 @@ public:
     char getNextChar()
     {
         //call FileHander getNextFileChar()
-        return fh.getNextFileChar();
+        return fh->getNextFileChar();
+    }
+    int getCurrentLine(){
+        return fh->getFileLine();
     }
 };
 
