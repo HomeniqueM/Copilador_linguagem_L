@@ -61,6 +61,10 @@ void SyntaticAnalysis::setToken(Token token)
     this->token = token;
 }
 
+
+/**
+ * @brief: Realiza o casamento do Token Experado pelo Token Encontrado.
+*/
 void SyntaticAnalysis::matchToken(TokenID expectedToken)
 {
     std::cout << "Token Esperado :" << tokenToString(expectedToken) << expectedToken << std::endl;
@@ -85,7 +89,10 @@ void SyntaticAnalysis::matchToken(TokenID expectedToken)
     }
 }
 
-// S -> { ( D | Cmd) } fim_arquivo
+/**
+ * @brief: Analísa o caso da produção da Gramatica.
+ *         S -> { ( D | Cmd) } fim_arquivo
+*/
 void SyntaticAnalysis::productionS()
 {
     while (token.getTokenid() != TOKEN_ID_EOF)
@@ -111,7 +118,10 @@ void SyntaticAnalysis::productionS()
     }
 }
 
-// D -> D1 C { ,C } ; | final id = [-] const ;
+/**
+ * @brief: Analísa o caso da produção da Gramatica.
+ *         D -> D1 C { ,C } ; | final id = [-] const ;
+*/
 void SyntaticAnalysis::productionD()
 {
     if (token.getTokenid() == TOKEN_ID_FINAL)
@@ -138,7 +148,10 @@ void SyntaticAnalysis::productionD()
     }
 }
 
-// D1 -> ( char | integer | real | boolean | string )
+/**
+ * @brief: Analísa o caso da produção da Gramatica.
+ * D1 -> ( char | integer | real | boolean | string )
+*/
 void SyntaticAnalysis::productionD1()
 {
 
@@ -164,7 +177,11 @@ void SyntaticAnalysis::productionD1()
     }
 }
 
-// C -> id [ ( = [ - ] const | [ ( id | num ) ] ) ]
+
+/**
+ * @brief: Analísa o caso da produção da Gramatica.
+ * C -> id [ ( = [ - ] const | [ ( id | const) ] ) ]
+*/
 void SyntaticAnalysis::productionC()
 {
     matchToken(TOKEN_ID_IDENTIFIER);
@@ -193,7 +210,11 @@ void SyntaticAnalysis::productionC()
     }
 }
 
-// Cmd ->  [ ( A | R | T | L | E ) ] ;
+
+/**
+ * @brief: Analísa o caso da produção da Gramatica.
+ * Cmd -> ( ( [ ( A | L | E ) ] ; ) | ( R | T ) )
+*/
 void SyntaticAnalysis::productionCMD()
 {
     if (token.getTokenid() == TOKEN_ID_IDENTIFIER)
@@ -223,7 +244,11 @@ void SyntaticAnalysis::productionCMD()
    
 }
 
-// Cmd1 ->  [ ( A | R | T | L | E ) ] ;
+
+/**
+ * @brief: Analísa o caso da produção da Gramatica.
+ * Cmd1 -> [ ( A | R | T | L | E ) ]
+*/
 void SyntaticAnalysis::productionCMD1()
 {
     if (token.getTokenid() == TOKEN_ID_IDENTIFIER)
@@ -248,7 +273,10 @@ void SyntaticAnalysis::productionCMD1()
     }
 }
 
-// A ->  id = Exp
+/**
+ * @brief: Analísa o caso da produção da Gramatica.
+ * A ->  id = ( Exp | L )
+*/
 void SyntaticAnalysis::productionA()
 {
     matchToken(TOKEN_ID_IDENTIFIER);
@@ -259,7 +287,12 @@ void SyntaticAnalysis::productionA()
     productionExp();
 }
 
-// R -> for ( { R1 } ; Exp ; { R1 } ) ( [Cmd] | begin {Cmd} end )
+
+/**
+ * @brief: Analísa o caso da produção da Gramatica.
+ * R -> for (  R1 ;  Exp ;  R1  ) T1
+
+*/
 void SyntaticAnalysis::productionR()
 {
     matchToken(TOKEN_ID_FOR);
@@ -273,7 +306,11 @@ void SyntaticAnalysis::productionR()
     productionT1();
 }
 
-// R1-> Cmd { ,Cmd }
+/**
+ * @brief: Analísa o caso da produção da Gramatica.
+ * R1-> Cmd1 { ,Cmd1 } 
+
+*/
 void SyntaticAnalysis::productionR1()
 {
     productionCMD1();
@@ -284,7 +321,11 @@ void SyntaticAnalysis::productionR1()
     }
 }
 
-// T -> if ( Exp ) T1 [ else T1 ]
+
+/**
+ * @brief: Analísa o caso da produção da Gramatica.
+ * T -> if ( Exp ) T1 [ else T1 ]
+*/
 void SyntaticAnalysis::productionT()
 {
     matchToken(TOKEN_ID_IF);
@@ -299,7 +340,11 @@ void SyntaticAnalysis::productionT()
     }
 }
 
-// T1 -> ( Cmd | begin {Cmd} end )
+
+/**
+ * @brief: Analísa o caso da produção da Gramatica.
+ * T1 -> ( Cmd | begin { Cmd } end ) 
+*/
 void SyntaticAnalysis::productionT1()
 {
     if (token.getTokenid() == TOKEN_ID_BEGIN)
@@ -317,7 +362,10 @@ void SyntaticAnalysis::productionT1()
     }
 }
 
-// L -> readln ( id )
+/**
+ * @brief: Analísa o caso da produção da Gramatica.
+ * L -> readln ( id ) 
+*/
 void SyntaticAnalysis::productionL()
 {
     matchToken(TOKEN_ID_READLN);
@@ -326,7 +374,10 @@ void SyntaticAnalysis::productionL()
     matchToken(TOKEN_ID_CLOSE_PARANTHESES);
 }
 
-// E -> ( write( E1 ) | writeln( E1 ) )
+/**
+ * @brief: Analísa o caso da produção da Gramatica.
+ * E -> ( write | writeln ) ( E1 ) 
+*/
 void SyntaticAnalysis::productionE()
 {
     if (token.getTokenid() == TOKEN_ID_WRITE)
@@ -342,7 +393,10 @@ void SyntaticAnalysis::productionE()
     matchToken(TOKEN_ID_CLOSE_PARANTHESES);
 }
 
-// E1 -> Exp { , Exp }
+/**
+ * @brief: Analísa o caso da produção da Gramatica.
+ * E1 -> Exp { , Exp }
+*/
 void SyntaticAnalysis::productionE1()
 {
     productionExp();
@@ -353,7 +407,10 @@ void SyntaticAnalysis::productionE1()
     }
 }
 
-// Exp -> Exp1 { ( == | < | <= | > | >= ) Exp1 }
+/**
+ * @brief: Analísa o caso da produção da Gramatica.
+ * Exp -> Exp1 { ( == | < | <= | > | >= ) Exp1 }
+*/
 void SyntaticAnalysis::productionExp()
 {
     productionExp1();
@@ -383,7 +440,10 @@ void SyntaticAnalysis::productionExp()
     }
 }
 
-// Exp1 -> [ - ] Exp2 { ( + | - | or ) Exp2 }
+/**
+ * @brief: Analísa o caso da produção da Gramatica.
+ * Exp1 -> [ - ] Exp2 { ( + | - | or ) Exp2 }
+*/
 void SyntaticAnalysis::productionExp1()
 {
     if (token.getTokenid() == TOKEN_ID_SUBTRACTION)
@@ -404,7 +464,11 @@ void SyntaticAnalysis::productionExp1()
     }
 }
 
-// Exp2 -> Exp3 { ( *  | mod | div| and ) Exp3}
+
+/**
+ * @brief: Analísa o caso da produção da Gramatica.
+ * Exp2 -> Exp3 { ( *  | mod | (div |/)| and ) Exp3}
+*/
 void SyntaticAnalysis::productionExp2()
 {
     productionExp3();
@@ -422,7 +486,10 @@ void SyntaticAnalysis::productionExp2()
     }
 }
 
-// Exp3 -> Exp4 | not Exp4
+/**
+ * @brief: Analísa o caso da produção da Gramatica.
+ * Exp3 -> Exp4 | not Exp4
+*/
 void SyntaticAnalysis::productionExp3()
 {
     if (token.getTokenid() == TOKEN_ID_NOT)
@@ -432,7 +499,10 @@ void SyntaticAnalysis::productionExp3()
     productionExp4();
 }
 
-// Exp4 -> Exp5 | real(Exp5) | integer(Exp5)
+/**
+ * @brief: Analísa o caso da produção da Gramatica.
+ * Exp4 -> Exp5 | real( Exp5 ) | integer( Exp5 )
+*/
 void SyntaticAnalysis::productionExp4()
 {
     if (token.getTokenid() != TOKEN_ID_INTEGER && token.getTokenid() != TOKEN_ID_REAL)
@@ -455,7 +525,10 @@ void SyntaticAnalysis::productionExp4()
     }
 }
 
-// Exp5 -> ( Exp6 ) | EXP6
+/**
+ * @brief: Analísa o caso da produção da Gramatica.
+ * Exp5 -> const | id | ( Exp )
+*/
 void SyntaticAnalysis::productionExp5()
 {
     if (token.getTokenid() == TOKEN_ID_CONSTANT)
