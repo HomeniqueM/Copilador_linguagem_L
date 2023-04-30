@@ -9,11 +9,9 @@
 */
 class FileHandler{
     private:
-        //std::map<int,std::string> arq;
         std::string fileContent = "";
     public:
         FileHandler(std::string path);
-        //std::map<int,std::string> mapFile(std::string path);
         std::string getFileContent();
 };
 /**
@@ -46,25 +44,6 @@ std::string FileHandler::getFileContent(){
     return this->fileContent;
 }
 
-/*std::map<int,std::string> FileHandler::mapFile(std::string path){
-    std::ifstream arqf;
-    std::string s;
-
-    arqf.open(path);
-    if(arqf.fail()){
-        std::cout <<"Falha ao abrir arquivo \n";
-    }else{
-        for(int i=0;!arqf.eof();i++){
-            getline(arqf,s);
-            this->arq[i]=s;
-            //std::cout << s;
-            //std::cout << "\n";
-        }
-        arqf.close();
-    }
-
-    return this->arq;
-}*/
 #endif
 /*int main(){
     FileHandler fh("C:/Users/iagom/Downloads/exemplo.l");
