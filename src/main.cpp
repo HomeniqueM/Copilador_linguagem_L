@@ -16,6 +16,7 @@
 #include "symbols/token-id.cpp"
 
 #include "utils/arg-handler.cpp"
+#include "utils/file.cpp"
 #include <string>
 
 int main(int argc, char const *argv[])
@@ -23,11 +24,10 @@ int main(int argc, char const *argv[])
     try
     {
         
-        // ArgHandler handler;
-        // std::string path = handler.handleArgs(argc,argv);
-        // Problema ver Com o home
-        std::cout << "dhdid";
-        LexerAnalysis la("for(a=55;x>0; x+y)");
+        ArgHandler handler;
+        FileHandler fh(handler.handleArgs(argc,argv));
+        SymbolTable st = SymbolTable();
+        LexerAnalysis la(&fh,&st);
         SyntaticAnalysis sa = SyntaticAnalysis(&la);
         sa.Start(la.getNextToken());
     }
