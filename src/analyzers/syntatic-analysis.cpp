@@ -38,7 +38,6 @@ private:
     void productionExp3();
     void productionExp4();
     void productionExp5();
-    void productionExp6();
 
 public:
     SyntaticAnalysis(LexerAnalysis *la);
@@ -253,6 +252,9 @@ void SyntaticAnalysis::productionA()
 {
     matchToken(TOKEN_ID_IDENTIFIER);
     matchToken(TOKEN_ID_ASSIGNMENT);
+    if(token.getTokenid() == TOKEN_ID_READLN){
+        productionL();
+    }
     productionExp();
 }
 
@@ -452,23 +454,18 @@ void SyntaticAnalysis::productionExp4()
     }
 }
 
-// Exp5 -> ( Exp6 )
+// Exp5 -> ( Exp6 ) | EXP6
 void SyntaticAnalysis::productionExp5()
-{
-    matchToken(TOKEN_ID_OPEN_PARANTHESES);
-    productionExp6();
-    matchToken(TOKEN_ID_CLOSE_PARANTHESES);
-}
-
-// Exp6 -> const | id | Exp
-void SyntaticAnalysis::productionExp6()
 {
     if (token.getTokenid() == TOKEN_ID_CONSTANT)
         matchToken(TOKEN_ID_CONSTANT);
     else if (token.getTokenid() == TOKEN_ID_INTEGER)
         matchToken(TOKEN_ID_IDENTIFIER);
-    else
+    else {
+        matchToken(TOKEN_ID_OPEN_PARANTHESES);
         productionExp();
+        matchToken(TOKEN_ID_CLOSE_PARANTHESES);
+    }
 }
 
 
