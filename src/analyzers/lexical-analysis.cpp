@@ -677,7 +677,7 @@ StatePackage StartState::handle(char c)
 class State01
 {
 public:
-    Token makeAToken(std::string lexeme, TokenType tokentype, TokenID tokenId, int currentLine)
+    Token makeAToken(SymbolTable *st ,std::string lexeme, TokenType tokentype, TokenID tokenId, int currentLine)
     {
         // Token t = Token(lexema);
         // No codigo todo só é inserido id
@@ -700,20 +700,36 @@ public:
         if (tokenId == TOKEN_ID_IDENTIFIER)
         {
             // Verifica se o Tamanho é maior
-            if (lexeme.size() > Constants().IDENTIFIER_MAX_SIZE)
+            if (lexeme.size() > CONSTANTS_IDENTIFIER_MAX_SIZE)
             {
                 throw LException(ErrorCode::ENCEEDED_LIMIT_IDENTIFIER_MAX_SIZE, currentLine, "");
             }
             token.setLexeme(lexeme);
             token.setTokenType(tokentype);
             token.setTokenID(tokenId);
+
             // Aqui deve ser inserio o Token de identifier
-            token = *SymbolTable().Insert(token);
+            token = *st->Insert(token);
         }
         else if (tokenId == TOKEN_ID_CONSTANT)
         {
             if (tokentype == TOKEN_TYPE_REAL)
             {
+                std::string sublexeme = substringAfterDelimiter(lexeme, '.');
+                double doulexeme = std::stod(lexeme);
+
+                if (sublexeme.size() > CONSTANTS_MAXIMUM_ACCURACY_LENGTH)
+                {
+                    throw LException(ErrorCode::OVERFLOW_ACCURACY_LENGTH, currentLine, "");
+                }
+                if (doulexeme > CONSTANTS_REAL_MAX_VALUE)
+                {
+                    throw LException(ErrorCode::OVERFLOW_SIZE_REAL, currentLine, "");
+                }
+                if (doulexeme < CONSTANTS_REAL_MIN_VALUE)
+                {
+                    throw LException(ErrorCode::UNDERFLOW_SIZE_REAL, currentLine, "");
+                }
             }
             else if (tokentype == TOKEN_TYPE_INTEGER)
             {
@@ -725,10 +741,27 @@ public:
             token.setTokenType(tokentype);
             token.setTokenID(tokenId);
         }
+
         return token;
     }
 
 private:
+    /**
+     * @brief Retorna a substring depois do delimitador especificado.
+     *
+     * @param str A string original.
+     * @param delimiter O caractere delimitador.
+     * @return A substring depois do delimitador, ou uma string vazia se o delimitador não for encontrado.
+     */
+    std::string substringAfterDelimiter(std::string str, char delimiter)
+    {
+        int delimiterIndex = str.find(delimiter);
+        if (delimiterIndex == std::string::npos)
+        {
+            return "";
+        }
+        return str.substr(delimiterIndex + 1);
+    }
 };
 
 /**
@@ -799,7 +832,7 @@ public:
             }
         }
 
-        return State01().makeAToken(lexeme, tokentype, tokenId);
+        return State01().makeAToken(symboltable,lexeme, tokentype, tokenId, getCurrentLine());
     };
 
     void pushBackCurrentChar()
@@ -811,7 +844,6 @@ public:
      */
     char getNextChar()
     {
-
         if (isEndFile())
         {
             return LEXEME_EOF;
@@ -829,7 +861,7 @@ public:
     /**
      * @brief Retorna a atual linha do arquivo
      */
-    int currentLine()
+    int getCurrentLine()
     {
         return file_point;
     };
