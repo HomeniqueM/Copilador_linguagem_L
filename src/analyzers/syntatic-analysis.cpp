@@ -459,7 +459,7 @@ void SyntaticAnalysis::productionExp5()
 {
     if (token.getTokenid() == TOKEN_ID_CONSTANT)
         matchToken(TOKEN_ID_CONSTANT);
-    else if (token.getTokenid() == TOKEN_ID_INTEGER)
+    else if (token.getTokenid() == TOKEN_ID_IDENTIFIER)
         matchToken(TOKEN_ID_IDENTIFIER);
     else {
         matchToken(TOKEN_ID_OPEN_PARANTHESES);
