@@ -13,6 +13,7 @@
 #include "../error/l_exception.cpp"
 #include "../symbols/token-type.cpp"
 #include "../symbols/token-class.cpp"
+#include "../utils/file.cpp"
 
 /** =========================================================
  *
@@ -685,18 +686,16 @@ class State01
 class LexerAnalysis
 {
 private:
-    std::string file;                    // String a ser tokenizada
-    int file_point;                      // possição atual do char a ser tratado
+    FileHandler *fh;                    // String a ser tokenizada
     std::shared_ptr<State> currentState; // Validar necessidade
     SymbolTable *symboltable;
     
 
 public:
-    LexerAnalysis(std::string file) : currentState(std::make_shared<StartState>())
+    LexerAnalysis(FileHandler *fh,SymbolTable *symboltable) : currentState(std::make_shared<StartState>())
     {
-        this->file = file;
-        file_point = 0;
-        symboltable = new SymbolTable();
+        this->fh = fh;
+        this->symboltable = symboltable;
     }
     /**
      * @brief função que retorna o proximo possivel token
@@ -789,27 +788,16 @@ public:
 
     void pushBackCurrentChar()
     {
-        file_point--;
+        // call FileHandler setPrevChar()
+        fh.setPrevChar();
     }
     /**
      * @brief retorna o proximo char caso o arquivo não tenha terminado caso contrario retorna \0
      */
     char getNextChar()
     {
-
-        if (isEndFile())
-        {
-            return LEXEME_EOF;
-        }
-
-        return this->file[this->file_point++];
-    }
-    /**
-     * @brief verifica se foi encontrado o fim do arquivo
-     */
-    bool isEndFile()
-    {
-        return this->file_point >= this->file.size();
+        //call FileHander getNextFileChar()
+        return fh.getNextFileChar();
     }
 };
 
