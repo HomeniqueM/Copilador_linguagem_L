@@ -56,7 +56,6 @@ void SyntaticAnalysis::Start(Token token)
 {
     setToken(token);
     productionS();
-    std::cout << "Analise sintatica completa";
 }
 
 void SyntaticAnalysis::setToken(Token token)
@@ -69,14 +68,14 @@ void SyntaticAnalysis::setToken(Token token)
  */
 void SyntaticAnalysis::matchToken(TokenID expectedToken)
 {
-    std::cout << "Token Esperado :" << tokenToString(expectedToken) << expectedToken << std::endl;
-    std::cout << "Token Encontrado :" << tokenToString(token.getTokenid()) << token.getTokenid() << std::endl;
+    // std::cout << "Token Esperado :" << tokenToString(expectedToken) << expectedToken << std::endl;
+    // std::cout << "Token Encontrado :" << tokenToString(token.getTokenid()) << token.getTokenid() << std::endl;
     // Fazer o match
     if (expectedToken == token.getTokenid())
     {
         // Pedir o prx token
         setToken(la->getNextToken());
-        std::cout << "Proximo Token:" << tokenToString(token.getTokenid()) << token.getTokenid() << std::endl;
+        // std::cout << "Proximo Token:" << tokenToString(token.getTokenid()) << token.getTokenid() << std::endl;
     }
     else
     {
