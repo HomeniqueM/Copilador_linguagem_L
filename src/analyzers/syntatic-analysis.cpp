@@ -275,6 +275,19 @@ void SyntaticAnalysis::productionCMD1()
 void SyntaticAnalysis::productionA()
 {
     matchToken(TOKEN_ID_IDENTIFIER);
+    if(token.getTokenid() == TOKEN_ID_OPEN_BRACKET){
+        matchToken(TOKEN_ID_OPEN_BRACKET);
+        if (token.getTokenid() == TOKEN_ID_IDENTIFIER)
+        {
+            matchToken(TOKEN_ID_IDENTIFIER);
+        }
+        else
+        {
+            matchToken(TOKEN_ID_CONSTANT);
+        }
+
+        matchToken(TOKEN_ID_CLOSE_BRACKET);
+    }
     matchToken(TOKEN_ID_ASSIGNMENT);
     if (token.getTokenid() == TOKEN_ID_READLN)
     {
