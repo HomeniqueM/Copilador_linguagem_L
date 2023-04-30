@@ -9,20 +9,44 @@
 */
 class FileHandler{
     private:
-        std::map<int,std::string> arq;
+        //std::map<int,std::string> arq;
+        std::string fileContent = "";
     public:
-        FileHandler();
-        std::map<int,std::string> mapFile(std::string path);
+        FileHandler(std::string path);
+        //std::map<int,std::string> mapFile(std::string path);
+        std::string getFileContent();
 };
-
-FileHandler::FileHandler(){
-
+/**
+ * @brief Construtor da classe do utilitario de leitura do arquivo do programa fonte
+ * @param string com o path para o arquivo do programa fonte a ser compilado
+*/
+FileHandler::FileHandler(std::string path){
+    std::ifstream arqf;
+    std::string s;
+    //abertura do arquivo do programa fonte.
+    arqf.open(path);
+    //Em caso de sucesso ao abrir o arquivo escreve as linhas do arquivo em um string
+    //caso contrário gera uma mensagem de erro.
+    if(arqf.fail()){
+        std::cout <<"Falha ao abrir arquivo \n";
+    }else{
+        for(int i=0;!arqf.eof();i++){
+            getline(arqf,s);
+            this->fileContent.append(s);
+            this->fileContent.append("\n");
+        }
+        arqf.close();
+    }
 }
 /**
- * @brief metodo que faz a leitura do arquivo do programa fonte e mapeia em um map com as linhas do arquivo
- * @return map com as linhas do arquivo
+ * @brief Metodo que retorna a string com o conteudo do programa fonte
+ * @return conteudo do programa fonte em formato de string
 */
-std::map<int,std::string> FileHandler::mapFile(std::string path){
+std::string FileHandler::getFileContent(){
+    return this->fileContent;
+}
+
+/*std::map<int,std::string> FileHandler::mapFile(std::string path){
     std::ifstream arqf;
     std::string s;
 
@@ -40,10 +64,10 @@ std::map<int,std::string> FileHandler::mapFile(std::string path){
     }
 
     return this->arq;
-}
+}*/
 #endif
 /*int main(){
-    FileHandler fh;
-    fh.mapFile("C:/Users/iagom/Downloads/exemplo.l");
+    FileHandler fh("C:/Users/iagom/Downloads/exemplo.l");
+    std::cout << fh.getFileContent();
     return 0;
 }*/
