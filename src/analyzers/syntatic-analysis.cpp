@@ -53,6 +53,7 @@ void SyntaticAnalysis::Start(Token token)
 {
     setToken(token);
     productionS();
+    std::cout << "Analise sintatica completa"
 }
 
 void SyntaticAnalysis::setToken(Token token)
