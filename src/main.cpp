@@ -16,13 +16,17 @@
 #include "symbols/token-id.cpp"
 
 #include "utils/arg-handler.cpp"
+#include "utils/file.cpp"
 #include <string>
 
 int main(int argc, char const *argv[])
 {
     try
     {
-        LexerAnalysis la("for(a=5;x>0; x+y)");
+        ArgHandler handler;
+        FileHandler fh(handler.handleArgs(argc,argv));
+        SymbolTable st = SymbolTable();
+        LexerAnalysis la(&fh,&st);
         SyntaticAnalysis sa = SyntaticAnalysis(&la);
         sa.Start(la.getNextToken());
     }

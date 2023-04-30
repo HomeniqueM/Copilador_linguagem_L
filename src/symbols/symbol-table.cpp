@@ -41,17 +41,11 @@ SymbolTable::SymbolTable()
 	Token symbl = Token();
 	TokenID id;
 
-	for (auto &s : init)
-	// for (std::string s = init.back(); !init.empty(); init.pop_back(), s = init.back())
-	{
+	for (auto &s : init){
 		id = stringToTokenId(s);
 		symbl.setTokenID(id);
 		symbl.setLexeme(s);
-		this->Insert(symbl);
-
-		/*std::cout <<"inserted " +s+" at ";
-		std::cout << this->Find(s);
-		std::cout << "\n";*/
+		Insert(symbl);
 	}
 }
 
@@ -74,8 +68,7 @@ Token *SymbolTable::Insert(Token token)
 }
 /**
  * @brief busca um símbolo na tabela atual e retorna o endereço do registro
- * @if se não encontrado, busca nas tabelas dos escopos envolventes
- * @else caso não encontre em nenhuma tabela de nenhum escopo envolvente retorna um endereço nulo
+ * @if se não encontrar o símbolo na tabela retorna nulo
  */
 Token *SymbolTable::Find(std::string lexem)
 {
@@ -99,10 +92,13 @@ bool SymbolTable::isItAValidChar(char c)
 
 /*int main(){
 	SymbolTable symtable;
+	std::cout << symtable.Find("integer")<<"\n";
 	Token symbl;
-	TokenID id = TOKEN_ID_INTEGER;
+	TokenID id;
+	std::string s = "integer";
+	id = stringToTokenId(s);
 	symbl.setTokenID(id);
-	symtable.Insert("integer",symbl);
-	std::cout << symtable.Find("integer");
+	symbl.setLexeme(s);
+	std::cout << symtable.Insert(symbl);
 	return 0;
 }*/
