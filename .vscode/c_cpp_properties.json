@@ -3,7 +3,8 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/src/analyzers/lexical-state"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

@@ -1,3 +1,5 @@
+#ifndef ERROR_ERROR_CODE
+#define ERROR_ERROR_CODE
 #include <string>
 #include <exception>
 #include <sstream>
@@ -6,6 +8,8 @@ enum class ErrorCode
 {
     INVALIDCHARACTER,
     UNEXPECTED_CHARACTER,
+    UNEXPECTED_TOKEN,
+    UNEXPECTED_TOKEN_EOF,
     UNEXPECTED_END_OFFILE,
     NO_FILE_PATH_FOUND,
     UNKNOWN
@@ -36,6 +40,7 @@ private:
     {
         std::ostringstream oss;
         oss << "Error: ";
+        oss << " [" << line_ << "] ";
         switch (code_)
         {
         case ErrorCode::INVALIDCHARACTER:
@@ -43,6 +48,12 @@ private:
             break;
         case ErrorCode::UNEXPECTED_CHARACTER:
             oss << "character não era esperado ";
+            break;
+        case ErrorCode::UNEXPECTED_TOKEN:
+            oss << "token nao esperado";
+            break;
+        case ErrorCode::UNEXPECTED_TOKEN_EOF:
+            oss << "fim de arquivo nao esperado";
             break;
         case ErrorCode::NO_FILE_PATH_FOUND:
             oss << "caminho do arquivo fonte nao encontrado";
@@ -53,10 +64,9 @@ private:
         }
         if (!mOptional_.empty())
         {
-
             oss << " - " << mOptional_;
         }
-        oss << " (linha " << line_ << ")";
         return oss.str();
     }
 };
+#endif

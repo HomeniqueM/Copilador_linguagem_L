@@ -1,3 +1,5 @@
+#ifndef ANALYZERS_SYNTATIC_ANALYSIS 
+#define ANALYZERS_SYNTATIC_ANALYSIS
 #include <iostream>
 #include <string>
 #include <vector>
@@ -7,10 +9,12 @@
 #include "../symbols/token.cpp"
 #include "../error/l_exception.cpp"
 #include "../symbols/token-type.cpp"
+#include "../analyzers/lexical-analysis.cpp"
 
 class SyntaticAnalysis
 {
 private:
+    LexerAnalysis *la;
     Token token;
     void setToken(Token token);
     void matchToken(TokenID expectedToken);
@@ -19,8 +23,10 @@ private:
     void productionD1();
     void productionC();
     void productionCMD();
+    void productionCMD1();
     void productionA();
     void productionR();
+    void productionR1();
     void productionT();
     void productionT1();
     void productionL();
@@ -35,23 +41,17 @@ private:
     void productionExp6();
 
 public:
-    SyntaticAnalysis(/* args */);
-    ~SyntaticAnalysis();
+    SyntaticAnalysis(LexerAnalysis *la);
     void Start(Token token);
 };
 
-SyntaticAnalysis::SyntaticAnalysis(/* args */)
+SyntaticAnalysis::SyntaticAnalysis(LexerAnalysis *la)
 {
-}
-
-SyntaticAnalysis::~SyntaticAnalysis()
-{
+    this->la = la;
 }
 
 void SyntaticAnalysis::Start(Token token)
 {
-    // Pedir um token pro amigo
-    // Set token
     setToken(token);
     productionS();
 }
@@ -63,22 +63,24 @@ void SyntaticAnalysis::setToken(Token token)
 
 void SyntaticAnalysis::matchToken(TokenID expectedToken)
 {
+    std::cout << "Token Esperado :" << tokenToString(expectedToken) << expectedToken << std::endl;
+    std::cout << "Token Encontrado :" <<  tokenToString(token.getTokenid()) << token.getTokenid() << std::endl;
     // Fazer o match
     if (expectedToken == token.getTokenid())
     {
         // Pedir o prx token
-        Token nextToken;
-        setToken(nextToken);
+        setToken(la->getNextToken());
+        std::cout << "Proximo Token:"  <<  tokenToString(token.getTokenid()) << token.getTokenid() << std::endl;
     }
     else
     {
         if (token.getTokenid() == TOKEN_ID_EOF)
         {
-            // Gerar erro de Fim de arquivo não esperado.
+            throw LException(ErrorCode::UNEXPECTED_TOKEN_EOF, 0, "");
         }
         else
         {
-            // Gerar erro de Token não esperado.
+            throw LException(ErrorCode::UNEXPECTED_TOKEN, 0, token.getLexeme());
         }
     }
 }
@@ -98,7 +100,6 @@ void SyntaticAnalysis::productionS()
 
         if (declaration)
         {
-            std::cout << "declaration" << std::endl;
             productionD();
         }
         else
@@ -198,6 +199,36 @@ void SyntaticAnalysis::productionCMD()
     if (token.getTokenid() == TOKEN_ID_IDENTIFIER)
     {
         productionA();
+        matchToken(TOKEN_ID_SEMICOLON);
+    }
+    else if (token.getTokenid() == TOKEN_ID_FOR)
+    {
+        productionR();
+    }
+    else if (token.getTokenid() == TOKEN_ID_IF)
+    {
+        productionT();
+    }
+    else if (token.getTokenid() == TOKEN_ID_READLN)
+    {
+        productionL();
+        matchToken(TOKEN_ID_SEMICOLON);
+    }
+    else if (token.getTokenid() == TOKEN_ID_WRITE || token.getTokenid() == TOKEN_ID_WRITELN)
+    {
+        productionE();
+        matchToken(TOKEN_ID_SEMICOLON);
+    }
+
+   
+}
+
+// Cmd1 ->  [ ( A | R | T | L | E ) ] ;
+void SyntaticAnalysis::productionCMD1()
+{
+    if (token.getTokenid() == TOKEN_ID_IDENTIFIER)
+    {
+        productionA();
     }
     else if (token.getTokenid() == TOKEN_ID_FOR)
     {
@@ -215,14 +246,13 @@ void SyntaticAnalysis::productionCMD()
     {
         productionE();
     }
-
-    matchToken(TOKEN_ID_SEMICOLON);
 }
 
 // A ->  id = Exp
 void SyntaticAnalysis::productionA()
 {
     matchToken(TOKEN_ID_IDENTIFIER);
+    matchToken(TOKEN_ID_ASSIGNMENT);
     productionExp();
 }
 
@@ -232,7 +262,9 @@ void SyntaticAnalysis::productionR()
     matchToken(TOKEN_ID_FOR);
     matchToken(TOKEN_ID_OPEN_PARANTHESES);
     productionR1();
+    matchToken(TOKEN_ID_SEMICOLON);
     productionExp();
+    matchToken(TOKEN_ID_SEMICOLON);
     productionR1();
     matchToken(TOKEN_ID_CLOSE_PARANTHESES);
     productionT1();
@@ -241,11 +273,11 @@ void SyntaticAnalysis::productionR()
 // R1-> Cmd { ,Cmd }
 void SyntaticAnalysis::productionR1()
 {
-    productionCMD();
+    productionCMD1();
     while (token.getTokenid() == TOKEN_ID_COMMA)
     {
         matchToken(TOKEN_ID_COMMA);
-        productionCMD();
+        productionCMD1();
     }
 }
 
@@ -275,6 +307,10 @@ void SyntaticAnalysis::productionT1()
             productionCMD();
         }
         matchToken(TOKEN_ID_END);
+    }
+    else 
+    {
+        productionCMD();
     }
 }
 
@@ -318,11 +354,11 @@ void SyntaticAnalysis::productionE1()
 void SyntaticAnalysis::productionExp()
 {
     productionExp1();
-    while (token.getTokenid() == TOKEN_ID_EQUALITY || token.getTokenid() == TOKEN_ID_GREATER_THEN || token.getTokenid() == TOKEN_ID_GREATER_EQUAL_TO || token.getTokenid() == TOKEN_ID_LESS_THAN || token.getTokenid() == TOKEN_ID_LESS_EQUAL_TO)
+    while (token.getTokenid() == TOKEN_ID_ENQUALS || token.getTokenid() == TOKEN_ID_GREATER_THEN || token.getTokenid() == TOKEN_ID_GREATER_EQUAL_TO || token.getTokenid() == TOKEN_ID_LESS_THAN || token.getTokenid() == TOKEN_ID_LESS_EQUAL_TO)
     {
-        if (token.getTokenid() == TOKEN_ID_EQUALITY)
+        if (token.getTokenid() == TOKEN_ID_ENQUALS)
         {
-            matchToken(TOKEN_ID_EQUALITY);
+            matchToken(TOKEN_ID_ENQUALS);
         }
         else if (token.getTokenid() == TOKEN_ID_GREATER_THEN)
         {
@@ -435,15 +471,5 @@ void SyntaticAnalysis::productionExp6()
         productionExp();
 }
 
-int main()
-{
 
-    std::cout << "Inicio do teste" << std::endl;
-    SyntaticAnalysis *sintatico = new SyntaticAnalysis();
-    Token *token = new Token();
-    token->setTokenID(TOKEN_ID_CHAR);
-    std::string a = tokenToString(token->getTokenid());
-    std::cout << a;
-
-    sintatico->Start(*token);
-}
+#endif

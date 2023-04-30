@@ -12,21 +12,22 @@
 
 /**
  * @brief classe tabela de símbolos
-*/
+ */
 class SymbolTable
 {
 private:
-   	std::unordered_map<std::string,Token> table;       
+	std::unordered_map<std::string, Token> table;
 
 public:
 	SymbolTable();
 	bool isItAValidChar(char c);
-	Token *Insert(std::string lexem, Token tok);
+	Token *Insert(Token token);
 	Token *Find(std::string lexem);
 };
 
 /**
  * @brief construtor para a primeira tabela de escopo mais abrangente
+ *
  *
  */
 SymbolTable::SymbolTable()
@@ -39,11 +40,14 @@ SymbolTable::SymbolTable()
 
 	Token symbl;
 	TokenID id;
-	for (std::string s = init.back(); !init.empty(); init.pop_back(), s = init.back())
+
+	for (auto &s : init)
+	// for (std::string s = init.back(); !init.empty(); init.pop_back(), s = init.back())
 	{
 		id = stringToTokenId(s);
 		symbl.setTokenID(id);
-		this->Insert(s, symbl);
+		symbl.setLexeme(s);
+		this->Insert(symbl);
 
 		/*std::cout <<"inserted " +s+" at ";
 		std::cout << this->Find(s);
@@ -51,34 +55,37 @@ SymbolTable::SymbolTable()
 	}
 }
 
-
 /**
  * @brief insere um símbolo na tabela
  * @return retorna a posição de inserção do símbolo
  */
-Token * SymbolTable::Insert(std::string lexem, Token tok)
+Token *SymbolTable::Insert(Token token)
 {
-	std::pair<std::unordered_map<std::string,Token>::iterator,bool> rtn;
-	rtn = table.insert({lexem,tok});
-	
-	if(rtn.second){
-		Token * res=this->Find(lexem);
-		return res;
-	}else{
-		return nullptr;
+	Token *res = this->Find(token.getLexeme());
+	if (res == nullptr)
+	{
+
+		std::pair<std::unordered_map<std::string, Token>::iterator, bool> rtn;
+		rtn = this->table.insert({token.getLexeme(), token});
+		return &(rtn.first->second);
 	}
+
+	return res;
 }
 /**
  * @brief busca um símbolo na tabela atual e retorna o endereço do registro
  * @if se não encontrado, busca nas tabelas dos escopos envolventes
  * @else caso não encontre em nenhuma tabela de nenhum escopo envolvente retorna um endereço nulo
-*/
-Token * SymbolTable::Find(std::string lexem) 
+ */
+Token *SymbolTable::Find(std::string lexem)
 {
-    auto found = this->table.find(lexem);
-    if (found != this->table.end()) 
+	auto found = this->table.find(lexem);
+
+	if (found != this->table.end())
+	{
 		return &found->second;
-    return nullptr;
+	}
+	return nullptr;
 }
 
 bool SymbolTable::isItAValidChar(char c)
@@ -99,4 +106,3 @@ bool SymbolTable::isItAValidChar(char c)
 	std::cout << symtable.Find("integer");
 	return 0;
 }*/
-
