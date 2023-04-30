@@ -48,7 +48,10 @@ SyntaticAnalysis::SyntaticAnalysis(LexerAnalysis *la)
 {
     this->la = la;
 }
-
+/**
+ * @brief: Inicia o Analizador Sintatico.
+ * @param Token inicial a ser analisado
+*/
 void SyntaticAnalysis::Start(Token token)
 {
     setToken(token);
@@ -79,11 +82,11 @@ void SyntaticAnalysis::matchToken(TokenID expectedToken)
     {
         if (token.getTokenid() == TOKEN_ID_EOF)
         {
-            throw LException(ErrorCode::UNEXPECTED_TOKEN_EOF, 0, "");
+            throw LException(ErrorCode::UNEXPECTED_TOKEN_EOF, la->getCurrentLine() + 1, "");
         }
         else
         {
-            throw LException(ErrorCode::UNEXPECTED_TOKEN, 0, token.getLexeme());
+            throw LException(ErrorCode::UNEXPECTED_TOKEN, la->getCurrentLine() + 1, token.getLexeme());
         }
     }
 }
