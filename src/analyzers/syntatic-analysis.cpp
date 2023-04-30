@@ -143,8 +143,8 @@ void SyntaticAnalysis::productionD()
             matchToken(TOKEN_ID_COMMA);
             productionC();
         }
-        matchToken(TOKEN_ID_SEMICOLON);
     }
+    matchToken(TOKEN_ID_SEMICOLON);
 }
 
 /**
