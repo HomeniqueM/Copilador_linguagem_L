@@ -50,7 +50,7 @@ FileHandler::FileHandler(std::string path){
 char FileHandler::getNextFileChar(){
     char res;
     //Se solicitado um caractere em uma linha que não existe no arquivo res recebe \0 
-    if(this->line >= this->fileContent.size()){
+    if(this->isEof()){
         res='\0';
     }else{
         //Verifica se foi solicitado um caractere em uma posição não existente da linha
