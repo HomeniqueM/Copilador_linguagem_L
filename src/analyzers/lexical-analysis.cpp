@@ -763,9 +763,6 @@ public:
             result->setTokenID(tokenId);
         }
 
-        std::cout << "Lexeme: " << result->getLexeme() << std::endl;
-
-        std::cout << "TokenId: " << tokenToString(result->getTokenid()) << std::endl;
         return result;
     }
 
