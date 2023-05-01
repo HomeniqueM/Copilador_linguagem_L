@@ -24,7 +24,8 @@ int main(int argc, char const *argv[])
     try
     {
         ArgHandler handler;
-        FileHandler fh(handler.handleArgs(argc, argv));
+        FileHandler fh("/home/homenique/DataCenter/Formação/Faculdade/Ciência_da_computação/8º - Periodo/8º - Compiladores/Projeto Final/Projeto/Copilador_linguagem_L/My_test/exemplo_01.l");
+        //FileHandler fh(handler.handleArgs(argc, argv));
         SymbolTable st = SymbolTable();
         LexerAnalysis la(&fh, &st);
         SyntaticAnalysis sa = SyntaticAnalysis(&la);
