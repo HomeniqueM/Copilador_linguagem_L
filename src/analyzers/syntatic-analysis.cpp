@@ -51,7 +51,7 @@ SyntaticAnalysis::SyntaticAnalysis(LexerAnalysis *la)
 /**
  * @brief: Inicia o Analizador Sintatico.
  * @param Token inicial a ser analisado
-*/
+ */
 
 void SyntaticAnalysis::Start(Token *token)
 {
@@ -70,13 +70,13 @@ void SyntaticAnalysis::setToken(Token *token)
 void SyntaticAnalysis::matchToken(TokenID expectedToken)
 {
     // std::cout << "Token Esperado :" << tokenToString(expectedToken) << expectedToken << std::endl;
-    // std::cout << "Token Encontrado :" << tokenToString(token.getTokenid()) << token.getTokenid() << std::endl;
+    // std::cout << "Token Encontrado :" << tokenToString(token->getTokenid()) << token->getTokenid() << std::endl;
     // Fazer o match
     if (expectedToken == token->getTokenid())
     {
         // Pedir o prx token
         setToken(la->getNextToken());
-        // std::cout << "Proximo Token:" << tokenToString(token.getTokenid()) << token.getTokenid() << std::endl;
+        // std::cout << "Proximo Token:" << tokenToString(token->getTokenid()) << token->getTokenid() << std::endl;
     }
     else
     {
@@ -275,7 +275,8 @@ void SyntaticAnalysis::productionCMD1()
 void SyntaticAnalysis::productionA()
 {
     matchToken(TOKEN_ID_IDENTIFIER);
-    if(token->getTokenid() == TOKEN_ID_OPEN_BRACKET){
+    if (token->getTokenid() == TOKEN_ID_OPEN_BRACKET)
+    {
         matchToken(TOKEN_ID_OPEN_BRACKET);
         if (token->getTokenid() == TOKEN_ID_IDENTIFIER)
         {
@@ -289,7 +290,8 @@ void SyntaticAnalysis::productionA()
         matchToken(TOKEN_ID_CLOSE_BRACKET);
     }
     matchToken(TOKEN_ID_ASSIGNMENT);
-    if(token->getTokenid() == TOKEN_ID_READLN){
+    if (token->getTokenid() == TOKEN_ID_READLN)
+    {
         productionL();
     }
     productionExp();
@@ -355,7 +357,7 @@ void SyntaticAnalysis::productionT1()
     if (token->getTokenid() == TOKEN_ID_BEGIN)
     {
         matchToken(TOKEN_ID_BEGIN);
-        while (token->getTokenid() == TOKEN_ID_END)
+        while (token->getTokenid() != TOKEN_ID_END)
         {
             productionCMD();
         }
@@ -538,7 +540,22 @@ void SyntaticAnalysis::productionExp5()
     if (token->getTokenid() == TOKEN_ID_CONSTANT)
         matchToken(TOKEN_ID_CONSTANT);
     else if (token->getTokenid() == TOKEN_ID_IDENTIFIER)
+    {
         matchToken(TOKEN_ID_IDENTIFIER);
+        if (token->getTokenid() == TOKEN_ID_OPEN_BRACKET)
+        {
+            matchToken(TOKEN_ID_OPEN_BRACKET);
+            if (token->getTokenid() == TOKEN_ID_IDENTIFIER)
+            {
+                matchToken(TOKEN_ID_IDENTIFIER);
+            }
+            else
+            {
+                matchToken(TOKEN_ID_CONSTANT);
+            }
+            matchToken(TOKEN_ID_CLOSE_BRACKET);
+        }
+    }
     else
     {
         matchToken(TOKEN_ID_OPEN_PARANTHESES);
