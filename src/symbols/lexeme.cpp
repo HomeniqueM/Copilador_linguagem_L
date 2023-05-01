@@ -50,6 +50,7 @@ const std::vector<char> LEXEME_VALID_SYMBOLS{
     '?',
     '>',
     '<',
+    '*',
     '=',
     '\n',
     '\t',
