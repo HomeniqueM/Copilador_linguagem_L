@@ -11,10 +11,10 @@ private:
     std::string _lexeme;
     TokenID _id;
     TokenType _tokenType;
-    int _tokenSize;
+    size_t _tokenSize;
 
 public:
-    Token(TokenID id = TOKEN_ID_NULL, TokenType tokenType = TOKEN_TYPE_UNDEFINED, std::string lexeme = "", int tokenSize = 0)
+    Token(TokenID id = TOKEN_ID_NULL, TokenType tokenType = TOKEN_TYPE_UNDEFINED, std::string lexeme = "", size_t tokenSize = 0)
     {
         this->_id = id;
         this->_tokenType = tokenType;
@@ -25,11 +25,12 @@ public:
     void setTokenID(TokenID id);
     void setLexeme(std::string lexeme);
     void setTokenType(TokenType tokenType);
-    void setTokenSize(int tokenSize);
+    void setTokenSize(size_t tokenSize);
 
     TokenID getTokenid();
     TokenType getTokenType();
     std::string getLexeme();
+    size_t getTokeSize();
 };
 
 void Token::setTokenID(TokenID id)
@@ -46,6 +47,10 @@ void Token::setTokenType(TokenType tokenType)
 {
     this->_tokenType = tokenType;
 }
+void Token::setTokenSize(size_t tokenSize)
+{
+    this->_tokenSize = tokenSize;
+}
 
 TokenID Token::getTokenid()
 {
@@ -61,5 +66,10 @@ std::string Token::getLexeme()
 {
     return _lexeme;
 }
+size_t Token::getTokeSize()
+{
+    return _tokenSize;
+}
 
 #endif
+
