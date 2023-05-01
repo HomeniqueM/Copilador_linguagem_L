@@ -71,13 +71,13 @@ private:
         case ErrorCode::OVERFLOW_ACCURACY_LENGTH:
             oss << "Valor de acuracia maximo excedido";
         case ErrorCode::OVERFLOW_SIZE_REAL:
-            oss << "Valor maximo excedido";
+            oss << "Valor maximo excedido, valor maximo suportado "<<CONSTANTS_REAL_MAX_VALUE;
         case ErrorCode::UNDERFLOW_SIZE_REAL:
-            oss << "Valor minimo nao atingido";
+            oss << "Valor minimo nao suportado "<<CONSTANTS_REAL_MIN_VALUE;
         case ErrorCode::OVERFLOW_SIZE_INTEGER:
-            oss << "Valor maximo excedido";
+            oss << "Valor maximo excedido, valor maximo suportado "<<CONSTANTS_INTEGER_MAX_VALUE;
         case ErrorCode::UNDERFLOW_SIZE_INTEGER:
-            oss << "Valor minimo nao atingido";
+            oss << "Valor minimo nao suportado "<<CONSTANTS_INTEGER_MIN_VALUE;
         case ErrorCode::FILE_OPENNING_FAIL:
             oss << "Falha ao abrir arquivo";
         default:
