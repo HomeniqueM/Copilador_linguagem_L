@@ -1,3 +1,10 @@
+/**
+ * Pontificia Universidade Católica de Minas Gerais
+ * ICEI - Departamento de Ciência da Computação
+ * Disciplina de Compiladores
+ * Prof Alexei Machado
+ * @authors Guilherme Côsso Lima Pimenta, Homenique Vieira Martins, Iago Augusto Coelho Morgado
+*/
 #ifndef SYMBOLS_SYMBOL_TABLE
 #define SYMBOLS_SYMBOL_TABLE
 #include <iostream>
@@ -89,16 +96,3 @@ bool SymbolTable::isItAValidChar(char c)
 }
 
 #endif
-
-/*int main(){
-	SymbolTable symtable;
-	std::cout << symtable.Find("integer")<<"\n";
-	Token symbl;
-	TokenID id;
-	std::string s = "integer";
-	id = stringToTokenId(s);
-	symbl.setTokenID(id);
-	symbl.setLexeme(s);
-	std::cout << symtable.Insert(symbl);
-	return 0;
-}*/
