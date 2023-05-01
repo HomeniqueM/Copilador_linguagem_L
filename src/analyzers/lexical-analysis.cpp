@@ -16,6 +16,7 @@
 #include "../utils/constants.cpp"
 #include "../utils/file.cpp"
 
+int currentLine;
 /** =========================================================
  *
  * @brief Pacote de retorno para cada estado
@@ -189,7 +190,7 @@ class State15 : public State
         else
         {
             std::string msg = "Erra esperando um valor numerico porém foi lido " + c;
-            throw LException(ErrorCode::UNEXPECTED_CHARACTER, __LINE__, msg);
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine , msg);
         }
 
         return package;
@@ -214,7 +215,7 @@ class State14 : public State
         else
         {
             std::string msg = "Erra esperando um valor numerico ou simbolo[+ ou -] porém foi lido " + c;
-            throw LException(ErrorCode::UNEXPECTED_CHARACTER, __LINE__, msg);
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine , msg);
         }
 
         return package;
@@ -260,7 +261,7 @@ class State12 : public State
         else
         {
             std::string msg = "Erra esperando um valor numerico porém foi lido " + c;
-            throw LException(ErrorCode::UNEXPECTED_CHARACTER, 0, msg);
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine , msg);
         }
 
         return package;
@@ -306,7 +307,7 @@ class State09 : public State
         else
         {
             std::string msg = "Erra esperando a letra a h porém o que foi lido foi " + c;
-            throw LException(ErrorCode::UNEXPECTED_CHARACTER, 0, msg);
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER,currentLine , msg);
         }
 
         return package;
@@ -491,7 +492,7 @@ public:
         else
         {
             std::string msg = ": Erra esperado \' porém veio " + c;
-            throw LException(ErrorCode::UNEXPECTED_CHARACTER, 0, msg);
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine , msg);
         }
         return package;
     }
@@ -665,7 +666,7 @@ StatePackage StartState::handle(char c)
         // Tratativa a ser feita
 
         std::string str(1, c);
-        throw LException(ErrorCode::UNEXPECTED_CHARACTER, __LINE__, str);
+        throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine , str);
     }
     return package;
 }
@@ -733,6 +734,12 @@ public:
             }
             else if (tokentype == TOKEN_TYPE_INTEGER)
             {
+                int lexemeInt = std::stoi(lexeme);
+                if(lexemeInt > CONSTANTS_INTEGER_MAX_VALUE){
+                    throw LException(ErrorCode::OVERFLOW_SIZE_INTEGER,currentLine,"");
+                }else if(lexemeInt < CONSTANTS_INTEGER_MIN_VALUE){
+                    throw LException(ErrorCode::UNDERFLOW_SIZE_INTEGER,currentLine,"");
+                }
             }
 
             token.setLexeme(lexeme);
@@ -847,6 +854,7 @@ public:
      */
     char getNextChar()
     {
+        currentLine = getCurrentLine();
         return fh->getNextFileChar();
     }
     int getCurrentLine()
