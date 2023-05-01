@@ -15,8 +15,8 @@ class SyntaticAnalysis
 {
 private:
     LexerAnalysis *la;
-    Token token;
-    void setToken(Token token);
+    Token *token;
+    void setToken(Token *token);
     void matchToken(TokenID expectedToken);
     void productionS();
     void productionD();
@@ -41,7 +41,7 @@ private:
 
 public:
     SyntaticAnalysis(LexerAnalysis *la);
-    void Start(Token token);
+    void Start(Token *token);
 };
 
 SyntaticAnalysis::SyntaticAnalysis(LexerAnalysis *la)
@@ -52,13 +52,14 @@ SyntaticAnalysis::SyntaticAnalysis(LexerAnalysis *la)
  * @brief: Inicia o Analizador Sintatico.
  * @param Token inicial a ser analisado
 */
-void SyntaticAnalysis::Start(Token token)
+
+void SyntaticAnalysis::Start(Token *token)
 {
     setToken(token);
     productionS();
 }
 
-void SyntaticAnalysis::setToken(Token token)
+void SyntaticAnalysis::setToken(Token *token)
 {
     this->token = token;
 }
@@ -71,7 +72,7 @@ void SyntaticAnalysis::matchToken(TokenID expectedToken)
     // std::cout << "Token Esperado :" << tokenToString(expectedToken) << expectedToken << std::endl;
     // std::cout << "Token Encontrado :" << tokenToString(token.getTokenid()) << token.getTokenid() << std::endl;
     // Fazer o match
-    if (expectedToken == token.getTokenid())
+    if (expectedToken == token->getTokenid())
     {
         // Pedir o prx token
         setToken(la->getNextToken());
@@ -79,7 +80,7 @@ void SyntaticAnalysis::matchToken(TokenID expectedToken)
     }
     else
     {
-        if (token.getTokenid() == TOKEN_ID_EOF)
+        if (token->getTokenid() == TOKEN_ID_EOF)
         {
             throw LException(ErrorCode::UNEXPECTED_TOKEN_EOF, la->getCurrentLine() + 1, "");
         }
@@ -96,15 +97,15 @@ void SyntaticAnalysis::matchToken(TokenID expectedToken)
  */
 void SyntaticAnalysis::productionS()
 {
-    while (token.getTokenid() != TOKEN_ID_EOF)
+    while (token->getTokenid() != TOKEN_ID_EOF)
     {
         bool declaration =
-            token.getTokenid() == TOKEN_ID_FINAL ||
-            token.getTokenid() == TOKEN_ID_INTEGER ||
-            token.getTokenid() == TOKEN_ID_CHAR ||
-            token.getTokenid() == TOKEN_ID_REAL ||
-            token.getTokenid() == TOKEN_ID_STRING ||
-            token.getTokenid() == TOKEN_ID_BOOLEAN;
+            token->getTokenid() == TOKEN_ID_FINAL ||
+            token->getTokenid() == TOKEN_ID_INTEGER ||
+            token->getTokenid() == TOKEN_ID_CHAR ||
+            token->getTokenid() == TOKEN_ID_REAL ||
+            token->getTokenid() == TOKEN_ID_STRING ||
+            token->getTokenid() == TOKEN_ID_BOOLEAN;
 
         if (declaration)
         {
@@ -123,12 +124,12 @@ void SyntaticAnalysis::productionS()
  */
 void SyntaticAnalysis::productionD()
 {
-    if (token.getTokenid() == TOKEN_ID_FINAL)
+    if (token->getTokenid() == TOKEN_ID_FINAL)
     {
         matchToken(TOKEN_ID_FINAL);
         matchToken(TOKEN_ID_IDENTIFIER);
         matchToken(TOKEN_ID_ASSIGNMENT);
-        if (token.getTokenid() == TOKEN_ID_SUBTRACTION)
+        if (token->getTokenid() == TOKEN_ID_SUBTRACTION)
         {
             matchToken(TOKEN_ID_SUBTRACTION);
         }
@@ -138,7 +139,7 @@ void SyntaticAnalysis::productionD()
     {
         productionD1();
         productionC();
-        while (token.getTokenid() == TOKEN_ID_COMMA)
+        while (token->getTokenid() == TOKEN_ID_COMMA)
         {
             matchToken(TOKEN_ID_COMMA);
             productionC();
@@ -154,7 +155,7 @@ void SyntaticAnalysis::productionD()
 void SyntaticAnalysis::productionD1()
 {
 
-    switch (token.getTokenid())
+    switch (token->getTokenid())
     {
     case TOKEN_ID_CHAR:
         matchToken(TOKEN_ID_CHAR);
@@ -183,10 +184,10 @@ void SyntaticAnalysis::productionD1()
 void SyntaticAnalysis::productionC()
 {
     matchToken(TOKEN_ID_IDENTIFIER);
-    if (token.getTokenid() == TOKEN_ID_ASSIGNMENT)
+    if (token->getTokenid() == TOKEN_ID_ASSIGNMENT)
     {
         matchToken(TOKEN_ID_ASSIGNMENT);
-        if (token.getTokenid() == TOKEN_ID_SUBTRACTION)
+        if (token->getTokenid() == TOKEN_ID_SUBTRACTION)
         {
             matchToken(TOKEN_ID_SUBTRACTION);
         }
@@ -195,7 +196,7 @@ void SyntaticAnalysis::productionC()
     else if (token.getTokenid() == TOKEN_ID_OPEN_BRACKET)
     {
         matchToken(TOKEN_ID_OPEN_BRACKET);
-        if (token.getTokenid() == TOKEN_ID_IDENTIFIER)
+        if (token->getTokenid() == TOKEN_ID_IDENTIFIER)
         {
             matchToken(TOKEN_ID_IDENTIFIER);
         }
@@ -214,20 +215,20 @@ void SyntaticAnalysis::productionC()
  */
 void SyntaticAnalysis::productionCMD()
 {
-    if (token.getTokenid() == TOKEN_ID_IDENTIFIER)
+    if (token->getTokenid() == TOKEN_ID_IDENTIFIER)
     {
         productionA();
         matchToken(TOKEN_ID_SEMICOLON);
     }
-    else if (token.getTokenid() == TOKEN_ID_FOR)
+    else if (token->getTokenid() == TOKEN_ID_FOR)
     {
         productionR();
     }
-    else if (token.getTokenid() == TOKEN_ID_IF)
+    else if (token->getTokenid() == TOKEN_ID_IF)
     {
         productionT();
     }
-    else if (token.getTokenid() == TOKEN_ID_READLN)
+    else if (token->getTokenid() == TOKEN_ID_READLN)
     {
         productionL();
         matchToken(TOKEN_ID_SEMICOLON);
@@ -245,19 +246,19 @@ void SyntaticAnalysis::productionCMD()
  */
 void SyntaticAnalysis::productionCMD1()
 {
-    if (token.getTokenid() == TOKEN_ID_IDENTIFIER)
+    if (token->getTokenid() == TOKEN_ID_IDENTIFIER)
     {
         productionA();
     }
-    else if (token.getTokenid() == TOKEN_ID_FOR)
+    else if (token->getTokenid() == TOKEN_ID_FOR)
     {
         productionR();
     }
-    else if (token.getTokenid() == TOKEN_ID_IF)
+    else if (token->getTokenid() == TOKEN_ID_IF)
     {
         productionT();
     }
-    else if (token.getTokenid() == TOKEN_ID_READLN)
+    else if (token->getTokenid() == TOKEN_ID_READLN)
     {
         productionL();
     }
@@ -288,8 +289,7 @@ void SyntaticAnalysis::productionA()
         matchToken(TOKEN_ID_CLOSE_BRACKET);
     }
     matchToken(TOKEN_ID_ASSIGNMENT);
-    if (token.getTokenid() == TOKEN_ID_READLN)
-    {
+    if(token->getTokenid() == TOKEN_ID_READLN){
         productionL();
     }
     productionExp();
@@ -321,7 +321,7 @@ void SyntaticAnalysis::productionR()
 void SyntaticAnalysis::productionR1()
 {
     productionCMD1();
-    while (token.getTokenid() == TOKEN_ID_COMMA)
+    while (token->getTokenid() == TOKEN_ID_COMMA)
     {
         matchToken(TOKEN_ID_COMMA);
         productionCMD1();
@@ -339,7 +339,7 @@ void SyntaticAnalysis::productionT()
     productionExp();
     matchToken(TOKEN_ID_CLOSE_PARANTHESES);
     productionT1();
-    if (token.getTokenid() == TOKEN_ID_ELSE)
+    if (token->getTokenid() == TOKEN_ID_ELSE)
     {
         matchToken(TOKEN_ID_ELSE);
         productionT1();
@@ -352,10 +352,10 @@ void SyntaticAnalysis::productionT()
  */
 void SyntaticAnalysis::productionT1()
 {
-    if (token.getTokenid() == TOKEN_ID_BEGIN)
+    if (token->getTokenid() == TOKEN_ID_BEGIN)
     {
         matchToken(TOKEN_ID_BEGIN);
-        while (token.getTokenid() == TOKEN_ID_END)
+        while (token->getTokenid() == TOKEN_ID_END)
         {
             productionCMD();
         }
@@ -385,7 +385,7 @@ void SyntaticAnalysis::productionL()
  */
 void SyntaticAnalysis::productionE()
 {
-    if (token.getTokenid() == TOKEN_ID_WRITE)
+    if (token->getTokenid() == TOKEN_ID_WRITE)
     {
         matchToken(TOKEN_ID_WRITE);
     }
@@ -405,7 +405,7 @@ void SyntaticAnalysis::productionE()
 void SyntaticAnalysis::productionE1()
 {
     productionExp();
-    while (token.getTokenid() == TOKEN_ID_COMMA)
+    while (token->getTokenid() == TOKEN_ID_COMMA)
     {
         matchToken(TOKEN_ID_COMMA);
         productionExp();
@@ -419,21 +419,21 @@ void SyntaticAnalysis::productionE1()
 void SyntaticAnalysis::productionExp()
 {
     productionExp1();
-    while (token.getTokenid() == TOKEN_ID_ENQUALS || token.getTokenid() == TOKEN_ID_GREATER_THEN || token.getTokenid() == TOKEN_ID_GREATER_EQUAL_TO || token.getTokenid() == TOKEN_ID_LESS_THAN || token.getTokenid() == TOKEN_ID_LESS_EQUAL_TO)
+    while (token->getTokenid() == TOKEN_ID_ENQUALS || token->getTokenid() == TOKEN_ID_GREATER_THEN || token->getTokenid() == TOKEN_ID_GREATER_EQUAL_TO || token->getTokenid() == TOKEN_ID_LESS_THAN || token->getTokenid() == TOKEN_ID_LESS_EQUAL_TO)
     {
-        if (token.getTokenid() == TOKEN_ID_ENQUALS)
+        if (token->getTokenid() == TOKEN_ID_ENQUALS)
         {
             matchToken(TOKEN_ID_ENQUALS);
         }
-        else if (token.getTokenid() == TOKEN_ID_GREATER_THEN)
+        else if (token->getTokenid() == TOKEN_ID_GREATER_THEN)
         {
             matchToken(TOKEN_ID_GREATER_THEN);
         }
-        else if (token.getTokenid() == TOKEN_ID_GREATER_EQUAL_TO)
+        else if (token->getTokenid() == TOKEN_ID_GREATER_EQUAL_TO)
         {
             matchToken(TOKEN_ID_GREATER_EQUAL_TO);
         }
-        else if (token.getTokenid() == TOKEN_ID_LESS_THAN)
+        else if (token->getTokenid() == TOKEN_ID_LESS_THAN)
         {
             matchToken(TOKEN_ID_LESS_THAN);
         }
@@ -451,17 +451,17 @@ void SyntaticAnalysis::productionExp()
  */
 void SyntaticAnalysis::productionExp1()
 {
-    if (token.getTokenid() == TOKEN_ID_SUBTRACTION)
+    if (token->getTokenid() == TOKEN_ID_SUBTRACTION)
     {
         matchToken(TOKEN_ID_SUBTRACTION);
     }
     productionExp2();
 
-    while (token.getTokenid() == TOKEN_ID_ADDITION || token.getTokenid() == TOKEN_ID_SUBTRACTION || token.getTokenid() == TOKEN_ID_OR)
+    while (token->getTokenid() == TOKEN_ID_ADDITION || token->getTokenid() == TOKEN_ID_SUBTRACTION || token->getTokenid() == TOKEN_ID_OR)
     {
-        if (token.getTokenid() == TOKEN_ID_ADDITION)
+        if (token->getTokenid() == TOKEN_ID_ADDITION)
             matchToken(TOKEN_ID_ADDITION);
-        else if (token.getTokenid() == TOKEN_ID_SUBTRACTION)
+        else if (token->getTokenid() == TOKEN_ID_SUBTRACTION)
             matchToken(TOKEN_ID_SUBTRACTION);
         else
             matchToken(TOKEN_ID_OR);
@@ -476,13 +476,13 @@ void SyntaticAnalysis::productionExp1()
 void SyntaticAnalysis::productionExp2()
 {
     productionExp3();
-    while (token.getTokenid() == TOKEN_ID_MULTIPLICATION || token.getTokenid() == TOKEN_ID_DIVISION || token.getTokenid() == TOKEN_ID_MODULO || token.getTokenid() == TOKEN_ID_AND)
+    while (token->getTokenid() == TOKEN_ID_MULTIPLICATION || token->getTokenid() == TOKEN_ID_DIVISION || token->getTokenid() == TOKEN_ID_MODULO || token->getTokenid() == TOKEN_ID_AND)
     {
-        if (token.getTokenid() == TOKEN_ID_MULTIPLICATION)
+        if (token->getTokenid() == TOKEN_ID_MULTIPLICATION)
             matchToken(TOKEN_ID_MULTIPLICATION);
-        else if (token.getTokenid() == TOKEN_ID_DIVISION)
+        else if (token->getTokenid() == TOKEN_ID_DIVISION)
             matchToken(TOKEN_ID_DIVISION);
-        else if (token.getTokenid() == TOKEN_ID_MODULO)
+        else if (token->getTokenid() == TOKEN_ID_MODULO)
             matchToken(TOKEN_ID_MODULO);
         else
             matchToken(TOKEN_ID_AND);
@@ -496,7 +496,7 @@ void SyntaticAnalysis::productionExp2()
  */
 void SyntaticAnalysis::productionExp3()
 {
-    if (token.getTokenid() == TOKEN_ID_NOT)
+    if (token->getTokenid() == TOKEN_ID_NOT)
     {
         matchToken(TOKEN_ID_NOT);
     }
@@ -509,13 +509,13 @@ void SyntaticAnalysis::productionExp3()
  */
 void SyntaticAnalysis::productionExp4()
 {
-    if (token.getTokenid() != TOKEN_ID_INTEGER && token.getTokenid() != TOKEN_ID_REAL)
+    if (token->getTokenid() != TOKEN_ID_INTEGER && token->getTokenid() != TOKEN_ID_REAL)
     {
         productionExp5();
     }
     else
     {
-        if (token.getTokenid() == TOKEN_ID_INTEGER)
+        if (token->getTokenid() == TOKEN_ID_INTEGER)
         {
             matchToken(TOKEN_ID_INTEGER);
         }
@@ -535,9 +535,9 @@ void SyntaticAnalysis::productionExp4()
  */
 void SyntaticAnalysis::productionExp5()
 {
-    if (token.getTokenid() == TOKEN_ID_CONSTANT)
+    if (token->getTokenid() == TOKEN_ID_CONSTANT)
         matchToken(TOKEN_ID_CONSTANT);
-    else if (token.getTokenid() == TOKEN_ID_IDENTIFIER)
+    else if (token->getTokenid() == TOKEN_ID_IDENTIFIER)
         matchToken(TOKEN_ID_IDENTIFIER);
     else
     {
