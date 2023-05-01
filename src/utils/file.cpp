@@ -1,9 +1,17 @@
+/**
+ * Pontificia Universidade Católica de Minas Gerais
+ * ICEI - Departamento de Ciência da Computação
+ * Disciplina de Compiladores
+ * Prof Alexei Machado
+ * @authors Guilherme Côsso Lima Pimenta, Homenique Vieira Martins, Iago Augusto Coelho Morgado
+*/
 #ifndef UTILS_FILE
 #define UTILS_FILE
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <map>
+#include "../error/l_exception.cpp"
 /**
  * @brief Classe do utilitario de leitura do arquivo do programa fonte a ser compilado
 */
@@ -78,7 +86,7 @@ char FileHandler::getNextFileChar(){
  * @brief retorna a linha atual do arquivo
 */
 int FileHandler::getFileLine(){
-    return this->line;
+    return this->line+1;
 }
 /**
  * @brief retorna a posição atual da linha do arquivo
@@ -99,10 +107,3 @@ void FileHandler:: setPrevChar(){
     this->line_pos--;
 }
 #endif
-/*int main(){
-    FileHandler fh("C:/Users/iagom/Downloads/exemplo.l");
-    for(char r=fh.getNextFileChar();!fh.isEof();r=fh.getNextFileChar()){
-        std::cout << r;
-    }
-    return 0;
-}*/
