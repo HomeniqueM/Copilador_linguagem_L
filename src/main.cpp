@@ -1,4 +1,10 @@
-
+/**
+ * Pontificia Universidade Católica de Minas Gerais
+ * ICEI - Departamento de Ciência da Computação
+ * Disciplina de Compiladores
+ * Prof Alexei Machado
+ * @authors Guilherme Côsso Lima Pimenta, Homenique Vieira Martins, Iago Augusto Coelho Morgado
+*/
 #include <iostream>
 #include <string>
 #include <vector>
@@ -29,7 +35,7 @@ int main(int argc, char const *argv[])
         LexerAnalysis la(&fh, &st);
         SyntaticAnalysis sa = SyntaticAnalysis(&la);
         sa.Start(la.getNextToken());
-        std::cout << "[" << la.getCurrentLine() << "] Numero de Linhas Compiladas.";
+        std::cout << "[" << la.getCurrentLine() << "] Linhas Compiladas.";
     }
     catch (const LException &e)
     {

@@ -1,3 +1,11 @@
+/**
+ * Pontificia Universidade Católica de Minas Gerais
+ * ICEI - Departamento de Ciência da Computação
+ * Disciplina de Compiladores
+ * Prof Alexei Machado
+ * @authors Guilherme Côsso Lima Pimenta, Homenique Vieira Martins, Iago Augusto Coelho Morgado
+*/
+
 #ifndef ANALYZERS_LEXICAL_ANALYSIS
 #define ANALYZERS_LEXICAL_ANALYSIS
 
@@ -193,7 +201,7 @@ class State15 : public State
         else
         {
             std::string msg = "Erra esperando um valor numerico porém foi lido " + c;
-            throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine , msg);
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine, msg);
         }
 
         return package;
@@ -218,7 +226,7 @@ class State14 : public State
         else
         {
             std::string msg = "Erra esperando um valor numerico ou simbolo[+ ou -] porém foi lido " + c;
-            throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine , msg);
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine, msg);
         }
 
         return package;
@@ -264,7 +272,7 @@ class State12 : public State
         else
         {
             std::string msg = "Erra esperando um valor numerico porém foi lido " + c;
-            throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine , msg);
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine, msg);
         }
 
         return package;
@@ -310,7 +318,7 @@ class State09 : public State
         else
         {
             std::string msg = "Erra esperando a letra a h porém o que foi lido foi " + c;
-            throw LException(ErrorCode::UNEXPECTED_CHARACTER,currentLine , msg);
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine, msg);
         }
 
         return package;
@@ -509,7 +517,7 @@ public:
         else
         {
             std::string msg = ": Erra esperado \' porém veio " + c;
-            throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine , msg);
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine, msg);
         }
         return package;
     }
@@ -525,9 +533,14 @@ public:
         StatePackage package;
         if (c == '"')
         {
-            package.identifier = +c;
+            // package.identifier = +c;
             this->completed = true;
         }
+        else if (c == LEXEME_BREAK_LINE)
+        {
+            throw LException(ErrorCode::STRING_BREAK_LINE,currentLine,"");
+        }
+
         else
         {
             package.identifier = +c;
@@ -535,7 +548,6 @@ public:
 
             nextState = std::make_shared<State21>();
         }
-
         return package;
     }
 };
@@ -683,7 +695,7 @@ StatePackage StartState::handle(char c)
         // Tratativa a ser feita
 
         std::string str(1, c);
-        throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine , str);
+        throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine, str);
     }
     return package;
 }
@@ -698,18 +710,6 @@ public:
     Token *makeAToken(SymbolTable *st, std::string lexeme, TokenType tokentype, TokenID tokenId, int currentLine)
     {
 
-        // Token t = Token(lexema);
-        // No codigo todo só é inserido id
-
-        // adicionar o token
-
-        // Tabela de simbolo relaciona o Token
-        // tabela_simbolos.tratar_token(t);
-
-        // Token class
-
-        // verificar se e palavra reservada
-        // se nao for nenhum dos dois entao ele eh identificador
         Token token = Token();
         Token *result = nullptr;
 
@@ -724,7 +724,8 @@ public:
             token.setLexeme(lexeme);
             token.setTokenType(tokentype);
             token.setTokenID(tokenId);
-
+            // verificar se e palavra reservada
+            // se nao for nenhum dos dois entao ele eh identificador
             // Aqui deve ser inserio o Token de identifier
             result = st->Insert(token);
         }
@@ -751,13 +752,17 @@ public:
             else if (tokentype == TOKEN_TYPE_INTEGER)
             {
                 int lexemeInt = std::stoi(lexeme);
-                if(lexemeInt > CONSTANTS_INTEGER_MAX_VALUE){
-                    throw LException(ErrorCode::OVERFLOW_SIZE_INTEGER,currentLine,"");
-                }else if(lexemeInt < CONSTANTS_INTEGER_MIN_VALUE){
-                    throw LException(ErrorCode::UNDERFLOW_SIZE_INTEGER,currentLine,"");
+                if (lexemeInt > CONSTANTS_INTEGER_MAX_VALUE)
+                {
+                    throw LException(ErrorCode::OVERFLOW_SIZE_INTEGER, currentLine, "");
+                }
+                else if (lexemeInt < CONSTANTS_INTEGER_MIN_VALUE)
+                {
+                    throw LException(ErrorCode::UNDERFLOW_SIZE_INTEGER, currentLine, "");
                 }
             }
             result = new Token();
+            result->setTokenSize(getTokenSize(tokentype, lexeme));
             result->setLexeme(lexeme);
             result->setTokenType(tokentype);
             result->setTokenID(tokenId);
@@ -789,6 +794,33 @@ private:
             return "";
         }
         return str.substr(delimiterIndex + 1);
+    }
+
+    size_t getTokenSize(TokenType tokenType, std::string lexeme)
+    {
+        size_t result = 0;
+        switch (tokenType)
+        {
+        case TOKEN_TYPE_BOOLEAN:
+            result = CONSTANTS_BOOLEAN_SIZE;
+            break;
+        case TOKEN_TYPE_CHAR:
+            result = CONSTANTS_CHAR_SIZE;
+            break;
+        case TOKEN_TYPE_INTEGER:
+            result = CONSTANTS_INTEGER_SIZE;
+            break;
+        case TOKEN_TYPE_REAL:
+            result = CONSTANTS_REAL_SIZE;
+            break;
+        case TOKEN_TYPE_STRING:
+            result = lexeme.size() * CONSTANTS_CHAR_SIZE;
+            break;
+        default:
+            result = 0;
+            break;
+        }
+        return result;
     }
 };
 

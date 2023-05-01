@@ -1,3 +1,10 @@
+/**
+ * Pontificia Universidade Católica de Minas Gerais
+ * ICEI - Departamento de Ciência da Computação
+ * Disciplina de Compiladores
+ * Prof Alexei Machado
+ * @authors Guilherme Côsso Lima Pimenta, Homenique Vieira Martins, Iago Augusto Coelho Morgado
+*/
 #ifndef SYMBOLS_LEXEME
 #define SYMBOLS_LEXEME
 
@@ -9,6 +16,7 @@
  * @brief todos os simbolos unicos validos dentro do analisador lexico
  */
 const char LEXEME_UNDERSCORE = '_';
+const char LEXEME_BREAK_LINE = '\n';
 const char LEXEME_EOF = '\0';
 
 
@@ -50,6 +58,7 @@ const std::vector<char> LEXEME_VALID_SYMBOLS{
     '?',
     '>',
     '<',
+    '*',
     '=',
     '\n',
     '\t',

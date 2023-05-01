@@ -1,3 +1,10 @@
+/**
+ * Pontificia Universidade Católica de Minas Gerais
+ * ICEI - Departamento de Ciência da Computação
+ * Disciplina de Compiladores
+ * Prof Alexei Machado
+ * @authors Guilherme Côsso Lima Pimenta, Homenique Vieira Martins, Iago Augusto Coelho Morgado
+*/
 #ifndef ERROR_ERROR_CODE
 #define ERROR_ERROR_CODE
 #include <string>
@@ -12,6 +19,7 @@ enum class ErrorCode
     UNEXPECTED_TOKEN_EOF,
     UNEXPECTED_END_OFFILE,
     NO_FILE_PATH_FOUND,
+    STRING_BREAK_LINE,
     OVERFLOW_SIZE_INTEGER,
     OVERFLOW_SIZE_REAL,
     UNDERFLOW_SIZE_INTEGER,
@@ -47,14 +55,14 @@ private:
     {
         std::ostringstream oss;
         oss << "Error: ";
-        oss << " [" << line_ << "] ";
+        oss << line_ << ": ";
         switch (code_)
         {
         case ErrorCode::INVALIDCHARACTER:
-            oss << "character não é valido";
+            oss << "character invalido";
             break;
         case ErrorCode::UNEXPECTED_CHARACTER:
-            oss << "character não era esperado ";
+            oss << "character nao esperado ";
             break;
         case ErrorCode::UNEXPECTED_TOKEN:
             oss << "token nao esperado";
@@ -66,27 +74,36 @@ private:
             oss << "caminho do arquivo fonte nao encontrado";
             break;
         case ErrorCode::ENCEEDED_LIMIT_IDENTIFIER_MAX_SIZE:
-            oss << "Identificadores podem somente possui " << CONSTANTS_IDENTIFIER_MAX_SIZE << " caracteres";
+            oss << "identificadores podem somente possui " << CONSTANTS_IDENTIFIER_MAX_SIZE << " caracteres";
             break;
         case ErrorCode::OVERFLOW_ACCURACY_LENGTH:
             oss << "Valor de acuracia maximo excedido";
+            break;
         case ErrorCode::OVERFLOW_SIZE_REAL:
             oss << "Valor maximo excedido, valor maximo suportado "<<CONSTANTS_REAL_MAX_VALUE;
+            break;
         case ErrorCode::UNDERFLOW_SIZE_REAL:
             oss << "Valor minimo nao suportado "<<CONSTANTS_REAL_MIN_VALUE;
+            break;
         case ErrorCode::OVERFLOW_SIZE_INTEGER:
             oss << "Valor maximo excedido, valor maximo suportado "<<CONSTANTS_INTEGER_MAX_VALUE;
+            break;
         case ErrorCode::UNDERFLOW_SIZE_INTEGER:
             oss << "Valor minimo nao suportado "<<CONSTANTS_INTEGER_MIN_VALUE;
+            break;
         case ErrorCode::FILE_OPENNING_FAIL:
             oss << "Falha ao abrir arquivo";
+            break;
+        case ErrorCode::STRING_BREAK_LINE:
+            oss << "String não pode possuir quebra de linhas";
+            break;
         default:
             oss << "Unknown error";
             break;
         }
         if (!mOptional_.empty())
         {
-            oss << " - " << mOptional_;
+            oss << " : " << mOptional_;
         }
         return oss.str();
     }
