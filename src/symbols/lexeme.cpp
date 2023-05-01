@@ -9,6 +9,7 @@
  * @brief todos os simbolos unicos validos dentro do analisador lexico
  */
 const char LEXEME_UNDERSCORE = '_';
+const char LEXEME_BREAK_LINE = '\n';
 const char LEXEME_EOF = '\0';
 
 

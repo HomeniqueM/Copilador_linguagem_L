@@ -525,9 +525,14 @@ public:
         StatePackage package;
         if (c == '"')
         {
-            package.identifier = +c;
+            // package.identifier = +c;
             this->completed = true;
         }
+        else if (c == LEXEME_BREAK_LINE)
+        {
+            throw LException(ErrorCode::STRING_BREAK_LINE,currentLine,"");
+        }
+
         else
         {
             package.identifier = +c;
@@ -535,7 +540,6 @@ public:
 
             nextState = std::make_shared<State21>();
         }
-
         return package;
     }
 };
