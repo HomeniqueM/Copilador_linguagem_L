@@ -72,7 +72,7 @@ private:
             oss << "Valor de acuracia maximo excedido";
         case ErrorCode::OVERFLOW_SIZE_REAL:
             oss << "Valor maximo excedido";
-        case ErrorCode::UNDERFLOW_SIZE_INTEGER:
+        case ErrorCode::UNDERFLOW_SIZE_REAL:
             oss << "Valor minimo nao atingido";
         case ErrorCode::OVERFLOW_SIZE_INTEGER:
             oss << "Valor maximo excedido";
