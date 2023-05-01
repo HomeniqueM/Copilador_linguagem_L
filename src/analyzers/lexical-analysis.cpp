@@ -138,13 +138,15 @@ class State05 : public State
         }
         else if (isalpha(c) || isdigit(c) || c == '_')
         {
-            package.tokenType = TOKEN_TYPE_STRING;
-            package.tokenId = TOKEN_ID_CONSTANT;
+            package.tokenType = TOKEN_TYPE_UNDEFINED;
+            package.tokenId = TOKEN_ID_IDENTIFIER;
             package.identifier = +c;
             nextState = std::make_shared<State03>();
         }
         else
         {
+            package.tokenType = TOKEN_TYPE_UNDEFINED;
+            package.tokenId = TOKEN_ID_IDENTIFIER;
             package.returnChar = true;
             this->completed = true;
         }
@@ -394,12 +396,14 @@ class State04 : public State
         else if (isalpha(c) || isdigit(c) || c == '_')
         {
 
-            package.tokenId = TOKEN_ID_CONSTANT;
+            package.tokenType = TOKEN_TYPE_UNDEFINED;
+            package.tokenId = TOKEN_ID_IDENTIFIER;
             package.identifier = +c;
             nextState = std::make_shared<State03>();
         }
         else
         {
+            package.tokenType = TOKEN_TYPE_UNDEFINED;
             package.tokenId = TOKEN_ID_IDENTIFIER;
 
             package.returnChar = true;
@@ -423,6 +427,10 @@ public:
         {
             package.tokenId = TOKEN_ID_ENQUALS;
             package.identifier = +c;
+        }
+        else
+        {
+            package.returnChar = true;
         }
 
         this->completed = true;
@@ -450,6 +458,10 @@ public:
             package.tokenId = TOKEN_ID_DIFFERENT;
             package.identifier = +c;
         }
+        else
+        {
+            package.returnChar = true;
+        }
 
         this->completed = true;
 
@@ -469,6 +481,10 @@ public:
         if (c == '=')
         {
             package.identifier = +c;
+        }
+        else
+        {
+            package.returnChar = true;
         }
         this->completed = true;
 
@@ -634,7 +650,7 @@ StatePackage StartState::handle(char c)
         else
         {
             package.identifier = +c;
-            package.tokenType = TOKEN_TYPE_STRING;
+            package.tokenType = TOKEN_TYPE_UNDEFINED;
             package.tokenId = TOKEN_ID_IDENTIFIER;
             nextState = std::make_shared<State03>();
         }
@@ -678,8 +694,9 @@ StatePackage StartState::handle(char c)
 class State01
 {
 public:
-    Token makeAToken(SymbolTable *st, std::string lexeme, TokenType tokentype, TokenID tokenId, int currentLine)
+    Token *makeAToken(SymbolTable *st, std::string lexeme, TokenType tokentype, TokenID tokenId, int currentLine)
     {
+
         // Token t = Token(lexema);
         // No codigo todo só é inserido id
 
@@ -692,11 +709,9 @@ public:
 
         // verificar se e palavra reservada
         // se nao for nenhum dos dois entao ele eh identificador
-
         Token token = Token();
-        token.setLexeme(lexeme);
+        Token *result = nullptr;
 
-        token.setLexeme(lexeme);
         // verificar se e eh constante
         if (tokenId == TOKEN_ID_IDENTIFIER)
         {
@@ -710,7 +725,7 @@ public:
             token.setTokenID(tokenId);
 
             // Aqui deve ser inserio o Token de identifier
-            token = *st->Insert(token);
+            result = st->Insert(token);
         }
         else if (tokenId == TOKEN_ID_CONSTANT)
         {
@@ -735,19 +750,23 @@ public:
             else if (tokentype == TOKEN_TYPE_INTEGER)
             {
             }
-
-            token.setLexeme(lexeme);
-            token.setTokenType(tokentype);
-            token.setTokenID(tokenId);
+            result = new Token();
+            result->setLexeme(lexeme);
+            result->setTokenType(tokentype);
+            result->setTokenID(tokenId);
         }
         else
         {
-            token.setLexeme(lexeme);
-            token.setTokenType(tokentype);
-            token.setTokenID(tokenId);
+            result = new Token();
+            result->setLexeme(lexeme);
+            result->setTokenType(tokentype);
+            result->setTokenID(tokenId);
         }
 
-        return token;
+        std::cout << "Lexeme: " << result->getLexeme() << std::endl;
+
+        std::cout << "TokenId: " << tokenToString(result->getTokenid()) << std::endl;
+        return result;
     }
 
 private:
@@ -788,7 +807,7 @@ public:
     /**
      * @brief função que retorna o proximo possivel token
      */
-    Token getNextToken()
+    Token *getNextToken()
     {
         currentState = std::make_shared<StartState>();
         std::string lexeme = "";
