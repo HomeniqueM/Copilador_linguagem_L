@@ -13,8 +13,10 @@
 #include "../error/l_exception.cpp"
 #include "../symbols/token-type.cpp"
 #include "../symbols/token-class.cpp"
+#include "../utils/constants.cpp"
 #include "../utils/file.cpp"
 
+int currentLine;
 /** =========================================================
  *
  * @brief Pacote de retorno para cada estado
@@ -25,7 +27,6 @@ typedef struct StatePackage
     bool returnChar = false; // deve voltar um char
     std::string identifier;  // onde o lexima é montado
     TokenType tokenType = TOKEN_TYPE_UNDEFINED;
-    TokenClass tokenclass = TOKEN_CLASS_UNDEFINED;
     TokenID tokenId = TOKEN_ID_NULL;
 } StatePackage;
 
@@ -138,14 +139,15 @@ class State05 : public State
         }
         else if (isalpha(c) || isdigit(c) || c == '_')
         {
-            package.tokenclass = TOKEN_CLASS_CONSTANT;
-            package.tokenType = TOKEN_TYPE_STRING;
+            package.tokenType = TOKEN_TYPE_UNDEFINED;
             package.tokenId = TOKEN_ID_IDENTIFIER;
             package.identifier = +c;
             nextState = std::make_shared<State03>();
         }
         else
         {
+            package.tokenType = TOKEN_TYPE_UNDEFINED;
+            package.tokenId = TOKEN_ID_IDENTIFIER;
             package.returnChar = true;
             this->completed = true;
         }
@@ -191,7 +193,7 @@ class State15 : public State
         else
         {
             std::string msg = "Erra esperando um valor numerico porém foi lido " + c;
-            throw LException(ErrorCode::UNEXPECTED_CHARACTER, __LINE__, msg);
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine , msg);
         }
 
         return package;
@@ -216,7 +218,7 @@ class State14 : public State
         else
         {
             std::string msg = "Erra esperando um valor numerico ou simbolo[+ ou -] porém foi lido " + c;
-            throw LException(ErrorCode::UNEXPECTED_CHARACTER, __LINE__, msg);
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine , msg);
         }
 
         return package;
@@ -254,6 +256,7 @@ class State12 : public State
         StatePackage package;
         if (isdigit(c))
         {
+            package.tokenType = TOKEN_TYPE_REAL;
             package.tokenId = TOKEN_ID_CONSTANT;
             package.identifier = +c;
             nextState = std::make_shared<State13>();
@@ -261,7 +264,7 @@ class State12 : public State
         else
         {
             std::string msg = "Erra esperando um valor numerico porém foi lido " + c;
-            throw LException(ErrorCode::UNEXPECTED_CHARACTER, 0, msg);
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine , msg);
         }
 
         return package;
@@ -307,7 +310,7 @@ class State09 : public State
         else
         {
             std::string msg = "Erra esperando a letra a h porém o que foi lido foi " + c;
-            throw LException(ErrorCode::UNEXPECTED_CHARACTER, 0, msg);
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER,currentLine , msg);
         }
 
         return package;
@@ -393,15 +396,17 @@ class State04 : public State
         }
         else if (isalpha(c) || isdigit(c) || c == '_')
         {
-            package.tokenclass = TOKEN_CLASS_CONSTANT;
-            package.tokenType = TOKEN_TYPE_STRING;
+
+            package.tokenType = TOKEN_TYPE_UNDEFINED;
             package.tokenId = TOKEN_ID_IDENTIFIER;
             package.identifier = +c;
             nextState = std::make_shared<State03>();
         }
         else
         {
+            package.tokenType = TOKEN_TYPE_UNDEFINED;
             package.tokenId = TOKEN_ID_IDENTIFIER;
+
             package.returnChar = true;
             this->completed = true;
         }
@@ -423,6 +428,10 @@ public:
         {
             package.tokenId = TOKEN_ID_ENQUALS;
             package.identifier = +c;
+        }
+        else
+        {
+            package.returnChar = true;
         }
 
         this->completed = true;
@@ -447,6 +456,12 @@ public:
         }
         else if (c == '>')
         {
+            package.tokenId = TOKEN_ID_DIFFERENT;
+            package.identifier = +c;
+        }
+        else
+        {
+            package.returnChar = true;
         }
 
         this->completed = true;
@@ -467,6 +482,10 @@ public:
         if (c == '=')
         {
             package.identifier = +c;
+        }
+        else
+        {
+            package.returnChar = true;
         }
         this->completed = true;
 
@@ -490,7 +509,7 @@ public:
         else
         {
             std::string msg = ": Erra esperado \' porém veio " + c;
-            throw LException(ErrorCode::UNEXPECTED_CHARACTER, 0, msg);
+            throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine , msg);
         }
         return package;
     }
@@ -513,6 +532,7 @@ public:
         {
             package.identifier = +c;
             package.tokenType = TOKEN_TYPE_STRING;
+
             nextState = std::make_shared<State21>();
         }
 
@@ -580,6 +600,7 @@ StatePackage StartState::handle(char c)
         package.tokenId = stringToTokenId(std::string(1, c));
     }
 
+    // Estado de comentario
     else if (c == '{')
     {
         nextState = std::make_shared<CommentState>();
@@ -600,17 +621,16 @@ StatePackage StartState::handle(char c)
     else if (c == '\'')
     {
         package.identifier = +c;
-        package.tokenclass = TOKEN_CLASS_CONSTANT;
+
         package.tokenType = TOKEN_TYPE_CHAR;
-        package.tokenId = TOKEN_ID_CHAR;
+        package.tokenId = TOKEN_ID_CONSTANT;
         nextState = std::make_shared<State19>();
     }
     else if (c == '"')
     {
         package.identifier = +c;
         package.tokenType = TOKEN_TYPE_STRING;
-        package.tokenclass = TOKEN_CLASS_CONSTANT;
-        package.tokenId = TOKEN_ID_STRING;
+        package.tokenId = TOKEN_ID_CONSTANT;
         nextState = std::make_shared<State21>();
     }
     else if (c == '>')
@@ -624,22 +644,20 @@ StatePackage StartState::handle(char c)
         if (isItaAlphabetHexa(c))
         {
             package.identifier = +c;
-            package.tokenclass = TOKEN_CLASS_CONSTANT;
             package.tokenType = TOKEN_TYPE_CHAR;
+            package.tokenId = TOKEN_ID_CONSTANT;
             nextState = std::make_shared<State04>();
         }
         else
         {
             package.identifier = +c;
-            package.tokenclass = TOKEN_CLASS_VARIABLE;
-            package.tokenType = TOKEN_TYPE_STRING;
+            package.tokenType = TOKEN_TYPE_UNDEFINED;
             package.tokenId = TOKEN_ID_IDENTIFIER;
             nextState = std::make_shared<State03>();
         }
     }
     else if (isdigit(c))
     {
-        package.tokenclass = TOKEN_CLASS_CONSTANT;
         package.tokenType = TOKEN_TYPE_CHAR;
         package.tokenId = TOKEN_ID_CONSTANT;
         package.identifier = +c;
@@ -647,9 +665,8 @@ StatePackage StartState::handle(char c)
     }
     else if (c == '.')
     {
-        package.tokenclass = TOKEN_CLASS_CONSTANT;
         package.tokenType = TOKEN_TYPE_REAL;
-        package.tokenId = TOKEN_ID_REAL;
+        package.tokenId = TOKEN_ID_CONSTANT;
         package.identifier = +c;
         nextState = std::make_shared<State12>();
     }
@@ -658,7 +675,6 @@ StatePackage StartState::handle(char c)
     {
         package.identifier = +c;
         this->completed = true;
-        package.tokenclass = TOKEN_CLASS_CONSTANT;
         package.tokenType = TOKEN_TYPE_CHAR;
         package.tokenId = TOKEN_ID_EOF;
     }
@@ -667,7 +683,7 @@ StatePackage StartState::handle(char c)
         // Tratativa a ser feita
 
         std::string str(1, c);
-        throw LException(ErrorCode::UNEXPECTED_CHARACTER, __LINE__, str);
+        throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine , str);
     }
     return package;
 }
@@ -678,6 +694,102 @@ StatePackage StartState::handle(char c)
  * ========================================================== */
 class State01
 {
+public:
+    Token *makeAToken(SymbolTable *st, std::string lexeme, TokenType tokentype, TokenID tokenId, int currentLine)
+    {
+
+        // Token t = Token(lexema);
+        // No codigo todo só é inserido id
+
+        // adicionar o token
+
+        // Tabela de simbolo relaciona o Token
+        // tabela_simbolos.tratar_token(t);
+
+        // Token class
+
+        // verificar se e palavra reservada
+        // se nao for nenhum dos dois entao ele eh identificador
+        Token token = Token();
+        Token *result = nullptr;
+
+        // verificar se e eh constante
+        if (tokenId == TOKEN_ID_IDENTIFIER)
+        {
+            // Verifica se o Tamanho é maior
+            if (lexeme.size() > CONSTANTS_IDENTIFIER_MAX_SIZE)
+            {
+                throw LException(ErrorCode::ENCEEDED_LIMIT_IDENTIFIER_MAX_SIZE, currentLine, "");
+            }
+            token.setLexeme(lexeme);
+            token.setTokenType(tokentype);
+            token.setTokenID(tokenId);
+
+            // Aqui deve ser inserio o Token de identifier
+            result = st->Insert(token);
+        }
+        else if (tokenId == TOKEN_ID_CONSTANT)
+        {
+            if (tokentype == TOKEN_TYPE_REAL)
+            {
+                std::string sublexeme = substringAfterDelimiter(lexeme, '.');
+                double doulexeme = std::stod(lexeme);
+
+                if (sublexeme.size() > CONSTANTS_MAXIMUM_ACCURACY_LENGTH)
+                {
+                    throw LException(ErrorCode::OVERFLOW_ACCURACY_LENGTH, currentLine, "");
+                }
+                if (doulexeme > CONSTANTS_REAL_MAX_VALUE)
+                {
+                    throw LException(ErrorCode::OVERFLOW_SIZE_REAL, currentLine, "");
+                }
+                if (doulexeme < CONSTANTS_REAL_MIN_VALUE)
+                {
+                    throw LException(ErrorCode::UNDERFLOW_SIZE_REAL, currentLine, "");
+                }
+            }
+            else if (tokentype == TOKEN_TYPE_INTEGER)
+            {
+                int lexemeInt = std::stoi(lexeme);
+                if(lexemeInt > CONSTANTS_INTEGER_MAX_VALUE){
+                    throw LException(ErrorCode::OVERFLOW_SIZE_INTEGER,currentLine,"");
+                }else if(lexemeInt < CONSTANTS_INTEGER_MIN_VALUE){
+                    throw LException(ErrorCode::UNDERFLOW_SIZE_INTEGER,currentLine,"");
+                }
+            }
+            result = new Token();
+            result->setLexeme(lexeme);
+            result->setTokenType(tokentype);
+            result->setTokenID(tokenId);
+        }
+        else
+        {
+            result = new Token();
+            result->setLexeme(lexeme);
+            result->setTokenType(tokentype);
+            result->setTokenID(tokenId);
+        }
+
+        return result;
+    }
+
+private:
+    /**
+     * @brief Retorna a substring depois do delimitador especificado.
+     *
+     * @param str A string original.
+     * @param delimiter O caractere delimitador.
+     * @return A substring depois do delimitador, ou uma string vazia se o delimitador não for encontrado.
+     */
+    std::string substringAfterDelimiter(std::string str, char delimiter)
+    {
+        int delimiterIndex = str.find(delimiter);
+        if (delimiterIndex == std::string::npos)
+        {
+            return "";
+        }
+        return str.substr(delimiterIndex + 1);
+    }
 };
 
 /**
@@ -686,13 +798,12 @@ class State01
 class LexerAnalysis
 {
 private:
-    FileHandler *fh;                    // String a ser tokenizada
+    FileHandler *fh;                     // String a ser tokenizada
     std::shared_ptr<State> currentState; // Validar necessidade
     SymbolTable *symboltable;
-    
 
 public:
-    LexerAnalysis(FileHandler *fh,SymbolTable *symboltable) : currentState(std::make_shared<StartState>())
+    LexerAnalysis(FileHandler *fh, SymbolTable *symboltable) : currentState(std::make_shared<StartState>())
     {
         this->fh = fh;
         this->symboltable = symboltable;
@@ -700,12 +811,12 @@ public:
     /**
      * @brief função que retorna o proximo possivel token
      */
-    Token getNextToken()
+    Token *getNextToken()
     {
         currentState = std::make_shared<StartState>();
         std::string lexeme = "";
         TokenType tokentype = TOKEN_TYPE_UNDEFINED;
-        TokenClass tokenclas = TOKEN_CLASS_UNDEFINED;
+
         TokenID tokenId = TOKEN_ID_NULL;
 
         char cc;
@@ -729,10 +840,6 @@ public:
                 {
                     tokentype = result.tokenType;
                 }
-                if (result.tokenclass != TOKEN_CLASS_UNDEFINED)
-                {
-                    tokenclas = result.tokenclass;
-                }
                 if (result.tokenId != TOKEN_ID_NULL)
                 {
                     tokenId = result.tokenId;
@@ -747,43 +854,11 @@ public:
             {
                 std::string str(1, cc);
 
-                throw LException(ErrorCode::INVALIDCHARACTER,getCurrentLine(), str);
+                throw LException(ErrorCode::INVALIDCHARACTER, getCurrentLine(), str);
             }
         }
-        Token token = Token();
-        token.setLexeme(lexeme);
 
-        token.setLexeme(lexeme);
-        if (TOKEN_ID_IDENTIFIER == tokenId)
-        {
-            TokenID tmpID = stringToTokenId(lexeme);
-            if (tmpID != TOKEN_ID_NULL)
-            {
-                token.setTokenID(tmpID);
-            }
-            else
-            {
-                token.setTokenID(tokenId);
-            }
-        }
-        else
-        {
-            token.setTokenID(tokenId);
-        }
-
-        // Token t = Token(lexema);
-        // No codigo todo só é inserido id
-
-        // adicionar o token
-
-        // Tabela de simbolo relaciona o Token
-        // tabela_simbolos.tratar_token(t);
-
-        // Token class
-        // verificar se e eh constante
-        // verificar se e palavra reservada
-        // se nao for nenhum dos dois entao ele eh identificador
-        return token;
+        return State01().makeAToken(symboltable, lexeme, tokentype, tokenId, getCurrentLine());
     };
 
     void pushBackCurrentChar()
@@ -796,10 +871,11 @@ public:
      */
     char getNextChar()
     {
-        //call FileHander getNextFileChar()
+        currentLine = getCurrentLine();
         return fh->getNextFileChar();
     }
-    int getCurrentLine(){
+    int getCurrentLine()
+    {
         return fh->getFileLine();
     }
 };

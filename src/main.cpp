@@ -23,13 +23,13 @@ int main(int argc, char const *argv[])
 {
     try
     {
-        
         ArgHandler handler;
-        FileHandler fh(handler.handleArgs(argc,argv));
+        FileHandler fh(handler.handleArgs(argc, argv));
         SymbolTable st = SymbolTable();
-        LexerAnalysis la(&fh,&st);
+        LexerAnalysis la(&fh, &st);
         SyntaticAnalysis sa = SyntaticAnalysis(&la);
         sa.Start(la.getNextToken());
+        std::cout << "[" << la.getCurrentLine() << "] Numero de Linhas Compiladas.";
     }
     catch (const LException &e)
     {

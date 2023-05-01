@@ -32,8 +32,8 @@ FileHandler::FileHandler(std::string path){
     //Em caso de sucesso ao abrir o arquivo escreve as linhas do arquivo em um string
     //caso contrário gera uma mensagem de erro.
     if(arqf.fail()){
-        //crair exception
-        std::cout <<"Falha ao abrir arquivo \n";
+        //criar exception
+        throw LException(ErrorCode::FILE_OPENNING_FAIL,0);
     }else{
         for(int i=0;!arqf.eof();i++){
             getline(arqf,s);
