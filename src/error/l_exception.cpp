@@ -47,7 +47,7 @@ private:
     {
         std::ostringstream oss;
         oss << "Error: ";
-        oss << " [" << line_ << "] ";
+        oss << line_ << ": ";
         switch (code_)
         {
         case ErrorCode::INVALIDCHARACTER:
@@ -86,7 +86,7 @@ private:
         }
         if (!mOptional_.empty())
         {
-            oss << " - " << mOptional_;
+            oss << " : " << mOptional_;
         }
         return oss.str();
     }
