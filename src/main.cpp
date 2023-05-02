@@ -35,7 +35,7 @@ int main(int argc, char const *argv[])
         LexerAnalysis la(&fh, &st);
         SyntaticAnalysis sa = SyntaticAnalysis(&la);
         sa.Start(la.getNextToken());
-        std::cout << "[" << la.getCurrentLine() << "] Linhas Compiladas.";
+        std::cout << "[" << la.getCurrentLine() -1 << "] Linhas Compiladas.";
     }
     catch (const LException &e)
     {

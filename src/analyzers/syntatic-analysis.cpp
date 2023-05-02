@@ -89,7 +89,7 @@ void SyntaticAnalysis::matchToken(TokenID expectedToken)
     {
         if (token->getTokenid() == TOKEN_ID_EOF)
         {
-            throw LException(ErrorCode::UNEXPECTED_TOKEN_EOF, la->getCurrentLine(), "");
+            throw LException(ErrorCode::UNEXPECTED_TOKEN_EOF, la->getCurrentLine() - 1, "");
         }
         else
         {
@@ -235,27 +235,32 @@ void SyntaticAnalysis::productionC()
  */
 void SyntaticAnalysis::productionCMD()
 {
-    if (token->getTokenid() == TOKEN_ID_IDENTIFIER)
+
+    if (token->getTokenid() == TOKEN_ID_IF || token->getTokenid() == TOKEN_ID_FOR)
     {
-        productionA();
-        matchToken(TOKEN_ID_SEMICOLON);
-    }
-    else if (token->getTokenid() == TOKEN_ID_FOR)
-    {
-        productionR();
-    }
-    else if (token->getTokenid() == TOKEN_ID_IF)
-    {
-        productionT();
-    }
-    else if (token->getTokenid() == TOKEN_ID_READLN)
-    {
-        productionL();
-        matchToken(TOKEN_ID_SEMICOLON);
+        if (token->getTokenid() == TOKEN_ID_FOR)
+        {
+            productionR();
+        }
+        else
+        {
+            productionT();
+        }
     }
     else
     {
-        productionE();
+        if (token->getTokenid() == TOKEN_ID_IDENTIFIER)
+        {
+            productionA();
+        }
+        else if (token->getTokenid() == TOKEN_ID_READLN)
+        {
+            productionL();
+        }
+        else if(token->getTokenid() == TOKEN_ID_WRITE ||token->getTokenid() == TOKEN_ID_WRITELN)
+        {
+            productionE();
+        }
         matchToken(TOKEN_ID_SEMICOLON);
     }
 }
