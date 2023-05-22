@@ -5,51 +5,8 @@
  * Prof Alexei Machado
  * @authors Guilherme Côsso Lima Pimenta, Homenique Vieira Martins, Iago Augusto Coelho Morgado
 */
-#ifndef ANALYZERS_SYNTATIC_ANALYSIS
-#define ANALYZERS_SYNTATIC_ANALYSIS
-#include <iostream>
-#include <string>
-#include <vector>
-#include <functional>
-#include <memory>
-#include <algorithm>
-//#include "../symbols/token.h"
-#include "../error/l_exception.cpp"
-#include "../symbols/token-type.cpp"
-#include "../analyzers/lexical-analysis.cpp"
 
-class SyntaticAnalysis
-{
-private:
-    LexerAnalysis *la;
-    Token *token;
-    void setToken(Token *token);
-    void matchToken(TokenID expectedToken);
-    void productionS();
-    void productionD();
-    void productionD1();
-    void productionC();
-    void productionCMD();
-    void productionCMD1();
-    void productionA();
-    void productionR();
-    void productionR1();
-    void productionT();
-    void productionT1();
-    void productionL();
-    void productionE();
-    void productionE1();
-    void productionExp();
-    void productionExp1();
-    void productionExp2();
-    void productionExp3();
-    void productionExp4();
-    void productionExp5();
-
-public:
-    SyntaticAnalysis(LexerAnalysis *la);
-    void Start(Token *token);
-};
+#include "syntatic-analysis.hpp"
 
 SyntaticAnalysis::SyntaticAnalysis(LexerAnalysis *la)
 {
@@ -595,5 +552,3 @@ void SyntaticAnalysis::productionExp5()
         matchToken(TOKEN_ID_CLOSE_PARANTHESES);
     }
 }
-
-#endif

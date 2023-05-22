@@ -8,9 +8,9 @@
 #ifndef SYMBOLS_TOKEN
 #define SYMBOLS_TOKEN
 #include <string>
-#include "token-id.cpp"
-#include "token-class.cpp"
-#include "token-type.cpp"
+#include "token-id.hpp"
+#include "token-class.hpp"
+#include "token-type.hpp"
 
 class Token
 {

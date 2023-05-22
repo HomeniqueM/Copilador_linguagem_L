@@ -5,29 +5,7 @@
  * Prof Alexei Machado
  * @authors Guilherme Côsso Lima Pimenta, Homenique Vieira Martins, Iago Augusto Coelho Morgado
 */
-#ifndef UTILS_FILE
-#define UTILS_FILE
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <map>
-#include "../error/l_exception.cpp"
-/**
- * @brief Classe do utilitario de leitura do arquivo do programa fonte a ser compilado
-*/
-class FileHandler{
-    private:
-        std::map<int, std::string> fileContent;
-        std::size_t line;
-        std::size_t line_pos;
-    public:
-        FileHandler(std::string path);
-        char getNextFileChar();
-        int getFileLine();
-        int getFileLinePos();
-        bool isEof();
-        void setPrevChar();
-};
+#include "file.h"
 /**
  * @brief Construtor da classe do utilitario de leitura do arquivo do programa fonte
  * @param string com o path para o arquivo do programa fonte a ser compilado
@@ -106,4 +84,3 @@ bool FileHandler::isEof(){
 void FileHandler:: setPrevChar(){
     this->line_pos--;
 }
-#endif

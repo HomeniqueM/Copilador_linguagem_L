@@ -16,13 +16,13 @@
 #include <memory>
 #include <algorithm>
 
-#include "../symbols/symbol-table.cpp"
-#include "../symbols/token.h"
+#include "../symbols/symbol-table.hpp"
 #include "../error/l_exception.cpp"
-#include "../symbols/token-type.cpp"
-#include "../symbols/token-class.cpp"
+#include "../symbols/token.hpp"
+#include "../symbols/token-type.hpp"
+#include "../symbols/token-class.hpp"
 #include "../utils/constants.h"
-#include "../utils/file.cpp"
+#include "../utils/file.h"
 
 int currentLine;
 /** =========================================================

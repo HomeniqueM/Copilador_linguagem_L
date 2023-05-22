@@ -12,17 +12,12 @@
 #include <memory>
 #include <algorithm>
 
-#include "symbols/symbol-table.cpp"
-#include "symbols/token.h"
+#include "symbols/symbol-table.hpp"
 #include "error/l_exception.cpp"
-#include "symbols/token-type.cpp"
 #include "analyzers/lexical-analysis.cpp"
-#include "analyzers/syntatic-analysis.cpp"
-
-#include "symbols/token-id.cpp"
-
+#include "analyzers/syntatic-analysis.hpp"
 #include "utils/arg-handler.h"
-#include "utils/file.cpp"
+#include "utils/file.h"
 #include <string>
 
 int main(int argc, char const *argv[])

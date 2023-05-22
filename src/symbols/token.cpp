@@ -5,7 +5,7 @@
  * Prof Alexei Machado
  * @authors Guilherme Côsso Lima Pimenta, Homenique Vieira Martins, Iago Augusto Coelho Morgado
 */
-#include "token.h"
+#include "token.hpp"
 
 void Token::setTokenID(TokenID id)
 {
