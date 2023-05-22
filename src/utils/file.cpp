@@ -18,8 +18,8 @@
 class FileHandler{
     private:
         std::map<int, std::string> fileContent;
-        int line;
-        int line_pos;
+        std::size_t line;
+        std::size_t line_pos;
     public:
         FileHandler(std::string path);
         char getNextFileChar();
@@ -86,13 +86,13 @@ char FileHandler::getNextFileChar(){
  * @brief retorna a linha atual do arquivo
 */
 int FileHandler::getFileLine(){
-    return this->line+1;
+    return static_cast<int>(this->line+1);
 }
 /**
  * @brief retorna a posição atual da linha do arquivo
 */
 int FileHandler::getFileLinePos(){
-    return this->line_pos;
+    return static_cast<int>(this->line_pos);
 }
 /**
  * @brief retorna se o fim do arquivo foi aingido

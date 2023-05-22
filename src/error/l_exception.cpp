@@ -10,7 +10,9 @@
 #include <string>
 #include <exception>
 #include <sstream>
-#include "../utils/constants.cpp"
+#include <map>
+#include "../utils/constants.h"
+
 enum class ErrorCode
 {
     INVALIDCHARACTER,
@@ -28,6 +30,12 @@ enum class ErrorCode
     ENCEEDED_LIMIT_IDENTIFIER_MAX_SIZE,
     FILE_OPENNING_FAIL,
     UNKNOWN
+};
+
+// Mapeamento de códigos de erro para mensagens de erro
+const std::map<ErrorCode, std::string_view> errorMessages = {
+    {ErrorCode::INVALIDCHARACTER, "character invalido"},
+    // Adicione o restante dos códigos de erro aqui
 };
 
 /**

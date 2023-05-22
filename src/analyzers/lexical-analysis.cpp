@@ -21,7 +21,7 @@
 #include "../error/l_exception.cpp"
 #include "../symbols/token-type.cpp"
 #include "../symbols/token-class.cpp"
-#include "../utils/constants.cpp"
+#include "../utils/constants.h"
 #include "../utils/file.cpp"
 
 int currentLine;
@@ -788,7 +788,7 @@ private:
      */
     std::string substringAfterDelimiter(std::string str, char delimiter)
     {
-        int delimiterIndex = str.find(delimiter);
+        std::size_t delimiterIndex = str.find(delimiter);
         if (delimiterIndex == std::string::npos)
         {
             return "";
