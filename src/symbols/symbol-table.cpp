@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <vector>
 #include <utility>
-#include "token.cpp"
+#include "token.h"
 #include "token-id.cpp"
 #include "lexeme.cpp"
 

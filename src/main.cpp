@@ -13,7 +13,7 @@
 #include <algorithm>
 
 #include "symbols/symbol-table.cpp"
-#include "symbols/token.cpp"
+#include "symbols/token.h"
 #include "error/l_exception.cpp"
 #include "symbols/token-type.cpp"
 #include "analyzers/lexical-analysis.cpp"
@@ -21,7 +21,7 @@
 
 #include "symbols/token-id.cpp"
 
-#include "utils/arg-handler.cpp"
+#include "utils/arg-handler.h"
 #include "utils/file.cpp"
 #include <string>
 

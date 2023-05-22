@@ -17,7 +17,7 @@
 #include <algorithm>
 
 #include "../symbols/symbol-table.cpp"
-#include "../symbols/token.cpp"
+#include "../symbols/token.h"
 #include "../error/l_exception.cpp"
 #include "../symbols/token-type.cpp"
 #include "../symbols/token-class.cpp"

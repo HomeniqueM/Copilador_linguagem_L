@@ -13,7 +13,7 @@
 #include <functional>
 #include <memory>
 #include <algorithm>
-#include "../symbols/token.cpp"
+//#include "../symbols/token.h"
 #include "../error/l_exception.cpp"
 #include "../symbols/token-type.cpp"
 #include "../analyzers/lexical-analysis.cpp"
