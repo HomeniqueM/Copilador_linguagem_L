@@ -5,7 +5,7 @@
  * Prof Alexei Machado
  * @authors Guilherme Côsso Lima Pimenta, Homenique Vieira Martins, Iago Augusto Coelho Morgado
 */
-#include "arg-handler.h"
+#include "arg-handler.hpp"
 /**
  *@brief Metodo que trata os argumentos do compilador gerando um erro caso o caminho do arquivo não tenha sido fornecido
  *@return retorna uma string com o caminho do arquivo do programa fonte

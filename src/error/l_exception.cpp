@@ -11,7 +11,7 @@
 #include <exception>
 #include <sstream>
 #include <map>
-#include "../utils/constants.h"
+#include "../utils/constants.hpp"
 
 enum class ErrorCode
 {
@@ -19,7 +19,6 @@ enum class ErrorCode
     UNEXPECTED_CHARACTER,
     UNEXPECTED_TOKEN,
     UNEXPECTED_TOKEN_EOF,
-    UNEXPECTED_END_OFFILE,
     NO_FILE_PATH_FOUND,
     STRING_BREAK_LINE,
     OVERFLOW_SIZE_INTEGER,
@@ -35,7 +34,7 @@ enum class ErrorCode
 // Mapeamento de códigos de erro para mensagens de erro
 const std::map<ErrorCode, std::string_view> errorMessages = {
     {ErrorCode::INVALIDCHARACTER, "character invalido"},
-    // Adicione o restante dos códigos de erro aqui
+     {ErrorCode::UNEXPECTED_CHARACTER, "character nao esperado"},
 };
 
 /**

@@ -16,7 +16,7 @@
 #include "../symbols/token.hpp"
 #include "../error/l_exception.cpp"
 #include "../symbols/token-type.hpp"
-#include "../analyzers/lexical-analysis.cpp"
+#include "../analyzers/lexical-analysis.hpp"
 
 class SyntaticAnalysis
 {

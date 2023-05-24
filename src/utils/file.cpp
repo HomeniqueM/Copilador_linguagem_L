@@ -5,7 +5,7 @@
  * Prof Alexei Machado
  * @authors Guilherme Côsso Lima Pimenta, Homenique Vieira Martins, Iago Augusto Coelho Morgado
 */
-#include "file.h"
+#include "file.hpp"
 /**
  * @brief Construtor da classe do utilitario de leitura do arquivo do programa fonte
  * @param string com o path para o arquivo do programa fonte a ser compilado

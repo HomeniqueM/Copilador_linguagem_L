@@ -14,10 +14,10 @@
 
 #include "symbols/symbol-table.hpp"
 #include "error/l_exception.cpp"
-#include "analyzers/lexical-analysis.cpp"
+#include "analyzers/lexical-analysis.hpp"
 #include "analyzers/syntatic-analysis.hpp"
-#include "utils/arg-handler.h"
-#include "utils/file.h"
+#include "utils/arg-handler.hpp"
+#include "utils/file.hpp"
 #include <string>
 
 int main(int argc, char const *argv[])

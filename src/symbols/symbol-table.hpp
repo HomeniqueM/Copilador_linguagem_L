@@ -14,7 +14,7 @@
 #include <utility>
 #include "token.hpp"
 #include "token-id.hpp"
-#include "lexeme.cpp"
+#include "lexeme.hpp"
 
 /**
  * @brief classe tabela de símbolos
