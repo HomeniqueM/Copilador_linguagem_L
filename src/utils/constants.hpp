@@ -7,6 +7,7 @@
 */
 #ifndef UTILS_CONSTANTES
 #define UTILS_CONSTANTES
+#include <iostream>
 /**
  * @brief classe responsável por armazenar constantes
  *

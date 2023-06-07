@@ -43,3 +43,4 @@
 My_test/*
 .exe
 .l
+build/*

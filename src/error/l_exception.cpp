@@ -10,14 +10,15 @@
 #include <string>
 #include <exception>
 #include <sstream>
-#include "../utils/constants.cpp"
+#include <map>
+#include "../utils/constants.hpp"
+
 enum class ErrorCode
 {
     INVALIDCHARACTER,
     UNEXPECTED_CHARACTER,
     UNEXPECTED_TOKEN,
     UNEXPECTED_TOKEN_EOF,
-    UNEXPECTED_END_OFFILE,
     NO_FILE_PATH_FOUND,
     STRING_BREAK_LINE,
     OVERFLOW_SIZE_INTEGER,
@@ -28,6 +29,12 @@ enum class ErrorCode
     ENCEEDED_LIMIT_IDENTIFIER_MAX_SIZE,
     FILE_OPENNING_FAIL,
     UNKNOWN
+};
+
+// Mapeamento de códigos de erro para mensagens de erro
+const std::map<ErrorCode, std::string_view> errorMessages = {
+    {ErrorCode::INVALIDCHARACTER, "character invalido"},
+     {ErrorCode::UNEXPECTED_CHARACTER, "character nao esperado"},
 };
 
 /**
