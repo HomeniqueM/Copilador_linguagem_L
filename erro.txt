@@ -1,0 +1,240 @@
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `tokenToString[abi:cxx11](TokenID)':
+syntatic-analysis.cpp:(.text+0x0): multiple definition of `tokenToString[abi:cxx11](TokenID)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x0): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `stringToTokenId(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
+syntatic-analysis.cpp:(.text+0xdb5): multiple definition of `stringToTokenId(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0xdb5): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `Token::setTokenID(TokenID)':
+syntatic-analysis.cpp:(.text+0x1724): multiple definition of `Token::setTokenID(TokenID)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x1724): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `Token::setLexeme(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
+syntatic-analysis.cpp:(.text+0x173c): multiple definition of `Token::setLexeme(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x173c): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `Token::setTokenType(TokenType)':
+syntatic-analysis.cpp:(.text+0x1762): multiple definition of `Token::setTokenType(TokenType)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x1762): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `Token::setTokenSize(unsigned long)':
+syntatic-analysis.cpp:(.text+0x177a): multiple definition of `Token::setTokenSize(unsigned long)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x177a): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `Token::getTokenid()':
+syntatic-analysis.cpp:(.text+0x1796): multiple definition of `Token::getTokenid()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x1796): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `Token::getTokenType()':
+syntatic-analysis.cpp:(.text+0x17a8): multiple definition of `Token::getTokenType()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x17a8): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `Token::getLexeme[abi:cxx11]()':
+syntatic-analysis.cpp:(.text+0x17ba): multiple definition of `Token::getLexeme[abi:cxx11]()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x17ba): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `Token::getTokeSize()':
+syntatic-analysis.cpp:(.text+0x17e4): multiple definition of `Token::getTokeSize()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x17e4): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `isItaAlphabetHexa(char)':
+syntatic-analysis.cpp:(.text+0x17f6): multiple definition of `isItaAlphabetHexa(char)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x17f6): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `isAValidUnitarySymbol(char)':
+syntatic-analysis.cpp:(.text+0x1890): multiple definition of `isAValidUnitarySymbol(char)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x1890): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `isALexemeDelimiter(char)':
+syntatic-analysis.cpp:(.text+0x192a): multiple definition of `isALexemeDelimiter(char)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x192a): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `SymbolTable::SymbolTable()':
+syntatic-analysis.cpp:(.text+0x19c4): multiple definition of `SymbolTable::SymbolTable()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x19c4): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `SymbolTable::Insert(Token)':
+syntatic-analysis.cpp:(.text+0x2ad6): multiple definition of `SymbolTable::Insert(Token)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x2ad6): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `SymbolTable::SymbolTable()':
+syntatic-analysis.cpp:(.text+0x19c4): multiple definition of `SymbolTable::SymbolTable()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x19c4): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `SymbolTable::Find(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
+syntatic-analysis.cpp:(.text+0x2c6a): multiple definition of `SymbolTable::Find(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x2c6a): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `SymbolTable::isItAValidChar(char)':
+syntatic-analysis.cpp:(.text+0x2cf8): multiple definition of `SymbolTable::isItAValidChar(char)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x2cf8): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `FileHandler::FileHandler(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
+syntatic-analysis.cpp:(.text+0x2dd0): multiple definition of `FileHandler::FileHandler(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x2dd0): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `FileHandler::FileHandler(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
+syntatic-analysis.cpp:(.text+0x2dd0): multiple definition of `FileHandler::FileHandler(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x2dd0): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `FileHandler::getNextFileChar()':
+syntatic-analysis.cpp:(.text+0x3078): multiple definition of `FileHandler::getNextFileChar()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x3078): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `FileHandler::isEof()':
+syntatic-analysis.cpp:(.text+0x322a): multiple definition of `FileHandler::isEof()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x322a): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `FileHandler::getFileLine()':
+syntatic-analysis.cpp:(.text+0x3202): multiple definition of `FileHandler::getFileLine()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x3202): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `FileHandler::getFileLinePos()':
+syntatic-analysis.cpp:(.text+0x3218): multiple definition of `FileHandler::getFileLinePos()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x3218): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `FileHandler::setPrevChar()':
+syntatic-analysis.cpp:(.text+0x3258): multiple definition of `FileHandler::setPrevChar()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x3258): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o:(.bss+0x0): multiple definition of `currentLine'; build/analyzers/lexical-analysis.o:(.bss+0x0): first defined here
+/usr/bin/ld: build/analyzers/syntatic-analysis.o: in function `StartState::handle(char)':
+syntatic-analysis.cpp:(.text+0x3278): multiple definition of `StartState::handle(char)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x3278): first defined here
+/usr/bin/ld: build/symbols/lexeme.o: in function `isItaAlphabetHexa(char)':
+lexeme.cpp:(.text+0x0): multiple definition of `isItaAlphabetHexa(char)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x17f6): first defined here
+/usr/bin/ld: build/symbols/lexeme.o: in function `isAValidUnitarySymbol(char)':
+lexeme.cpp:(.text+0x9a): multiple definition of `isAValidUnitarySymbol(char)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x1890): first defined here
+/usr/bin/ld: build/symbols/lexeme.o: in function `isALexemeDelimiter(char)':
+lexeme.cpp:(.text+0x134): multiple definition of `isALexemeDelimiter(char)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x192a): first defined here
+/usr/bin/ld: build/symbols/symbol-table.o: in function `tokenToString[abi:cxx11](TokenID)':
+symbol-table.cpp:(.text+0x0): multiple definition of `tokenToString[abi:cxx11](TokenID)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x0): first defined here
+/usr/bin/ld: build/symbols/symbol-table.o: in function `stringToTokenId(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
+symbol-table.cpp:(.text+0xdb5): multiple definition of `stringToTokenId(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0xdb5): first defined here
+/usr/bin/ld: build/symbols/symbol-table.o: in function `Token::setTokenID(TokenID)':
+symbol-table.cpp:(.text+0x1724): multiple definition of `Token::setTokenID(TokenID)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x1724): first defined here
+/usr/bin/ld: build/symbols/symbol-table.o: in function `Token::setLexeme(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
+symbol-table.cpp:(.text+0x173c): multiple definition of `Token::setLexeme(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x173c): first defined here
+/usr/bin/ld: build/symbols/symbol-table.o: in function `Token::setTokenType(TokenType)':
+symbol-table.cpp:(.text+0x1762): multiple definition of `Token::setTokenType(TokenType)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x1762): first defined here
+/usr/bin/ld: build/symbols/symbol-table.o: in function `Token::setTokenSize(unsigned long)':
+symbol-table.cpp:(.text+0x177a): multiple definition of `Token::setTokenSize(unsigned long)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x177a): first defined here
+/usr/bin/ld: build/symbols/symbol-table.o: in function `Token::getTokenid()':
+symbol-table.cpp:(.text+0x1796): multiple definition of `Token::getTokenid()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x1796): first defined here
+/usr/bin/ld: build/symbols/symbol-table.o: in function `Token::getTokenType()':
+symbol-table.cpp:(.text+0x17a8): multiple definition of `Token::getTokenType()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x17a8): first defined here
+/usr/bin/ld: build/symbols/symbol-table.o: in function `Token::getLexeme[abi:cxx11]()':
+symbol-table.cpp:(.text+0x17ba): multiple definition of `Token::getLexeme[abi:cxx11]()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x17ba): first defined here
+/usr/bin/ld: build/symbols/symbol-table.o: in function `Token::getTokeSize()':
+symbol-table.cpp:(.text+0x17e4): multiple definition of `Token::getTokeSize()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x17e4): first defined here
+/usr/bin/ld: build/symbols/symbol-table.o: in function `isItaAlphabetHexa(char)':
+symbol-table.cpp:(.text+0x17f6): multiple definition of `isItaAlphabetHexa(char)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x17f6): first defined here
+/usr/bin/ld: build/symbols/symbol-table.o: in function `isAValidUnitarySymbol(char)':
+symbol-table.cpp:(.text+0x1890): multiple definition of `isAValidUnitarySymbol(char)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x1890): first defined here
+/usr/bin/ld: build/symbols/symbol-table.o: in function `isALexemeDelimiter(char)':
+symbol-table.cpp:(.text+0x192a): multiple definition of `isALexemeDelimiter(char)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x192a): first defined here
+/usr/bin/ld: build/symbols/symbol-table.o: in function `SymbolTable::SymbolTable()':
+symbol-table.cpp:(.text+0x19c4): multiple definition of `SymbolTable::SymbolTable()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x19c4): first defined here
+/usr/bin/ld: build/symbols/symbol-table.o: in function `SymbolTable::Insert(Token)':
+symbol-table.cpp:(.text+0x2ad6): multiple definition of `SymbolTable::Insert(Token)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x2ad6): first defined here
+/usr/bin/ld: build/symbols/symbol-table.o: in function `SymbolTable::SymbolTable()':
+symbol-table.cpp:(.text+0x19c4): multiple definition of `SymbolTable::SymbolTable()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x19c4): first defined here
+/usr/bin/ld: build/symbols/symbol-table.o: in function `SymbolTable::Find(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
+symbol-table.cpp:(.text+0x2c6a): multiple definition of `SymbolTable::Find(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x2c6a): first defined here
+/usr/bin/ld: build/symbols/symbol-table.o: in function `SymbolTable::isItAValidChar(char)':
+symbol-table.cpp:(.text+0x2cf8): multiple definition of `SymbolTable::isItAValidChar(char)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x2cf8): first defined here
+/usr/bin/ld: build/symbols/token.o: in function `tokenToString[abi:cxx11](TokenID)':
+token.cpp:(.text+0x0): multiple definition of `tokenToString[abi:cxx11](TokenID)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x0): first defined here
+/usr/bin/ld: build/symbols/token.o: in function `stringToTokenId(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
+token.cpp:(.text+0xdb5): multiple definition of `stringToTokenId(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0xdb5): first defined here
+/usr/bin/ld: build/symbols/token.o: in function `Token::setTokenID(TokenID)':
+token.cpp:(.text+0x1724): multiple definition of `Token::setTokenID(TokenID)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x1724): first defined here
+/usr/bin/ld: build/symbols/token.o: in function `Token::setLexeme(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
+token.cpp:(.text+0x173c): multiple definition of `Token::setLexeme(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x173c): first defined here
+/usr/bin/ld: build/symbols/token.o: in function `Token::setTokenType(TokenType)':
+token.cpp:(.text+0x1762): multiple definition of `Token::setTokenType(TokenType)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x1762): first defined here
+/usr/bin/ld: build/symbols/token.o: in function `Token::setTokenSize(unsigned long)':
+token.cpp:(.text+0x177a): multiple definition of `Token::setTokenSize(unsigned long)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x177a): first defined here
+/usr/bin/ld: build/symbols/token.o: in function `Token::getTokenid()':
+token.cpp:(.text+0x1796): multiple definition of `Token::getTokenid()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x1796): first defined here
+/usr/bin/ld: build/symbols/token.o: in function `Token::getTokenType()':
+token.cpp:(.text+0x17a8): multiple definition of `Token::getTokenType()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x17a8): first defined here
+/usr/bin/ld: build/symbols/token.o: in function `Token::getLexeme[abi:cxx11]()':
+token.cpp:(.text+0x17ba): multiple definition of `Token::getLexeme[abi:cxx11]()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x17ba): first defined here
+/usr/bin/ld: build/symbols/token.o: in function `Token::getTokeSize()':
+token.cpp:(.text+0x17e4): multiple definition of `Token::getTokeSize()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x17e4): first defined here
+/usr/bin/ld: build/symbols/token-id.o: in function `tokenToString[abi:cxx11](TokenID)':
+token-id.cpp:(.text+0x0): multiple definition of `tokenToString[abi:cxx11](TokenID)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x0): first defined here
+/usr/bin/ld: build/symbols/token-id.o: in function `stringToTokenId(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
+token-id.cpp:(.text+0xdb5): multiple definition of `stringToTokenId(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0xdb5): first defined here
+/usr/bin/ld: build/utils/file.o: in function `FileHandler::FileHandler(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
+file.cpp:(.text+0x0): multiple definition of `FileHandler::FileHandler(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x2dd0): first defined here
+/usr/bin/ld: build/utils/file.o: in function `FileHandler::FileHandler(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
+file.cpp:(.text+0x0): multiple definition of `FileHandler::FileHandler(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x2dd0): first defined here
+/usr/bin/ld: build/utils/file.o: in function `FileHandler::getNextFileChar()':
+file.cpp:(.text+0x2a8): multiple definition of `FileHandler::getNextFileChar()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x3078): first defined here
+/usr/bin/ld: build/utils/file.o: in function `FileHandler::isEof()':
+file.cpp:(.text+0x45a): multiple definition of `FileHandler::isEof()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x322a): first defined here
+/usr/bin/ld: build/utils/file.o: in function `FileHandler::getFileLine()':
+file.cpp:(.text+0x432): multiple definition of `FileHandler::getFileLine()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x3202): first defined here
+/usr/bin/ld: build/utils/file.o: in function `FileHandler::getFileLinePos()':
+file.cpp:(.text+0x448): multiple definition of `FileHandler::getFileLinePos()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x3218): first defined here
+/usr/bin/ld: build/utils/file.o: in function `FileHandler::setPrevChar()':
+file.cpp:(.text+0x488): multiple definition of `FileHandler::setPrevChar()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x3258): first defined here
+/usr/bin/ld: build/main.o: in function `tokenToString[abi:cxx11](TokenID)':
+main.cpp:(.text+0x0): multiple definition of `tokenToString[abi:cxx11](TokenID)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x0): first defined here
+/usr/bin/ld: build/main.o: in function `stringToTokenId(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
+main.cpp:(.text+0xdb5): multiple definition of `stringToTokenId(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0xdb5): first defined here
+/usr/bin/ld: build/main.o: in function `Token::setTokenID(TokenID)':
+main.cpp:(.text+0x1724): multiple definition of `Token::setTokenID(TokenID)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x1724): first defined here
+/usr/bin/ld: build/main.o: in function `Token::setLexeme(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
+main.cpp:(.text+0x173c): multiple definition of `Token::setLexeme(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x173c): first defined here
+/usr/bin/ld: build/main.o: in function `Token::setTokenType(TokenType)':
+main.cpp:(.text+0x1762): multiple definition of `Token::setTokenType(TokenType)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x1762): first defined here
+/usr/bin/ld: build/main.o: in function `Token::setTokenSize(unsigned long)':
+main.cpp:(.text+0x177a): multiple definition of `Token::setTokenSize(unsigned long)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x177a): first defined here
+/usr/bin/ld: build/main.o: in function `Token::getTokenid()':
+main.cpp:(.text+0x1796): multiple definition of `Token::getTokenid()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x1796): first defined here
+/usr/bin/ld: build/main.o: in function `Token::getTokenType()':
+main.cpp:(.text+0x17a8): multiple definition of `Token::getTokenType()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x17a8): first defined here
+/usr/bin/ld: build/main.o: in function `Token::getLexeme[abi:cxx11]()':
+main.cpp:(.text+0x17ba): multiple definition of `Token::getLexeme[abi:cxx11]()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x17ba): first defined here
+/usr/bin/ld: build/main.o: in function `Token::getTokeSize()':
+main.cpp:(.text+0x17e4): multiple definition of `Token::getTokeSize()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x17e4): first defined here
+/usr/bin/ld: build/main.o: in function `isItaAlphabetHexa(char)':
+main.cpp:(.text+0x17f6): multiple definition of `isItaAlphabetHexa(char)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x17f6): first defined here
+/usr/bin/ld: build/main.o: in function `isAValidUnitarySymbol(char)':
+main.cpp:(.text+0x1890): multiple definition of `isAValidUnitarySymbol(char)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x1890): first defined here
+/usr/bin/ld: build/main.o: in function `isALexemeDelimiter(char)':
+main.cpp:(.text+0x192a): multiple definition of `isALexemeDelimiter(char)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x192a): first defined here
+/usr/bin/ld: build/main.o: in function `SymbolTable::SymbolTable()':
+main.cpp:(.text+0x19c4): multiple definition of `SymbolTable::SymbolTable()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x19c4): first defined here
+/usr/bin/ld: build/main.o: in function `SymbolTable::Insert(Token)':
+main.cpp:(.text+0x2ad6): multiple definition of `SymbolTable::Insert(Token)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x2ad6): first defined here
+/usr/bin/ld: build/main.o: in function `SymbolTable::SymbolTable()':
+main.cpp:(.text+0x19c4): multiple definition of `SymbolTable::SymbolTable()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x19c4): first defined here
+/usr/bin/ld: build/main.o: in function `SymbolTable::Find(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
+main.cpp:(.text+0x2c6a): multiple definition of `SymbolTable::Find(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x2c6a): first defined here
+/usr/bin/ld: build/main.o: in function `SymbolTable::isItAValidChar(char)':
+main.cpp:(.text+0x2cf8): multiple definition of `SymbolTable::isItAValidChar(char)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x2cf8): first defined here
+/usr/bin/ld: build/main.o: in function `FileHandler::FileHandler(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
+main.cpp:(.text+0x2dd0): multiple definition of `FileHandler::FileHandler(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x2dd0): first defined here
+/usr/bin/ld: build/main.o: in function `FileHandler::FileHandler(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
+main.cpp:(.text+0x2dd0): multiple definition of `FileHandler::FileHandler(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x2dd0): first defined here
+/usr/bin/ld: build/main.o: in function `FileHandler::getNextFileChar()':
+main.cpp:(.text+0x3078): multiple definition of `FileHandler::getNextFileChar()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x3078): first defined here
+/usr/bin/ld: build/main.o: in function `FileHandler::isEof()':
+main.cpp:(.text+0x322a): multiple definition of `FileHandler::isEof()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x322a): first defined here
+/usr/bin/ld: build/main.o: in function `FileHandler::getFileLine()':
+main.cpp:(.text+0x3202): multiple definition of `FileHandler::getFileLine()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x3202): first defined here
+/usr/bin/ld: build/main.o: in function `FileHandler::getFileLinePos()':
+main.cpp:(.text+0x3218): multiple definition of `FileHandler::getFileLinePos()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x3218): first defined here
+/usr/bin/ld: build/main.o: in function `FileHandler::setPrevChar()':
+main.cpp:(.text+0x3258): multiple definition of `FileHandler::setPrevChar()'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x3258): first defined here
+/usr/bin/ld: build/main.o:(.bss+0x0): multiple definition of `currentLine'; build/analyzers/lexical-analysis.o:(.bss+0x0): first defined here
+/usr/bin/ld: build/main.o: in function `StartState::handle(char)':
+main.cpp:(.text+0x3278): multiple definition of `StartState::handle(char)'; build/analyzers/lexical-analysis.o:lexical-analysis.cpp:(.text+0x3278): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::SyntaticAnalysis(LexerAnalysis*)':
+main.cpp:(.text+0x3890): multiple definition of `SyntaticAnalysis::SyntaticAnalysis(LexerAnalysis*)'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x3890): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::SyntaticAnalysis(LexerAnalysis*)':
+main.cpp:(.text+0x3890): multiple definition of `SyntaticAnalysis::SyntaticAnalysis(LexerAnalysis*)'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x3890): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::Start(Token*)':
+main.cpp:(.text+0x38aa): multiple definition of `SyntaticAnalysis::Start(Token*)'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x38aa): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::setToken(Token*)':
+main.cpp:(.text+0x38dc): multiple definition of `SyntaticAnalysis::setToken(Token*)'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x38dc): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::productionS()':
+main.cpp:(.text+0x3af2): multiple definition of `SyntaticAnalysis::productionS()'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x3af2): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::matchToken(TokenID)':
+main.cpp:(.text+0x38f8): multiple definition of `SyntaticAnalysis::matchToken(TokenID)'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x38f8): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::productionD()':
+main.cpp:(.text+0x3bd2): multiple definition of `SyntaticAnalysis::productionD()'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x3bd2): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::productionCMD()':
+main.cpp:(.text+0x3efa): multiple definition of `SyntaticAnalysis::productionCMD()'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x3efa): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::productionD1()':
+main.cpp:(.text+0x3cce): multiple definition of `SyntaticAnalysis::productionD1()'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x3cce): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::productionC()':
+main.cpp:(.text+0x3d92): multiple definition of `SyntaticAnalysis::productionC()'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x3d92): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::productionR()':
+main.cpp:(.text+0x41c2): multiple definition of `SyntaticAnalysis::productionR()'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x41c2): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::productionT()':
+main.cpp:(.text+0x42ac): multiple definition of `SyntaticAnalysis::productionT()'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x42ac): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::productionA()':
+main.cpp:(.text+0x40e4): multiple definition of `SyntaticAnalysis::productionA()'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x40e4): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::productionL()':
+main.cpp:(.text+0x43c0): multiple definition of `SyntaticAnalysis::productionL()'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x43c0): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::productionE()':
+main.cpp:(.text+0x4414): multiple definition of `SyntaticAnalysis::productionE()'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x4414): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::productionCMD1()':
+main.cpp:(.text+0x4026): multiple definition of `SyntaticAnalysis::productionCMD1()'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x4026): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::productionExp()':
+main.cpp:(.text+0x44e6): multiple definition of `SyntaticAnalysis::productionExp()'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x44e6): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::productionR1()':
+main.cpp:(.text+0x4256): multiple definition of `SyntaticAnalysis::productionR1()'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x4256): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::productionT1()':
+main.cpp:(.text+0x433e): multiple definition of `SyntaticAnalysis::productionT1()'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x433e): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::productionE1()':
+main.cpp:(.text+0x4490): multiple definition of `SyntaticAnalysis::productionE1()'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x4490): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::productionExp1()':
+main.cpp:(.text+0x4658): multiple definition of `SyntaticAnalysis::productionExp1()'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x4658): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::productionExp2()':
+main.cpp:(.text+0x476c): multiple definition of `SyntaticAnalysis::productionExp2()'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x476c): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::productionExp3()':
+main.cpp:(.text+0x48de): multiple definition of `SyntaticAnalysis::productionExp3()'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x48de): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::productionExp4()':
+main.cpp:(.text+0x4924): multiple definition of `SyntaticAnalysis::productionExp4()'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x4924): first defined here
+/usr/bin/ld: build/main.o: in function `SyntaticAnalysis::productionExp5()':
+main.cpp:(.text+0x49e8): multiple definition of `SyntaticAnalysis::productionExp5()'; build/analyzers/syntatic-analysis.o:syntatic-analysis.cpp:(.text+0x49e8): first defined here
+/usr/bin/ld: build/main.o: in function `ArgHandler::handleArgs[abi:cxx11](int, char const**)':
+main.cpp:(.text+0x4b64): multiple definition of `ArgHandler::handleArgs[abi:cxx11](int, char const**)'; build/utils/arg-handler.o:arg-handler.cpp:(.text+0x0): first defined here
+collect2: error: ld returned 1 exit status
+make: *** [makefile:23: lcompile] Error 1
