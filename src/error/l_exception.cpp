@@ -17,12 +17,15 @@ enum class ErrorCode
 {
     // Erros solicitados
     INVALIDCHARACTER, // Pdf 01
-    INVALIDLEX, // PDF 01
-    UNEXPECTED_EOF, // PDF 01
-    UNEXPECTED_TOKEN,
+    INVALIDLEX,       // PDF 01
+    UNEXPECTED_EOF,   // PDF 01
+    UNEXPECTED_TOKEN, // PDF 02
+    UNDECLARED_IDENTIFIER, // PDF 03
+    IDENTIFIER_ALREADY_DECLARED, // PDF 03
+    MISMATCHED_IDENTIFIER,
+    INCOMPATIBLE_TYPES,
+    // Erros Customizados
     NO_FILE_PATH_FOUND,
-   
-    // Erros Customizados 
     UNEXPECTED_CHARACTER,
     OVERFLOW_SIZE_INTEGER,
     OVERFLOW_SIZE_REAL,
@@ -30,7 +33,7 @@ enum class ErrorCode
     UNDERFLOW_SIZE_REAL,
     OVERFLOW_ACCURACY_LENGTH,
     ENCEEDED_LIMIT_IDENTIFIER_MAX_SIZE,
-    FILE_OPENNING_FAIL,    
+    FILE_OPENNING_FAIL,
     UNKNOWN
 };
 
@@ -76,7 +79,7 @@ private:
             break;
         case ErrorCode::INVALIDLEX:
             oss << "lexema nao identificado";
-        break;
+            break;
         case ErrorCode::UNEXPECTED_TOKEN:
             oss << "token nao esperado";
             break;
@@ -107,13 +110,25 @@ private:
         case ErrorCode::FILE_OPENNING_FAIL:
             oss << "Falha ao abrir arquivo";
             break;
+        case ErrorCode::UNDECLARED_IDENTIFIER:
+            oss << "identificador nao declarado";
+            break;
+        case ErrorCode::IDENTIFIER_ALREADY_DECLARED:
+            oss << "identificador ja declarado";
+            break;
+        case ErrorCode::MISMATCHED_IDENTIFIER:
+            oss << "classe de identificador incompatível";
+            break;
+        case ErrorCode::INCOMPATIBLE_TYPES:
+            oss << "ipos incompativeis.";
+            break;
         default:
             oss << "Unknown error";
             break;
         }
         if (!mOptional_.empty())
         {
-            oss << " [" << mOptional_ << "]";
+            oss << " [" << mOptional_ << "].";
         }
         return oss.str();
     }
