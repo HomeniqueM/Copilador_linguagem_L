@@ -32,6 +32,7 @@ typedef struct StatePackage
     std::string identifier;  // onde o lexima é montado
     TokenType tokenType = TOKEN_TYPE_UNDEFINED;
     TokenID tokenId = TOKEN_ID_NULL;
+    
 } StatePackage;
 
 /** =========================================================
@@ -328,5 +329,6 @@ public:
     void pushBackCurrentChar();
     char getNextChar();
     int getCurrentLine();
+    Token *clone();
 };
 
