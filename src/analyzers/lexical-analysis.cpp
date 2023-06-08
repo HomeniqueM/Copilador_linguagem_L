@@ -13,7 +13,6 @@
 #include <memory>
 #include <algorithm>
 
-
 #include "../error/l_exception.cpp"
 #include "../symbols/token.hpp"
 #include "../symbols/token-type.hpp"
@@ -31,6 +30,7 @@
 
 StatePackage StartState::handle(char c)
 {
+    std::cout << "StartState Lido:" << c <<std::endl;
 
     StatePackage package;
 
@@ -535,12 +535,14 @@ StatePackage State22::handle(char c)
 
 StatePackage CommentState::handle(char c)
 {
+    std::cout << "Lido: " << c << std::endl;
+    
     StatePackage package;
     if (c == '}')
     {
         nextState = std::make_shared<StartState>();
     }
-    if (c == LEXEME_EOF)
+    else if (c == LEXEME_EOF)
     {
         std::string str(1, c);
         throw LException(ErrorCode::UNEXPECTED_TOKEN_EOF, currentLine, str);
