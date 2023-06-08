@@ -150,10 +150,16 @@ void CodeGen::negExpression(Token exp){
     this->pf << format("mov [qword M+%ld], al",tmpAddr)<<"\n";
 }
 //converte valor inteiro para real
-void CodeGen::cvtToReal(){
-
+void CodeGen::cvtToReal(Token t){
+    this->pf << format("mov rax, [qword M+%ld]", t.getAddr())<<"\n";
+    long tmpAddr = this->NewTmp(t);
+    this->pf << "cvtsi2ss xmm0, rax"<<"\n";
+    this->pf << format("movss [qword M+%d], xmm0", tmpAddr);
 }
 //converte valor real para inteiro
 void CodeGen::cvtToInt(){
-
+    this->pf << format("mov xmm0, [qword M+%ld]", t.getAddr())<<"\n";
+    long tmpAddr = this->NewTmp(t);
+    this->pf << "cvtsi2ss rax, xmm0"<<"\n";
+    this->pf << format("mov [qword M+%d], rax", tmpAddr);
 }
