@@ -132,6 +132,7 @@ StatePackage StartState::handle(char c)
     return package;
 }
 
+
 StatePackage State03::handle(char c)
 {
     StatePackage package = StatePackage();
@@ -487,8 +488,8 @@ StatePackage State20::handle(char c)
     }
     else
     {
-        std::string msg = ": Erra esperado \' porém veio " + c;
-        throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine, msg);
+       
+        throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine);
     }
     return package;
 }
