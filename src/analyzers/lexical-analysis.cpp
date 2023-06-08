@@ -504,7 +504,7 @@ StatePackage State21::handle(char c)
     }
     else if (c == LEXEME_BREAK_LINE)
     {
-        throw LException(ErrorCode::INVALIDCHARACTER, currentLine, "");
+        throw LException(ErrorCode::INVALIDCHARACTER, currentLine);
     }
 
     else
