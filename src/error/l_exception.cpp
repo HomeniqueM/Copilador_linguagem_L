@@ -10,14 +10,15 @@
 #include <string>
 #include <exception>
 #include <sstream>
-#include "../utils/constants.cpp"
+#include <map>
+#include "../utils/constants.hpp"
+
 enum class ErrorCode
 {
     INVALIDCHARACTER,
     UNEXPECTED_CHARACTER,
     UNEXPECTED_TOKEN,
     UNEXPECTED_TOKEN_EOF,
-    UNEXPECTED_END_OFFILE,
     NO_FILE_PATH_FOUND,
     STRING_BREAK_LINE,
     OVERFLOW_SIZE_INTEGER,
@@ -27,7 +28,18 @@ enum class ErrorCode
     OVERFLOW_ACCURACY_LENGTH,
     ENCEEDED_LIMIT_IDENTIFIER_MAX_SIZE,
     FILE_OPENNING_FAIL,
+    // Adicionado Erros do Semantico
+    IDENTIFIERNODECLARED,
+    IDENTIFIERALREADYDECLARED,
+    MISMATCHEDIDENTIFIERCLASS,
+    INCOMPATIBLETYPES,
     UNKNOWN
+};
+
+// Mapeamento de códigos de erro para mensagens de erro
+const std::map<ErrorCode, std::string_view> errorMessages = {
+    {ErrorCode::INVALIDCHARACTER, "character invalido"},
+     {ErrorCode::UNEXPECTED_CHARACTER, "character nao esperado"},
 };
 
 /**
@@ -55,7 +67,7 @@ private:
     {
         std::ostringstream oss;
         oss << "Error: ";
-        oss << " [" << line_ << "] ";
+        oss << line_ << ": ";
         switch (code_)
         {
         case ErrorCode::INVALIDCHARACTER:
@@ -97,13 +109,25 @@ private:
         case ErrorCode::STRING_BREAK_LINE:
             oss << "String não pode possuir quebra de linhas";
             break;
+        case ErrorCode::IDENTIFIERNODECLARED:
+            oss << "Identificador nao declarado";
+            break;
+        case ErrorCode::IDENTIFIERALREADYDECLARED:
+            oss << " Identificador ja declarado ";
+            break;
+        case ErrorCode::MISMATCHEDIDENTIFIERCLASS:
+            oss << "Classe de identificador incompatível";
+            break;
+        case ErrorCode::INCOMPATIBLETYPES:
+            oss << "Tipos incompativeis";
+            break;
         default:
             oss << "Unknown error";
             break;
         }
         if (!mOptional_.empty())
         {
-            oss << " - " << mOptional_;
+            oss << " : " << mOptional_;
         }
         return oss.str();
     }

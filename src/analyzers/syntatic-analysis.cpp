@@ -5,51 +5,8 @@
  * Prof Alexei Machado
  * @authors Guilherme Côsso Lima Pimenta, Homenique Vieira Martins, Iago Augusto Coelho Morgado
 */
-#ifndef ANALYZERS_SYNTATIC_ANALYSIS
-#define ANALYZERS_SYNTATIC_ANALYSIS
-#include <iostream>
-#include <string>
-#include <vector>
-#include <functional>
-#include <memory>
-#include <algorithm>
-#include "../symbols/token.cpp"
-#include "../error/l_exception.cpp"
-#include "../symbols/token-type.cpp"
-#include "../analyzers/lexical-analysis.cpp"
 
-class SyntaticAnalysis
-{
-private:
-    LexerAnalysis *la;
-    Token *token;
-    void setToken(Token *token);
-    void matchToken(TokenID expectedToken);
-    void productionS();
-    void productionD();
-    void productionD1();
-    void productionC();
-    void productionCMD();
-    void productionCMD1();
-    void productionA();
-    void productionR();
-    void productionR1();
-    void productionT();
-    void productionT1();
-    void productionL();
-    void productionE();
-    void productionE1();
-    void productionExp();
-    void productionExp1();
-    void productionExp2();
-    void productionExp3();
-    void productionExp4();
-    void productionExp5();
-
-public:
-    SyntaticAnalysis(LexerAnalysis *la);
-    void Start(Token *token);
-};
+#include "syntatic-analysis.hpp"
 
 SyntaticAnalysis::SyntaticAnalysis(LexerAnalysis *la)
 {
@@ -89,11 +46,11 @@ void SyntaticAnalysis::matchToken(TokenID expectedToken)
     {
         if (token->getTokenid() == TOKEN_ID_EOF)
         {
-            throw LException(ErrorCode::UNEXPECTED_TOKEN_EOF, la->getCurrentLine() + 1, "");
+            throw LException(ErrorCode::UNEXPECTED_TOKEN_EOF, la->getCurrentLine() - 1, "");
         }
         else
         {
-            throw LException(ErrorCode::UNEXPECTED_TOKEN, la->getCurrentLine() + 1, token->getLexeme());
+            throw LException(ErrorCode::UNEXPECTED_TOKEN, la->getCurrentLine(), token->getLexeme());
         }
     }
 }
@@ -175,6 +132,7 @@ void SyntaticAnalysis::productionD1()
         break;
     case TOKEN_ID_BOOLEAN:
         matchToken(TOKEN_ID_BOOLEAN);
+        break;
     case TOKEN_ID_STRING:
         matchToken(TOKEN_ID_STRING);
         break;
@@ -198,7 +156,19 @@ void SyntaticAnalysis::productionC()
         {
             matchToken(TOKEN_ID_SUBTRACTION);
         }
-        matchToken(TOKEN_ID_CONSTANT);
+
+        if (token->getTokenid() == TOKEN_ID_FALSE)
+        {
+            matchToken(TOKEN_ID_FALSE);
+        }
+        else if (token->getTokenid() == TOKEN_ID_TRUE)
+        {
+            matchToken(TOKEN_ID_TRUE);
+        }
+        else
+        {
+            matchToken(TOKEN_ID_CONSTANT);
+        }
     }
     else if (token->getTokenid() == TOKEN_ID_OPEN_BRACKET)
     {
@@ -222,27 +192,32 @@ void SyntaticAnalysis::productionC()
  */
 void SyntaticAnalysis::productionCMD()
 {
-    if (token->getTokenid() == TOKEN_ID_IDENTIFIER)
+
+    if (token->getTokenid() == TOKEN_ID_IF || token->getTokenid() == TOKEN_ID_FOR)
     {
-        productionA();
-        matchToken(TOKEN_ID_SEMICOLON);
-    }
-    else if (token->getTokenid() == TOKEN_ID_FOR)
-    {
-        productionR();
-    }
-    else if (token->getTokenid() == TOKEN_ID_IF)
-    {
-        productionT();
-    }
-    else if (token->getTokenid() == TOKEN_ID_READLN)
-    {
-        productionL();
-        matchToken(TOKEN_ID_SEMICOLON);
+        if (token->getTokenid() == TOKEN_ID_FOR)
+        {
+            productionR();
+        }
+        else
+        {
+            productionT();
+        }
     }
     else
     {
-        productionE();
+        if (token->getTokenid() == TOKEN_ID_IDENTIFIER)
+        {
+            productionA();
+        }
+        else if (token->getTokenid() == TOKEN_ID_READLN)
+        {
+            productionL();
+        }
+        else if(token->getTokenid() == TOKEN_ID_WRITE ||token->getTokenid() == TOKEN_ID_WRITELN)
+        {
+            productionE();
+        }
         matchToken(TOKEN_ID_SEMICOLON);
     }
 }
@@ -485,7 +460,7 @@ void SyntaticAnalysis::productionExp1()
 void SyntaticAnalysis::productionExp2()
 {
     productionExp3();
-    while (token->getTokenid() == TOKEN_ID_MULTIPLICATION || token->getTokenid() == TOKEN_ID_DIVISION || token->getTokenid() == TOKEN_ID_MODULO || token->getTokenid() == TOKEN_ID_AND)
+    while (token->getTokenid() == TOKEN_ID_MULTIPLICATION || token->getTokenid() == TOKEN_ID_DIVISION || token->getTokenid() == TOKEN_ID_MODULO || token->getTokenid() == TOKEN_ID_AND || token->getTokenid() == TOKEN_ID_DIFFERENT)
     {
         if (token->getTokenid() == TOKEN_ID_MULTIPLICATION)
             matchToken(TOKEN_ID_MULTIPLICATION);
@@ -493,6 +468,8 @@ void SyntaticAnalysis::productionExp2()
             matchToken(TOKEN_ID_DIVISION);
         else if (token->getTokenid() == TOKEN_ID_MODULO)
             matchToken(TOKEN_ID_MODULO);
+        else if (token->getTokenid() == TOKEN_ID_DIFFERENT)
+            matchToken(TOKEN_ID_DIFFERENT);
         else
             matchToken(TOKEN_ID_AND);
         productionExp3();
@@ -540,12 +517,17 @@ void SyntaticAnalysis::productionExp4()
 
 /**
  * @brief: Analísa o caso da produção da Gramatica.
- * Exp5 -> const | id | ( Exp )
+Exp5 -> const | id | true | false | [ [ ( id | const) ]  ] | ( Exp )
+
  */
 void SyntaticAnalysis::productionExp5()
 {
     if (token->getTokenid() == TOKEN_ID_CONSTANT)
         matchToken(TOKEN_ID_CONSTANT);
+    else if (token->getTokenid() == TOKEN_ID_TRUE)
+        matchToken(TOKEN_ID_TRUE);
+    else if (token->getTokenid() == TOKEN_ID_FALSE)
+        matchToken(TOKEN_ID_FALSE);
     else if (token->getTokenid() == TOKEN_ID_IDENTIFIER)
     {
         matchToken(TOKEN_ID_IDENTIFIER);
@@ -570,5 +552,3 @@ void SyntaticAnalysis::productionExp5()
         matchToken(TOKEN_ID_CLOSE_PARANTHESES);
     }
 }
-
-#endif

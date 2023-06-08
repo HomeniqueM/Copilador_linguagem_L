@@ -12,17 +12,12 @@
 #include <memory>
 #include <algorithm>
 
-#include "symbols/symbol-table.cpp"
-#include "symbols/token.cpp"
+#include "symbols/symbol-table.hpp"
 #include "error/l_exception.cpp"
-#include "symbols/token-type.cpp"
-#include "analyzers/lexical-analysis.cpp"
-#include "analyzers/syntatic-analysis.cpp"
-
-#include "symbols/token-id.cpp"
-
-#include "utils/arg-handler.cpp"
-#include "utils/file.cpp"
+#include "analyzers/lexical-analysis.hpp"
+#include "analyzers/syntatic-analysis.hpp"
+#include "utils/arg-handler.hpp"
+#include "utils/file.hpp"
 #include <string>
 
 int main(int argc, char const *argv[])
@@ -35,7 +30,7 @@ int main(int argc, char const *argv[])
         LexerAnalysis la(&fh, &st);
         SyntaticAnalysis sa = SyntaticAnalysis(&la);
         sa.Start(la.getNextToken());
-        std::cout << "[" << la.getCurrentLine() << "] Linhas Compiladas.";
+        std::cout << "[" << la.getCurrentLine() -1 << "] Linhas Compiladas.";
     }
     catch (const LException &e)
     {

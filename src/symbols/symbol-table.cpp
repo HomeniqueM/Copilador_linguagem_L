@@ -5,33 +5,7 @@
  * Prof Alexei Machado
  * @authors Guilherme Côsso Lima Pimenta, Homenique Vieira Martins, Iago Augusto Coelho Morgado
 */
-#ifndef SYMBOLS_SYMBOL_TABLE
-#define SYMBOLS_SYMBOL_TABLE
-#include <iostream>
-#include <unordered_map>
-#include <string>
-#include <algorithm>
-#include <vector>
-#include <utility>
-#include "token.cpp"
-#include "token-id.cpp"
-#include "lexeme.cpp"
-
-/**
- * @brief classe tabela de símbolos
- */
-class SymbolTable
-{
-private:
-	std::unordered_map<std::string, Token> table;
-
-public:
-	SymbolTable();
-	bool isItAValidChar(char c);
-	Token *Insert(Token token);
-	Token *Find(std::string lexem);
-};
-
+#include "symbol-table.hpp"
 /**
  * @brief construtor para a primeira tabela de escopo mais abrangente
  *
@@ -94,5 +68,3 @@ bool SymbolTable::isItAValidChar(char c)
 	//	return std::isalnum(c) || std::isalpha(c) ;
 	return std::isdigit(c) || std::isalpha(c) || (std::find(LEXEME_VALID_SYMBOLS.begin(), LEXEME_VALID_SYMBOLS.end(), c) != LEXEME_VALID_SYMBOLS.end());
 }
-
-#endif
