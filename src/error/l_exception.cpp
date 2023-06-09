@@ -28,6 +28,11 @@ enum class ErrorCode
     OVERFLOW_ACCURACY_LENGTH,
     ENCEEDED_LIMIT_IDENTIFIER_MAX_SIZE,
     FILE_OPENNING_FAIL,
+    // Adicionado Erros do Semantico
+    IDENTIFIERNODECLARED,
+    IDENTIFIERALREADYDECLARED,
+    MISMATCHEDIDENTIFIERCLASS,
+    INCOMPATIBLETYPES,
     UNKNOWN
 };
 
@@ -103,6 +108,18 @@ private:
             break;
         case ErrorCode::STRING_BREAK_LINE:
             oss << "String não pode possuir quebra de linhas";
+            break;
+        case ErrorCode::IDENTIFIERNODECLARED:
+            oss << "Identificador nao declarado";
+            break;
+        case ErrorCode::IDENTIFIERALREADYDECLARED:
+            oss << " Identificador ja declarado ";
+            break;
+        case ErrorCode::MISMATCHEDIDENTIFIERCLASS:
+            oss << "Classe de identificador incompatível";
+            break;
+        case ErrorCode::INCOMPATIBLETYPES:
+            oss << "Tipos incompativeis";
             break;
         default:
             oss << "Unknown error";
