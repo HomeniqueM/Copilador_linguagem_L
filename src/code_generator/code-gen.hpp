@@ -39,9 +39,9 @@ class CodeGen{
     private:
         std::string asmFileName;
         std::ofstream programFile;
-        long mem_count = 0;
-        long tmp_count = 0;
-        int label_counter = 0;
+        long mem_count;
+        long tmp_count;
+        int label_counter;
 
         const int char_size=0x1;
         const int number_size=0x4;
@@ -50,15 +50,25 @@ class CodeGen{
     public:
         CodeGen(std::string asmFileName = "program.asm");
         ~CodeGen();
+        long NewTmp(Token* t);
         void end();
         void startData();
         void startText();
         void startProgram();
         void DeclareVariable(Token* t);
         void DeclareConst(Token* t, Token* constant);
-        long NewTmp(Token* t);
-        void storeConstOnTmp(Token* constant);
-        int new_label() {
+        void storeConstOnTmp(Token *t,Token *constant);
+        void atributionCommand(Token *id, Token *exp);
+        void invertExpression(Token *exp);
+        void sumOperation(Token *op1, Token *op2);
+        void subOperation(Token *op1, Token *op2);
+        void multiplyOperation(Token *op1, Token *op2);
+        void divideOperation(Token *op1, Token *op2);
+        void negExpression(Token *exp);
+        void cvtToReal(Token *t);
+        void cvtToInt(Token *t);
+        void write(Token *t);
+        int newLabel() {
             return label_counter++;
         }
         // adicione aqui outras funções de manipulação de tipos

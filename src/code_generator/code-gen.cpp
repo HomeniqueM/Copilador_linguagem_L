@@ -7,14 +7,16 @@
 #include <stdexcept>
 #include <cstdio>
 
+//Construtor
 CodeGen::CodeGen(std::string asmFileName)
 {
     this->mem_count = 0x10000;
     this->tmp_count = 0x0;
-    this->labl_count = 1;
-    this->programFilep = pfp;
-    this->programFile.open(pfp);
+    this->label_counter = 0;
+    this->asmFileName = asmFileName;
+    this->programFile.open(asmFileName);
 }
+//Destrutor (encerra o fluxo de dados para o arquivo Assembly)
 CodeGen::~CodeGen()
 {
     this->programFile.close();
@@ -61,29 +63,34 @@ long CodeGen::NewTmp(Token *t)
     }
     return addr;
 }
+//encerra o programa
 void CodeGen::end()
 {
     this->programFile << "mov rax, 60 ;chamada de saída\n";
     this->programFile << "mov rdi, 0 ;código de saida sem erros\n";
     this->programFile << "syscall ;chama o kernel\n";
 }
+//cria nova seção de dados
 void CodeGen::startData()
 {
     this->programFile << "section .data\n";
 }
+//cria nova seção de texto
 void CodeGen::startText()
 {
     this->programFile << "section .text\n";
 }
+//inicializa o programa
 void CodeGen::startProgram()
 {
     this->startData();
     this->programFile << "M:\n";
     this->programFile << "\t resb 10000h ;temporários\n";
 }
+//comando de declaração de variável
 void CodeGen::DeclareVariable(Token *t)
 {
-    t->getTokenAddr(this->mem_count);
+    t->setTokenAddr(this->mem_count);
     if (t->getTokenType() == TOKEN_TYPE_CHAR)
     {
         this->mem_count += this->char_size;
@@ -103,23 +110,24 @@ void CodeGen::DeclareVariable(Token *t)
                  << "\n";
     }
 }
+//comando de declaração de constante (final)
 void CodeGen::DeclareConst(Token *t, Token *constant)
 {
     t->setTokenAddr(this->mem_count);
     if (t->getTokenType() == TOKEN_TYPE_CHAR)
     {
         this->mem_count += constant->getTokeSize();
-        this->programFile << format("db %s 1", constant.getLexeme()) << "\n";
+        this->programFile << format("db %s 1", constant->getLexeme()) << "\n";
     }
     else if (t->getTokenType() == TOKEN_TYPE_INTEGER || t->getTokenType() == TOKEN_TYPE_REAL)
     {
         this->mem_count += constant->getTokeSize();
-        this->programFile << format("dd %s", constant.getLexeme()) << "\n";
+        this->programFile << format("dd %s", constant->getLexeme()) << "\n";
     }
     else if (t->getTokenType() == TOKEN_TYPE_STRING)
     {
         this->mem_count += constant->getTokeSize();
-        this->programFile << format("db %s, 0", constant.getLexeme()) << "\n";
+        this->programFile << format("db %s, 0", constant->getLexeme()) << "\n";
     }
 }
 // guarda valor de uma constante em um temporário
@@ -130,7 +138,7 @@ void CodeGen::storeConstOnTmp(Token *t,Token *constant)
         t->setTokenAddr(this->mem_count);
         this->mem_count += constant->getTokeSize();
         this->startData();
-        this->programFile << format("dd %s", constant.getLexeme()) << "\n";
+        this->programFile << format("dd %s", constant->getLexeme()) << "\n";
         this->startText();
     }
     else if (constant->getTokenType() == TOKEN_TYPE_STRING)
@@ -138,21 +146,21 @@ void CodeGen::storeConstOnTmp(Token *t,Token *constant)
         t->setTokenAddr(this->mem_count - this->string_size + constant->getLexeme().size() - 1);
         this->mem_count += constant->getTokeSize();
         this->startData();
-        this->programFile << format("db %s,0", constant.getLexeme()) << "\n";
+        this->programFile << format("db %s,0", constant->getLexeme()) << "\n";
         this->startText();
     }
     else if (constant->getTokenType() == TOKEN_TYPE_CHAR)
     {
         long addr = this->NewTmp(constant);
         t->setTokenAddr(addr);
-        this->programFile << format("mov al, %s", constant.getLexeme()) << "\n";
+        this->programFile << format("mov al, %s", constant->getLexeme()) << "\n";
         this->programFile << format("mov [qword M+%ld], al", addr) << "\n";
     }
     else if (constant->getTokenType() == TOKEN_TYPE_INTEGER)
     {
         long addr = this->NewTmp(constant);
         t->setTokenAddr(addr);
-        this->programFile << format("mov eax, %s", constant.getLexeme()) << "\n";
+        this->programFile << format("mov eax, %s", constant->getLexeme()) << "\n";
         this->programFile << format("mov [qword M+%ld], eax", addr) << "\n";
     }
 }
@@ -201,7 +209,7 @@ void CodeGen::invertExpression(Token *exp)
     }
 }
 // Operação de soma
-void Codegen::sumOperation(Token *op1, Token *op2)
+void CodeGen::sumOperation(Token *op1, Token *op2)
 {
     if (op1->getTokenType() == op2->getTokenType())
     {
@@ -248,7 +256,7 @@ void Codegen::sumOperation(Token *op1, Token *op2)
     }
 }
 // Operação de subtração
-void Codegen::subOperation()
+void CodeGen::subOperation(Token *op1, Token *op2)
 {
     if (op1->getTokenType() == op2->getTokenType())
     {
@@ -295,7 +303,7 @@ void Codegen::subOperation()
     }
 }
 // Operação de multiplicação
-void Codegen::multiplyOperation(Token *op1, Token *op2)
+void CodeGen::multiplyOperation(Token *op1, Token *op2)
 {
     if (op1->getTokenType() == op2->getTokenType())
     {
@@ -342,7 +350,7 @@ void Codegen::multiplyOperation(Token *op1, Token *op2)
     }
 }
 // Operaçãp de divisão
-void Codegen::divideOperation(Token *op1, Token *op2)
+void CodeGen::divideOperation(Token *op1, Token *op2)
 {
     if (op1->getTokenType() == op2->getTokenType())
     {
@@ -444,7 +452,7 @@ void CodeGen::write(Token *t)
         this->programFile << "mov rdx, 1"<<"\n";
         this->programFile << "mov rax, 1"<<"\n";
         this->programFile << "mov rdi, 1"<<"\n";
-        this->programFile << "syscall";
+        this->programFile << "syscall"<<"\n";
     }else if (t->getTokenType() == TOKEN_TYPE_REAL)
     {
         bufferAddr = this->tmp_count;
@@ -455,47 +463,47 @@ void CodeGen::write(Token *t)
         label4 = newLabel();
         label5 = newLabel();
 
-        this->programFile << format("movss xmm0, [qword M+%ld]", t->get_endereco())<<"\n";
-        this->programFile << format("mov rsi, M+ %ld", bufferAddr)<<"\n";
-        this->programFile << "mov rcx, 0 "<<"\n";
-        this->programFile << "mov rdi, 6 "<<"\n";
+        this->programFile << format("movss xmm0, [qword M+%ld]", t->getTokenAddr())<<"\n";
+        this->programFile << format("mov rsi, M+%ld", bufferAddr)<<"\n";
+        this->programFile << "mov rcx, 0"<<"\n";
+        this->programFile << "mov rdi, 6"<<"\n";
         this->programFile << "mov rbx, 10 "<<"\n";
-        this->programFile << "cvtsi2ss xmm2, rbx "<<"\n";
-        this->programFile << "subss xmm1, xmm1 " <<"\n";
-        this->programFile << "comiss xmm0, xmm1 "<<"\n";
-        this->programFile << format("jae l%d", label1)<<"\n";
-        this->programFile << "mov dl, '-' "<<"\n";
+        this->programFile << "cvtsi2ss xmm2, rbx"<<"\n";
+        this->programFile << "subss xmm1, xmm1" <<"\n";
+        this->programFile << "comiss xmm0, xmm1"<<"\n";
+        this->programFile << format("jae Rot%d",label1)<<"\n";
+        this->programFile << "mov dl, '-'"<<"\n";
         this->programFile << "mov [rsi], dl"<<"\n";
-        this->programFile <<"mov rdx, -1 ;Carrega -1 em RDX"<<"\n";
-        this->programFile <<"cvtsi2ss xmm1, rdx ;Converte para real"<<"\n";
-        this->programFile <<"mulss xmm0, xmm1 ;Toma módulo"<<"\n";
-        this->programFile <<"add rsi, 1 ;incrementa índice"<<"\n";
-        this->programFile <<format("l%d:", label1),1<<"\n";
-        this->programFile <<"roundss xmm1, xmm0, 0b0011 ;parte inteira xmm1"<<"\n";
+        this->programFile <<"mov rdx, -1"<<"\n";
+        this->programFile <<"cvtsi2ss xmm1, rdx"<<"\n";
+        this->programFile <<"mulss xmm0, xmm1"<<"\n";
+        this->programFile <<"add rsi, 1"<<"\n";
+        this->programFile <<format("Rot%d:", label1)<<"\n";
+        this->programFile <<"roundss xmm1, xmm0, 0b0011"<<"\n";
         this->programFile <<"subss xmm0, xmm1"<<"\n";
         this->programFile <<"cvtss2si rax, xmm1"<<"\n";
-        this->programFile <<format("l%d:", label2),1<<"\n";
+        this->programFile <<format("Rot%d:", label2)<<"\n";
         this->programFile <<"add rcx, 1"<<"\n";
         this->programFile <<"cdq"<<"\n";
         this->programFile <<"idiv ebx"<<"\n";
         this->programFile <<"push dx"<<"\n";
         this->programFile <<"cmp eax, 0"<<"\n";
-        this->programFile <<format("jne l%d", label2)<<"\n";
+        this->programFile <<format("jne Rot%d", label2)<<"\n";
         this->programFile <<"sub rdi, rcx"<<"\n";
-        this->programFile <<format("l%d:", label3),1<<"\n";
+        this->programFile <<format("Rot%d:", label3)<<"\n";
         this->programFile <<"pop dx"<<"\n";
         this->programFile <<"add dl, '0'"<<"\n";
         this->programFile <<"mov [rsi], dl"<<"\n";
         this->programFile <<"add rsi, 1"<<"\n";
         this->programFile <<"sub rcx, 1"<<"\n";
         this->programFile <<"cmp rcx, 0"<<"\n";
-        this->programFile <<format("jne l%d", label3)<<"\n";
+        this->programFile <<format("jne Rot%d", label3)<<"\n";
         this->programFile <<"mov dl, '.'"<<"\n";
         this->programFile <<"mov [rsi], dl"<<"\n";
         this->programFile <<"add rsi, 1"<<"\n";
-        this->programFile <<format("l%d:", label4),1<<"\n";
+        this->programFile <<format("Rot%d:", label4)<<"\n";
         this->programFile <<"cmp rdi, 0"<<"\n";
-        this->programFile <<format("jle l%d", label5)<<"\n";
+        this->programFile <<format("jle Rot%d", label5)<<"\n";
         this->programFile <<"mulss xmm0,xmm2"<<"\n";
         this->programFile <<"roundss xmm1,xmm0,0b0011"<<"\n";
         this->programFile <<"subss xmm0,xmm1"<<"\n";
@@ -504,15 +512,14 @@ void CodeGen::write(Token *t)
         this->programFile <<"mov [rsi], dl"<<"\n";
         this->programFile <<"add rsi, 1"<<"\n";
         this->programFile <<"sub rdi, 1"<<"\n";
-        this->programFile <<format("jmp l%d", label4)<<"\n";
-        this->programFile <<format("l%d:", label5),1<<"\n";
+        this->programFile <<format("jmp Rot%d", label4)<<"\n";
+        this->programFile <<format("Rot%d:", label5)<<"\n";
         this->programFile <<"mov dl, 0"<<"\n";
         this->programFile <<"mov [rsi], dl"<<"\n";
         this->programFile <<"mov rdx, rsi"<<"\n";
         this->programFile <<format("mov rbx, M+%ld", bufferAddr)<<"\n";
         this->programFile <<"sub rdx, rbx"<<"\n";
         this->programFile <<format("mov rsi, M+%ld", bufferAddr)<<"\n";
-         this->programFile << "mov rdx, 100h"; //testar sem essa linha em caso de falha
         this->programFile <<"mov rax, 1"<<"\n";
         this->programFile <<"mov rdi, 1"<<"\n";
         this->programFile <<"syscall"<<"\n";
@@ -521,11 +528,11 @@ void CodeGen::write(Token *t)
     {
         bufferAddr = this->tmp_count;
         this->tmp_count += this->string_size;
-        label1 = new_label();
-        label2 = new_label();
-        label3 = new_label();
+        label1 = newLabel();
+        label2 = newLabel();
+        label3 = newLabel();
 
-        this->programFile <<format("mov eax, [qword M+%ld]", t->get_endereco())<<"\n";
+        this->programFile <<format("mov eax, [qword M+%ld]", t->getTokenAddr())<<"\n";
         this->programFile <<format("mov rsi, M+%ld", bufferAddr)<<"\n";
         this->programFile <<"mov rcx, 0"<<"\n";
         this->programFile <<"mov rdi, 0"<<"\n";
@@ -536,9 +543,9 @@ void CodeGen::write(Token *t)
         this->programFile <<"add rsi, 1"<<"\n";
         this->programFile <<"add rdi, 1"<<"\n";
         this->programFile <<"neg eax"<<"\n";
-        this->programFile <<format("Rot%d:",label1),1<<"\n";
+        this->programFile <<format("Rot%d:",label1)<<"\n";
         this->programFile <<"mov ebx, 10"<<"\n";
-        this->programFile <<format("Rot%d:",label2),1<<"\n";
+        this->programFile <<format("Rot%d:",label2)<<"\n";
         this->programFile <<"add rcx, 1"<<"\n";
         this->programFile <<"cdq"<<"\n";
         this->programFile <<"idiv ebx"<<"\n";
@@ -546,7 +553,7 @@ void CodeGen::write(Token *t)
         this->programFile <<"cmp eax, 0"<<"\n";
         this->programFile <<format("jne Rot%d", label2)<<"\n";
         this->programFile <<"add rdi,rcx"<<"\n";
-        this->programFile <<format("Rot%d:",label3),1<<"\n";
+        this->programFile <<format("Rot%d:",label3)<<"\n";
         this->programFile <<"pop dx"<<"\n";
         this->programFile <<"add dl, '0'"<<"\n";
         this->programFile <<"mov [rsi], dl"<<"\n";
@@ -562,10 +569,10 @@ void CodeGen::write(Token *t)
     }
 }
 //
-void CodeGen::writeLine()
+/*void CodeGen::writeLine()
 {
     this->programFile <<format("mov rsi, M+%ld", buffer_address)<<"\n";
     this->programFile <<"mov rax, 1"<<"\n";
     this->programFile <<"mov rdi, 1"<<"\n";
     this->programFile <<"syscall"<<"\n";
-}
+}*/
