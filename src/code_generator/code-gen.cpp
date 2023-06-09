@@ -440,7 +440,7 @@ void CodeGen::write(Token *t)
     }else if (t->getTokenType() == TOKEN_TYPE_CHAR)
     {
         bufferAddr = t->getTokenAddr();
-        this->programFile << format("mov rsi, M+%d", bufferAddr)<<"\n";
+        this->programFile << format("mov rsi, M+%ld", bufferAddr)<<"\n";
         this->programFile << "mov rdx, 1"<<"\n";
         this->programFile << "mov rax, 1"<<"\n";
         this->programFile << "mov rdi, 1"<<"\n";
@@ -456,7 +456,7 @@ void CodeGen::write(Token *t)
         label5 = newLabel();
 
         this->programFile << format("movss xmm0, [qword M+%ld]", t->get_endereco())<<"\n";
-        this->programFile << format("mov rsi, M+ %ld", buffer_address)<<"\n";
+        this->programFile << format("mov rsi, M+ %ld", bufferAddr)<<"\n";
         this->programFile << "mov rcx, 0 "<<"\n";
         this->programFile << "mov rdi, 6 "<<"\n";
         this->programFile << "mov rbx, 10 "<<"\n";
@@ -509,9 +509,10 @@ void CodeGen::write(Token *t)
         this->programFile <<"mov dl, 0"<<"\n";
         this->programFile <<"mov [rsi], dl"<<"\n";
         this->programFile <<"mov rdx, rsi"<<"\n";
-        this->programFile <<format("mov rbx, M+%ld", buffer_address)<<"\n";
+        this->programFile <<format("mov rbx, M+%ld", bufferAddr)<<"\n";
         this->programFile <<"sub rdx, rbx"<<"\n";
-        this->programFile <<format("mov rsi, M+%ld", buffer_address)<<"\n";
+        this->programFile <<format("mov rsi, M+%ld", bufferAddr)<<"\n";
+         this->programFile << "mov rdx, 100h"; //testar sem essa linha em caso de falha
         this->programFile <<"mov rax, 1"<<"\n";
         this->programFile <<"mov rdi, 1"<<"\n";
         this->programFile <<"syscall"<<"\n";
@@ -525,35 +526,36 @@ void CodeGen::write(Token *t)
         label3 = new_label();
 
         this->programFile <<format("mov eax, [qword M+%ld]", t->get_endereco())<<"\n";
-        this->programFile <<format("mov rsi, M+%ld", buffer_address)<<"\n";
+        this->programFile <<format("mov rsi, M+%ld", bufferAddr)<<"\n";
         this->programFile <<"mov rcx, 0"<<"\n";
         this->programFile <<"mov rdi, 0"<<"\n";
         this->programFile <<"cmp eax, 0"<<"\n";
-        this->programFile <<format("jge l%d",label1)<<"\n";
+        this->programFile <<format("jge Rot%d",label1)<<"\n";
         this->programFile <<"mov bl, '-' "<<"\n";
         this->programFile <<"mov [rsi], bl"<<"\n";
         this->programFile <<"add rsi, 1"<<"\n";
         this->programFile <<"add rdi, 1"<<"\n";
         this->programFile <<"neg eax"<<"\n";
-        this->programFile <<format("l%ld:",label1),1<<"\n";
+        this->programFile <<format("Rot%d:",label1),1<<"\n";
         this->programFile <<"mov ebx, 10"<<"\n";
-        this->programFile <<format("l%ld:",label2),1<<"\n";
+        this->programFile <<format("Rot%d:",label2),1<<"\n";
         this->programFile <<"add rcx, 1"<<"\n";
         this->programFile <<"cdq"<<"\n";
         this->programFile <<"idiv ebx"<<"\n";
         this->programFile <<"push dx"<<"\n";
         this->programFile <<"cmp eax, 0"<<"\n";
-        this->programFile <<format("jne l%d", label2)<<"\n";
+        this->programFile <<format("jne Rot%d", label2)<<"\n";
         this->programFile <<"add rdi,rcx"<<"\n";
-        this->programFile <<format("l%ld:",label3),1<<"\n";
+        this->programFile <<format("Rot%d:",label3),1<<"\n";
         this->programFile <<"pop dx"<<"\n";
         this->programFile <<"add dl, '0'"<<"\n";
         this->programFile <<"mov [rsi], dl"<<"\n";
         this->programFile <<"add rsi, 1"<<"\n";
         this->programFile <<"sub rcx, 1"<<"\n";
         this->programFile <<"cmp rcx, 0"<<"\n";
-        this->programFile <<format("jne l%d", label3)<<"\n";
-        this->programFile <<format("mov rsi, M+%ld",buffer_address)<<"\n";
+        this->programFile <<format("jne Rot%d", label3)<<"\n";
+        this->programFile <<format("mov rsi, M+%ld",bufferAddr)<<"\n";
+        this->programFile << "mov rdx, 100h"; //testar sem essa linha em caso de falha
         this->programFile <<"mov rax, 1"<<"\n";
         this->programFile <<"mov rdi, 1"<<"\n";
         this->programFile <<"syscall"<<"\n";
