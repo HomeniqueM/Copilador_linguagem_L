@@ -18,6 +18,7 @@
 #include "symbols/token-type.cpp"
 #include "analyzers/lexical-analysis.cpp"
 #include "analyzers/syntatic-analysis.cpp"
+#include "analyzers/semantic-analysis.cpp"
 
 #include "symbols/token-id.cpp"
 
@@ -30,10 +31,12 @@ int main(int argc, char const *argv[])
     try
     {
         ArgHandler handler;
-        FileHandler fh(handler.handleArgs(argc, argv));
+        FileHandler fh("../docs/t.l");
+        // FileHandler fh(handler.handleArgs(argc, argv));
         SymbolTable st = SymbolTable();
         LexerAnalysis la(&fh, &st);
-        SyntaticAnalysis sa = SyntaticAnalysis(&la);
+        SemanticAnalysis se = SemanticAnalysis(&la);
+        SyntaticAnalysis sa = SyntaticAnalysis(&la, &se, &st);
         sa.Start(la.getNextToken());
         std::cout << "[" << la.getCurrentLine() -1 << "] Linhas Compiladas.";
     }
@@ -44,3 +47,6 @@ int main(int argc, char const *argv[])
 
     return 0;
 }
+
+
+
