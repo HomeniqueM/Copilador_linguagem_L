@@ -25,6 +25,10 @@ void Token::setTokenSize(size_t tokenSize)
 {
     this->_tokenSize = tokenSize;
 }
+long Token::setTokenAddr(long addr)
+{
+    this->_addr = addr;
+}
 
 TokenID Token::getTokenid()
 {
@@ -43,6 +47,11 @@ std::string Token::getLexeme()
 size_t Token::getTokeSize()
 {
     return _tokenSize;
+}
+
+long Token::getTokenAddr()
+{
+    return _addr;
 }
 
 

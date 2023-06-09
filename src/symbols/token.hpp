@@ -19,6 +19,7 @@ private:
     TokenID _id;
     TokenType _tokenType;
     size_t _tokenSize;
+    long _addr;
 
 public:
     Token(TokenID id = TOKEN_ID_NULL, TokenType tokenType = TOKEN_TYPE_UNDEFINED, std::string lexeme = "", size_t tokenSize = 0)
@@ -33,11 +34,13 @@ public:
     void setLexeme(std::string lexeme);
     void setTokenType(TokenType tokenType);
     void setTokenSize(size_t tokenSize);
+    void setTokenAddr(long addr);
 
     TokenID getTokenid();
     TokenType getTokenType();
     std::string getLexeme();
     size_t getTokeSize();
+    long getTokenAddr();
 };
 
 #endif
