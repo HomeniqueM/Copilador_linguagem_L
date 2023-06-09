@@ -14,6 +14,7 @@
 
 #include "symbols/symbol-table.hpp"
 #include "error/l_exception.cpp"
+#include "analyzers/semantic-analysis.hpp"
 #include "analyzers/lexical-analysis.hpp"
 #include "analyzers/syntatic-analysis.hpp"
 #include "utils/arg-handler.hpp"
@@ -25,7 +26,7 @@ int main(int argc, char const *argv[])
     try
     {
         ArgHandler handler;
-        FileHandler fh("../docs/t.l");
+        FileHandler fh("docs/t.l");
         // FileHandler fh(handler.handleArgs(argc, argv));
         SymbolTable st = SymbolTable();
         LexerAnalysis la(&fh, &st);

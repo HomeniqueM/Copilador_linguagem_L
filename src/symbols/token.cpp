@@ -74,5 +74,3 @@ size_t Token::getTokeSize()
     return _tokenSize;
 }
 
-#endif
-

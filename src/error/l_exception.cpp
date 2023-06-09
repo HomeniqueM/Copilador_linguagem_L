@@ -36,12 +36,6 @@ enum class ErrorCode
     UNKNOWN
 };
 
-// Mapeamento de códigos de erro para mensagens de erro
-const std::map<ErrorCode, std::string_view> errorMessages = {
-    {ErrorCode::INVALIDCHARACTER, "character invalido"},
-     {ErrorCode::UNEXPECTED_CHARACTER, "character nao esperado"},
-};
-
 /**
  * @brief classe para criar erros customizado para o compilador da linguagem L
  */
