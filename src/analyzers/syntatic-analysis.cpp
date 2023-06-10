@@ -50,7 +50,7 @@ void SyntaticAnalysis::matchToken(TokenID expectedToken)
     {
         if (token->getTokenid() == TOKEN_ID_EOF)
         {
-            throw LException(ErrorCode::UNEXPECTED_TOKEN_EOF, la->getCurrentLine() - 1, "");
+            throw LException(ErrorCode::UNEXPECTED_EOF, la->getCurrentLine() - 1, "");
         }
         else
         {
