@@ -18,6 +18,8 @@ Token Token::clone(){
     return a;
 }
 
+
+
 void Token::setMaxTam(int maxTam)
 {
     this->maxTam = maxTam;
