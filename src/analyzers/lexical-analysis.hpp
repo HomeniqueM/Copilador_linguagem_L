@@ -32,6 +32,7 @@ typedef struct StatePackage
     std::string identifier;  // onde o lexima é montado
     TokenType tokenType = TOKEN_TYPE_UNDEFINED;
     TokenID tokenId = TOKEN_ID_NULL;
+    
 } StatePackage;
 
 /** =========================================================
@@ -94,8 +95,8 @@ public:
 };
 
 /** =========================================================
- * @brief 
- * @details 
+ * @brief Represanta o estado (S4)
+ * @details State para tratar idetificadores 
  * @category 
  * @param c caracteres a ser analisado
  * ========================================================== */
@@ -106,8 +107,8 @@ public:
 };
 
 /** =========================================================
- * @brief 
- * @details 
+ * @brief Represanta o estado (S5)
+ * @details State para tratar idetificadores
  * @category 
  * @param c caracteres a ser analisado
  * ========================================================== */
@@ -118,8 +119,8 @@ public:
 };
 
 /** =========================================================
- * @brief 
- * @details 
+ * @brief Represanta o estado (S6)
+ * @details Estado final do hexadecimal
  * @category 
  * @param c caracteres a ser analisado
  * ========================================================== */
@@ -130,8 +131,8 @@ public:
 };
 
 /** =========================================================
- * @brief 
- * @details 
+ * @brief Represanta o estado (S7)
+ * @details Estado para tratar hexadecimal no estado inicial
  * @category 
  * @param c caracteres a ser analisado
  * ========================================================== */
@@ -142,8 +143,8 @@ public:
 };
 
 /** =========================================================
- * @brief 
- * @details 
+ * @brief Represanta o estado (S8)
+ * @details Estado para tratar estado intermediario hexadecimal 
  * @category 
  * @param c caracteres a ser analisado
  * ========================================================== */
@@ -153,8 +154,8 @@ public:
     StatePackage handle(char c) override;
 };
 /** =========================================================
- * @brief 
- * @details 
+ * @brief Represanta o estado (S9)
+ * @details Estado para tratar estado intermediario hexadecimal 
  * @category 
  * @param c caracteres a ser analisado
  * ========================================================== */
@@ -164,8 +165,8 @@ public:
     StatePackage handle(char c) override;
 };
 /** =========================================================
- * @brief 
- * @details 
+ * @brief Represanta o estado (S10)
+ * @details Estado para tratar estado final hexadecimal 
  * @category 
  * @param c caracteres a ser analisado
  * ========================================================== */
@@ -175,8 +176,8 @@ public:
     StatePackage handle(char c) override;
 };
 /** =========================================================
- * @brief 
- * @details 
+ * @brief Represanta o estado (S12)
+ * @details  Transição para tratar de valores inteiros 
  * @category 
  * @param c caracteres a ser analisado
  * ========================================================== */
@@ -187,8 +188,8 @@ public:
 };
 
 /** =========================================================
- * @brief 
- * @details 
+ * @brief Represanta o estado (S13)
+ * @details Transição para tratar de valores reais 
  * @category 
  * @param c caracteres a ser analisado
  * ========================================================== */
@@ -199,8 +200,8 @@ public:
 };
 
 /** =========================================================
- * @brief 
- * @details 
+ * @brief  Represanta o estado (S14)
+ * @details Transição par ler valores reias 
  * @category 
  * @param c caracteres a ser analisado
  * ========================================================== */
@@ -211,8 +212,8 @@ public:
 };
 
 /** =========================================================
- * @brief 
- * @details 
+ * @brief Represanta o estado (S15)
+ * @details Transição par ler numero exponential 
  * @category 
  * @param c caracteres a ser analisado
  * ========================================================== */
@@ -222,8 +223,9 @@ public:
     StatePackage handle(char c) override;
 };
 /** =========================================================
- * @brief 
- * @details 
+ * @brief Represanta o estado (S16)
+ * @details Transição par ler valores numero até encontrar 
+ * algo diferente de um valor numerico 
  * @category 
  * @param c caracteres a ser analisado
  * ========================================================== */
@@ -233,8 +235,8 @@ public:
     StatePackage handle(char c) override;
 };
 /** =========================================================
- * @brief 
- * @details 
+ * @brief Represanta o estado (S17)
+ * @details Tratar o valores de < | <= | <>
  * @category 
  * @param c caracteres a ser analisado
  * ========================================================== */
@@ -244,8 +246,8 @@ public:
     StatePackage handle(char c) override;
 };
 /** =========================================================
- * @brief 
- * @details 
+ * @brief Represanta o estado (S18)
+ * @details Tratar o valores de = | == 
  * @category 
  * @param c caracteres a ser analisado
  * ========================================================== */
@@ -255,8 +257,8 @@ public:
     StatePackage handle(char c) override;
 };
 /** =========================================================
- * @brief 
- * @details 
+ * @brief Represanta o estado (S19)
+ * @details Tratar o valores char
  * @category 
  * @param c caracteres a ser analisado
  * ========================================================== */
@@ -266,8 +268,8 @@ public:
     StatePackage handle(char c) override;
 };
 /** =========================================================
- * @brief 
- * @details 
+ * @brief Represanta o estado (S20)
+ * @details Tratar o valores char
  * @category 
  * @param c caracteres a ser analisado
  * ========================================================== */
@@ -277,8 +279,8 @@ public:
     StatePackage handle(char c) override;
 };
 /** =========================================================
- * @brief 
- * @details 
+ * @brief Represanta o estado (S21)
+ * @details Tratar o Strings
  * @category 
  * @param c caracteres a ser analisado
  * ========================================================== */
@@ -288,8 +290,8 @@ public:
     StatePackage handle(char c) override;
 };
 /** =========================================================
- * @brief 
- * @details 
+ * @brief Represanta o estado (S22)
+ * @details Trata o valores > | >=
  * @category 
  * @param c caracteres a ser analisado
  * ========================================================== */
@@ -328,5 +330,6 @@ public:
     void pushBackCurrentChar();
     char getNextChar();
     int getCurrentLine();
+    Token *clone();
 };
 

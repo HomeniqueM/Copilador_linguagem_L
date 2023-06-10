@@ -20,6 +20,7 @@ private:
     TokenType _tokenType;
     TokenClass _tokenClass;
     size_t _tokenSize;
+    long _addr;
     int maxTam;
 
 public:
@@ -38,6 +39,7 @@ public:
     void setTokenType(TokenType tokenType);
     void setTokenClass(TokenClass _tokenClass);
     void setTokenSize(size_t tokenSize);
+    void setTokenAddr(long addr);
     void setMaxTam(int maxTam);
 
     TokenID getTokenid();
@@ -45,6 +47,7 @@ public:
     std::string getLexeme();
     TokenClass getTokenClass();
     size_t getTokeSize();
+    long getTokenAddr();
     int getMaxTam();
 
     Token clone();

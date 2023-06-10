@@ -40,6 +40,10 @@ void Token::setTokenSize(size_t tokenSize)
 {
     this->_tokenSize = tokenSize;
 }
+void Token::setTokenAddr(long addr)
+{
+    this->_addr = addr;
+}
 
 void Token::setTokenClass(TokenClass _tokenClass)
 {
@@ -54,6 +58,8 @@ TokenClass Token::getTokenClass()
 {
     return _tokenClass;
 }
+
+
 
 TokenID Token::getTokenid()
 {
@@ -73,4 +79,10 @@ size_t Token::getTokeSize()
 {
     return _tokenSize;
 }
+
+long Token::getTokenAddr()
+{
+    return _addr;
+}
+
 

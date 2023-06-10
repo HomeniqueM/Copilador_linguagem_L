@@ -17,8 +17,8 @@
 #include "../symbols/token-type.hpp"
 #include "../analyzers/lexical-analysis.hpp"
 
-class SemanticAnalysis
-{
+class SemanticAnalysis 
+{ 
 private:
     LexerAnalysis *la;
     void tokenIdSetType(Token *tokenConst, Token *tokenId);
@@ -41,5 +41,11 @@ public:
     void tokenIsMultDivAndMod(Token *token);
     void tokenIsIntergerOrReal(Token *token, bool isNeg);
     //void setMaxTamVet();
+    void rulle20(Token *tokenA, Token *tokenB, Token *operador);
+    void rulle23(Token *tokenA, Token *tokenB, Token *operador);
+    void setMaxTamVet(Token *tokenId, Token *tokenConst);
+    void ifTokenVectorInRange(Token *tokenId, Token *tokenConst);
+
+
     
 };
