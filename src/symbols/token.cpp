@@ -25,7 +25,7 @@ void Token::setTokenSize(size_t tokenSize)
 {
     this->_tokenSize = tokenSize;
 }
-long Token::setTokenAddr(long addr)
+void Token::setTokenAddr(long addr)
 {
     this->_addr = addr;
 }

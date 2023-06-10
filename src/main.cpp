@@ -18,9 +18,10 @@
 #include "analyzers/syntatic-analysis.hpp"
 #include "utils/arg-handler.hpp"
 #include "utils/file.hpp"
+#include "code_generator/code-gen.hpp"
 #include <string>
 
-int main(int argc, char const *argv[])
+/*int main(int argc, char const *argv[])
 {
     try
     {
@@ -37,5 +38,20 @@ int main(int argc, char const *argv[])
         std::cerr << e.what() << std::endl;
     }
 
+    return 0;
+}*/
+
+int main(){
+    CodeGen cg("program.asm");
+    Token *id = new Token();
+    Token *constant = new Token();
+    id->setTokenType(TOKEN_TYPE_STRING);
+    constant->setTokenType(TOKEN_TYPE_STRING);
+    constant->setLexeme("Banana");
+    constant->setTokenSize(6);
+    cg.startData();
+    cg.startText();
+    cg.write(id);
+    cg.end();
     return 0;
 }

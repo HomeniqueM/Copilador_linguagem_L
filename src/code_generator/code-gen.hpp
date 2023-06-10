@@ -60,10 +60,18 @@ class CodeGen{
         void storeConstOnTmp(Token *t,Token *constant);
         void atributionCommand(Token *id, Token *exp);
         void invertExpression(Token *exp);
+
         void sumOperation(Token *op1, Token *op2);
         void subOperation(Token *op1, Token *op2);
+        void orOperation(Token *op1,Token *op2);
+
         void multiplyOperation(Token *op1, Token *op2);
         void divideOperation(Token *op1, Token *op2);
+        void modOperation(Token *op1,Token *op2);
+        void andOperation();
+        void startIF(Token *t, int begin);
+
+        void writeInProgramFile(std::string s);
         void negExpression(Token *exp);
         void cvtToReal(Token *t);
         void cvtToInt(Token *t);
@@ -71,5 +79,7 @@ class CodeGen{
         int newLabel() {
             return label_counter++;
         }
-        // adicione aqui outras funções de manipulação de tipos
+        void initCondition(Token *t, int startLabel);
+        void finalizeBlock(int startLabel, int endLabel);
+        void finalizeConditionalChain(bool onElse, int startLabel, int endLabel); 
 };

@@ -15,6 +15,7 @@ CodeGen::CodeGen(std::string asmFileName)
     this->label_counter = 0;
     this->asmFileName = asmFileName;
     this->programFile.open(asmFileName);
+    startProgram();
 }
 //Destrutor (encerra o fluxo de dados para o arquivo Assembly)
 CodeGen::~CodeGen()
@@ -44,7 +45,6 @@ std::string format(const std::string &format, Args... args)
     // Retorna a string formatada
     return std::string(buf.get(), buf.get() + size - 1);
 }
-
 // cria novo temporário
 long CodeGen::NewTmp(Token *t)
 {
@@ -66,16 +66,16 @@ long CodeGen::NewTmp(Token *t)
 //encerra o programa
 void CodeGen::end()
 {
-    this->programFile << "mov rax, 60 ;chamada de saída\n";
-    this->programFile << "mov rdi, 0 ;código de saida sem erros\n";
-    this->programFile << "syscall ;chama o kernel\n";
+    this->programFile << "\tmov rax, 60 ;chamada de saída\n";
+    this->programFile << "\tmov rdi, 0 ;código de saida sem erros\n";
+    this->programFile << "\tsyscall ;chama o kernel\n";
 }
 //cria nova seção de dados
 void CodeGen::startData()
 {
     this->programFile << "section .data\n";
 }
-//cria nova seção de texto
+//cria nova seção de codigo
 void CodeGen::startText()
 {
     this->programFile << "section .text\n";
@@ -83,30 +83,33 @@ void CodeGen::startText()
 //inicializa o programa
 void CodeGen::startProgram()
 {
+    this->programFile << "global _start"<<"\n";
     this->startData();
     this->programFile << "M:\n";
-    this->programFile << "\t resb 10000h ;temporários\n";
+    this->programFile << "\tresb 10000h ;temporários\n";
+    this->startText();
+    this->programFile << "_start:"<<"\n";
 }
 //comando de declaração de variável
 void CodeGen::DeclareVariable(Token *t)
 {
     t->setTokenAddr(this->mem_count);
-    if (t->getTokenType() == TOKEN_TYPE_CHAR)
+    if (t->getTokenType() == TOKEN_TYPE_CHAR || t->getTokenType()== TOKEN_TYPE_BOOLEAN)
     {
         this->mem_count += this->char_size;
-        this->programFile << "\t resb 1"
+        this->programFile << "\tresb 1"
                  << "\n";
     }
     else if (t->getTokenType() == TOKEN_TYPE_INTEGER || t->getTokenType() == TOKEN_TYPE_REAL)
     {
         this->mem_count += this->number_size;
-        this->programFile << "\t resd 1"
+        this->programFile << "\tresd 1"
                  << "\n";
     }
     else if (t->getTokenType() == TOKEN_TYPE_STRING)
     {
         this->mem_count += this->string_size;
-        this->programFile << "\t resb 100h"
+        this->programFile << "\tresb 100h"
                  << "\n";
     }
 }
@@ -114,20 +117,21 @@ void CodeGen::DeclareVariable(Token *t)
 void CodeGen::DeclareConst(Token *t, Token *constant)
 {
     t->setTokenAddr(this->mem_count);
-    if (t->getTokenType() == TOKEN_TYPE_CHAR)
+    if (t->getTokenType() == TOKEN_TYPE_CHAR || t->getTokenType()== TOKEN_TYPE_BOOLEAN)
     {
         this->mem_count += constant->getTokeSize();
-        this->programFile << format("db %s 1", constant->getLexeme()) << "\n";
+        this->programFile << format("\tdb \'%s\' 1", constant->getLexeme().c_str()) << "\n";
     }
     else if (t->getTokenType() == TOKEN_TYPE_INTEGER || t->getTokenType() == TOKEN_TYPE_REAL)
     {
         this->mem_count += constant->getTokeSize();
-        this->programFile << format("dd %s", constant->getLexeme()) << "\n";
+        this->programFile << format("\tdd %s", constant->getLexeme().c_str()) << "\n";
     }
     else if (t->getTokenType() == TOKEN_TYPE_STRING)
     {
+        t->setTokenSize(constant->getTokeSize());
         this->mem_count += constant->getTokeSize();
-        this->programFile << format("db %s, 0", constant->getLexeme()) << "\n";
+        this->programFile << format("\tdb \'%s\', %d", constant->getLexeme().c_str(),constant->getTokeSize()) << "\n";
     }
 }
 // guarda valor de uma constante em um temporário
@@ -146,7 +150,7 @@ void CodeGen::storeConstOnTmp(Token *t,Token *constant)
         t->setTokenAddr(this->mem_count - this->string_size + constant->getLexeme().size() - 1);
         this->mem_count += constant->getTokeSize();
         this->startData();
-        this->programFile << format("db %s,0", constant->getLexeme()) << "\n";
+        this->programFile << format("db %s, %d", constant->getLexeme(),constant->getTokeSize()) << "\n";
         this->startText();
     }
     else if (constant->getTokenType() == TOKEN_TYPE_CHAR)
@@ -302,6 +306,20 @@ void CodeGen::subOperation(Token *op1, Token *op2)
         this->programFile << format("movss [qword M+%ld], xmm0", tmpAddr) << "\n";
     }
 }
+// Operação de or
+void CodeGen::orOperation(Token *op1,Token *op2){
+    this->programFile << format("mov eax, [qword M+%ld]", op1->getTokenAddr())<<"\n";
+    this->programFile << format("mov ebx, [qword M+%ld]", op1->getTokenAddr())<<"\n";
+    this->programFile << format("mov ecx, [qword M+%ld]", op2->getTokenAddr())<<"\n";
+    this->programFile << "imul ecx"<<"\n";
+    this->programFile << "add ebx, ecx";
+    this->programFile << "sub ebx, eax";
+
+    long tmpAddr = this->tmp_count;
+    this->tmp_count += this->char_size;
+    op1->setTokenAddr(tmpAddr);
+    this->programFile << format("mov [qword M+%ld],ebx",tmpAddr)<<"\n";
+} 
 // Operação de multiplicação
 void CodeGen::multiplyOperation(Token *op1, Token *op2)
 {
@@ -349,7 +367,7 @@ void CodeGen::multiplyOperation(Token *op1, Token *op2)
         this->programFile << format("movss [qword M+%ld], xmm0", tmpAddr) << "\n";
     }
 }
-// Operaçãp de divisão
+// Operação de divisão
 void CodeGen::divideOperation(Token *op1, Token *op2)
 {
     if (op1->getTokenType() == op2->getTokenType())
@@ -396,6 +414,20 @@ void CodeGen::divideOperation(Token *op1, Token *op2)
         this->programFile << format("movss [qword M+%ld], xmm0", tmpAddr) << "\n";
     }
 }
+//Operação de mod
+void CodeGen::modOperation(Token *op1,Token *op2){
+    this->programFile << format("mov eax, [qword M+%ld]", op1->getTokenAddr())<<"\n";
+    this->programFile << format("mov ebx, [qword M+%ld]", op1->getTokenAddr())<<"\n";
+    this->programFile << "idiv ebx"<<"\n";
+    long tmpAddr = NewTmp(op1);
+    op1->setTokenAddr(tmpAddr);
+    this->programFile << format("mov [qword M+%ld], edx", tmpAddr)<<"\n";
+
+}
+//Operação de and
+void CodeGen::andOperation(){
+
+}
 // negação da expressão
 void CodeGen::negExpression(Token *exp)
 {
@@ -440,11 +472,11 @@ void CodeGen::write(Token *t)
     if (t->getTokenType() == TOKEN_TYPE_STRING)
     {
         bufferAddr = t->getTokenAddr();
-        this->programFile << (format("mov rsi, M+%d", bufferAddr));
-        this->programFile << "mov rdx, 100h";
-        this->programFile <<"mov rax, 1";
-        this->programFile << "mov rdi, 1";
-        this->programFile << "syscall";
+        this->programFile << format("\tmov rsi, M+%ld", bufferAddr)<<"\n";
+        this->programFile << format("\tmov rdx, %d",t->getTokeSize())<<"\n";
+        this->programFile <<"\tmov rax, 1"<<"\n";
+        this->programFile << "\tmov rdi, 1"<<"\n";
+        this->programFile << "\tsyscall"<<"\n";
     }else if (t->getTokenType() == TOKEN_TYPE_CHAR)
     {
         bufferAddr = t->getTokenAddr();
@@ -562,17 +594,44 @@ void CodeGen::write(Token *t)
         this->programFile <<"cmp rcx, 0"<<"\n";
         this->programFile <<format("jne Rot%d", label3)<<"\n";
         this->programFile <<format("mov rsi, M+%ld",bufferAddr)<<"\n";
-        this->programFile << "mov rdx, 100h"; //testar sem essa linha em caso de falha
+        this->programFile << "mov rdx, 1"<<"\n";
         this->programFile <<"mov rax, 1"<<"\n";
         this->programFile <<"mov rdi, 1"<<"\n";
         this->programFile <<"syscall"<<"\n";
     }
 }
-//
-/*void CodeGen::writeLine()
-{
-    this->programFile <<format("mov rsi, M+%ld", buffer_address)<<"\n";
-    this->programFile <<"mov rax, 1"<<"\n";
-    this->programFile <<"mov rdi, 1"<<"\n";
-    this->programFile <<"syscall"<<"\n";
-}*/
+
+/**
+ * @brief escreve dentro da variavel para o arquivo
+ */
+void CodeGen::writeInProgramFile(std::string s){
+ this->programFile << s << "\n";
+}
+/**
+ * @brief uma declaração condicional 
+
+*/
+void CodeGen::initCondition(Token *t, int startLabel) {
+    writeInProgramFile(format("mov al, [qword M + %ld]", t->getTokenAddr()));
+    writeInProgramFile("cmp al, 0");
+    writeInProgramFile(format("je Rot%d", startLabel));
+}
+
+/**
+ * @brief Finaliza um bloco de código (bloco condicional)
+ */
+void CodeGen::finalizeBlock( int startLabel, int endLabel) {
+    writeInProgramFile(format("jmp Rot%d", startLabel));
+    writeInProgramFile(format("Rot%d:", endLabel));
+}
+
+/**
+ * @brief Finaliza uma cadeia condicional (if/else)
+ */
+
+void CodeGen::finalizeConditionalChain(bool onElse, int startLabel, int endLabel) {
+    onElse?
+        writeInProgramFile(format("Rot%d:", endLabel)) // Se estamos terminando um bloco else, marque com o rótulo de fim
+    : 
+        writeInProgramFile(format("Rot%d:", startLabel)); // Se estamos terminando um bloco if, marque com o rótulo de início
+}
