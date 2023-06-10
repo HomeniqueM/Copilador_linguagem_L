@@ -16,11 +16,11 @@
 enum class ErrorCode
 {
     // Erros solicitados
-    INVALIDCHARACTER, // Pdf 01
-    INVALIDLEX,       // PDF 01
-    UNEXPECTED_EOF,   // PDF 01
-    UNEXPECTED_TOKEN, // PDF 02
-    UNDECLARED_IDENTIFIER, // PDF 03
+    INVALIDCHARACTER,            // Pdf 01
+    INVALIDLEX,                  // PDF 01
+    UNEXPECTED_EOF,              // PDF 01
+    UNEXPECTED_TOKEN,            // PDF 02
+    UNDECLARED_IDENTIFIER,       // PDF 03
     IDENTIFIER_ALREADY_DECLARED, // PDF 03
     MISMATCHED_IDENTIFIER,
     INCOMPATIBLE_TYPES,
@@ -36,9 +36,7 @@ enum class ErrorCode
     FILE_OPENNING_FAIL,
     // Adicionado Erros do Semantico
     IDENTIFIER_NO_DECLARED,
-    IDENTIFIER_ALREADY_DECLARED,
     MISMATCHED_IDENTIFIER_CLASS,
-    INCOMPATIBLE_TYPES,
     UNKNOWN
 };
 
