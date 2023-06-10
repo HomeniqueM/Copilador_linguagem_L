@@ -43,9 +43,7 @@ public:
     //void setMaxTamVet();
     void rulle20(Token *tokenA, Token *tokenB, Token *operador);
     void rulle23(Token *tokenA, Token *tokenB, Token *operador);
+    void rulle25(Token *tokenA, Token *tokenB, Token *operador);
     void setMaxTamVet(Token *tokenId, Token *tokenConst);
     void ifTokenVectorInRange(Token *tokenId, Token *tokenConst);
-
-
-    
 };
