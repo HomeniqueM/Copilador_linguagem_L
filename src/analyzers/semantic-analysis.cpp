@@ -151,7 +151,6 @@ void SemanticAnalysis::tokenIsIntergerOrReal(Token *token, bool isNeg)
     }
 }
 
-
 /*[23] ->
 {
     se Exp1.operator150 == or
@@ -176,25 +175,70 @@ void SemanticAnalysis::rulle23(Token *tokenA, Token *tokenB, Token *operador)
     }
     else
     {
-        if (tokenA->getTokenType() != tokenB->getTokenType()){
-            if  ((tokenA->getTokenType() == TOKEN_TYPE_REAL || tokenA->getTokenType() == TOKEN_TYPE_INTEGER) &&
+        if (tokenA->getTokenType() != tokenB->getTokenType())
+        {
+            if ((tokenA->getTokenType() == TOKEN_TYPE_REAL || tokenA->getTokenType() == TOKEN_TYPE_INTEGER) &&
                 (tokenB->getTokenType() == TOKEN_TYPE_REAL || tokenB->getTokenType() == TOKEN_TYPE_INTEGER))
             {
                 tokenA->setTokenType(TOKEN_TYPE_REAL);
             }
             else
             {
-            throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "121");
+                throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "121");
+            }
+        }
+        else
+        {
+            if (!(tokenA->getTokenType() == TOKEN_TYPE_REAL || tokenA->getTokenType() == TOKEN_TYPE_INTEGER))
+            {
+                throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "121");
             }
         }
     }
 }
 
+void SemanticAnalysis::rulle25(Token *tokenA, Token *tokenB, Token *operador)
+{
+    if (operador->getTokenid() == TOKEN_ID_AND)
+    {
+        if (!(tokenA->getTokenType() == TOKEN_TYPE_BOOLEAN && tokenB->getTokenType() == TOKEN_TYPE_BOOLEAN))
+        {
+            throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "11");
+        }
+    }
+    else if (operador->getTokenid() == TOKEN_ID_MODULO && tokenB->getTokenType() != TOKEN_TYPE_INTEGER)
+    {
+        // Printar token B
+        throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "12");
+    }
+    else{
+
+        if (tokenA->getTokenType() != tokenB->getTokenType())
+        {
+            if ((tokenA->getTokenType() == TOKEN_TYPE_REAL || tokenA->getTokenType() == TOKEN_TYPE_INTEGER) &&
+                (tokenB->getTokenType() == TOKEN_TYPE_REAL || tokenB->getTokenType() == TOKEN_TYPE_INTEGER))
+            {
+                tokenA->setTokenType(TOKEN_TYPE_REAL);
+            }
+            else
+            {
+                throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "121");
+            }
+        }
+        else
+        {
+            if (!(tokenA->getTokenType() == TOKEN_TYPE_REAL || tokenA->getTokenType() == TOKEN_TYPE_INTEGER))
+            {
+                throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "121");
+            }
+        }
+    }
+}
 
 /*[20] ->
 {
-    se¹ Exp.tipo != Exp1.Tipo 
-        se² !( 	(Exp.tipo = real ou Exp.tipo = inteiro) && 
+    se¹ Exp.tipo != Exp1.Tipo
+        se² !( 	(Exp.tipo = real ou Exp.tipo = inteiro) &&
         (Exp1.tipo = real ou Exp1.tipo = inteiro))
         erro
     senao¹
@@ -204,26 +248,33 @@ void SemanticAnalysis::rulle23(Token *tokenA, Token *tokenB, Token *operador)
 */
 void SemanticAnalysis::rulle20(Token *tokenA, Token *tokenB, Token *operador)
 {
-    if (tokenA->getTokenType() != tokenB->getTokenType()){
-            if  ( !((tokenA->getTokenType() == TOKEN_TYPE_REAL || tokenA->getTokenType() == TOKEN_TYPE_INTEGER) &&
-                  (tokenB->getTokenType() == TOKEN_TYPE_REAL || tokenB->getTokenType() == TOKEN_TYPE_INTEGER)) )
-            {
-               throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "13");
-            }
+    if (tokenA->getTokenType() != tokenB->getTokenType())
+    {
+        if (!((tokenA->getTokenType() == TOKEN_TYPE_REAL || tokenA->getTokenType() == TOKEN_TYPE_INTEGER) &&
+              (tokenB->getTokenType() == TOKEN_TYPE_REAL || tokenB->getTokenType() == TOKEN_TYPE_INTEGER)))
+        {
+            throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "13");
+        }
     }
-    else{
-        if(operador->getTokenid() == TOKEN_ID_ENQUALS && tokenA->getTokenType() == TOKEN_TYPE_STRING ){
+    else
+    {
+        if (operador->getTokenid() == TOKEN_ID_ENQUALS && tokenA->getTokenType() == TOKEN_TYPE_STRING)
+        {
             throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "14");
         }
     }
+    tokenA->setTokenType(TOKEN_TYPE_BOOLEAN);
 }
 
-void SemanticAnalysis::setMaxTamVet(Token *tokenId, Token *tokenConst){
+void SemanticAnalysis::setMaxTamVet(Token *tokenId, Token *tokenConst)
+{
     tokenId->setMaxTam(stoi(tokenConst->getLexeme()));
 }
 
-void SemanticAnalysis::ifTokenVectorInRange(Token *tokenId, Token *tokenConst){
-    if(stoi(tokenConst->getLexeme()) >= tokenId->getMaxTam()){
+void SemanticAnalysis::ifTokenVectorInRange(Token *tokenId, Token *tokenConst)
+{
+    if (stoi(tokenConst->getLexeme()) >= tokenId->getMaxTam())
+    {
         throw LException(ErrorCode::IDENTIFIER_NO_DECLARED, la->getCurrentLine(), "15");
     }
 }
