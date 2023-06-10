@@ -1,6 +1,6 @@
 { Exemplo de Programa na linguagem L }
 
-integer A;
+integer A,A3h3A;
 char A1[40];
 final MAXITER=10;
 real percentual=.0e0;
