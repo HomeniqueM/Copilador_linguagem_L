@@ -45,12 +45,17 @@ int main(){
     CodeGen cg("program.asm");
     Token *id = new Token();
     Token *constant = new Token();
+    Token *t = new Token();
+    t->setTokenType(TOKEN_TYPE_STRING);
     id->setTokenType(TOKEN_TYPE_STRING);
     constant->setTokenType(TOKEN_TYPE_STRING);
     constant->setLexeme("Banana");
     constant->setTokenSize(6);
     cg.startData();
+    cg.DeclareVariable(id);
     cg.startText();
+    cg.storeConstOnTmp(t,constant);
+    cg.atributionCommand(id,t);
     cg.write(id);
     cg.end();
     return 0;

@@ -119,19 +119,19 @@ void CodeGen::DeclareConst(Token *t, Token *constant)
     t->setTokenAddr(this->mem_count);
     if (t->getTokenType() == TOKEN_TYPE_CHAR || t->getTokenType()== TOKEN_TYPE_BOOLEAN)
     {
-        this->mem_count += constant->getTokeSize();
+        this->mem_count += this->char_size;
         this->programFile << format("\tdb \'%s\' 1", constant->getLexeme().c_str()) << "\n";
     }
     else if (t->getTokenType() == TOKEN_TYPE_INTEGER || t->getTokenType() == TOKEN_TYPE_REAL)
     {
-        this->mem_count += constant->getTokeSize();
+        this->mem_count += this->number_size;
         this->programFile << format("\tdd %s", constant->getLexeme().c_str()) << "\n";
     }
     else if (t->getTokenType() == TOKEN_TYPE_STRING)
     {
-        t->setTokenSize(constant->getTokeSize());
-        this->mem_count += constant->getTokeSize();
-        this->programFile << format("\tdb \'%s\', %d", constant->getLexeme().c_str(),constant->getTokeSize()) << "\n";
+        t->setTokenSize(constant->getLexeme().size());
+        this->mem_count += constant->getLexeme().size();
+        this->programFile << format("\tdb \'%s\', %d", constant->getLexeme().c_str(),constant->getLexeme().size()) << "\n";
     }
 }
 // guarda valor de uma constante em um temporário
@@ -140,31 +140,32 @@ void CodeGen::storeConstOnTmp(Token *t,Token *constant)
     if (constant->getTokenType() == TOKEN_TYPE_REAL)
     {
         t->setTokenAddr(this->mem_count);
-        this->mem_count += constant->getTokeSize();
+        this->mem_count += this->number_size;
         this->startData();
-        this->programFile << format("dd %s", constant->getLexeme()) << "\n";
+        this->programFile << format("dd %s", constant->getLexeme().c_str()) << "\n";
         this->startText();
     }
     else if (constant->getTokenType() == TOKEN_TYPE_STRING)
     {
-        t->setTokenAddr(this->mem_count - this->string_size + constant->getLexeme().size() - 1);
-        this->mem_count += constant->getTokeSize();
+        t->setTokenAddr(this->mem_count);
+        t->setTokenSize(constant->getLexeme().size());
+        this->mem_count += constant->getLexeme().size();
         this->startData();
-        this->programFile << format("db %s, %d", constant->getLexeme(),constant->getTokeSize()) << "\n";
+        this->programFile << format("db \'%s\', %d", constant->getLexeme().c_str(),constant->getLexeme().size()) << "\n";
         this->startText();
     }
     else if (constant->getTokenType() == TOKEN_TYPE_CHAR)
     {
         long addr = this->NewTmp(constant);
         t->setTokenAddr(addr);
-        this->programFile << format("mov al, %s", constant->getLexeme()) << "\n";
+        this->programFile << format("mov al, \'%s\'", constant->getLexeme().c_str()) << "\n";
         this->programFile << format("mov [qword M+%ld], al", addr) << "\n";
     }
     else if (constant->getTokenType() == TOKEN_TYPE_INTEGER)
     {
         long addr = this->NewTmp(constant);
         t->setTokenAddr(addr);
-        this->programFile << format("mov eax, %s", constant->getLexeme()) << "\n";
+        this->programFile << format("mov eax, %s", constant->getLexeme().c_str()) << "\n";
         this->programFile << format("mov [qword M+%ld], eax", addr) << "\n";
     }
 }
@@ -178,13 +179,28 @@ void CodeGen::atributionCommand(Token *id, Token *exp)
     }
     else if (id->getTokenType() == TOKEN_TYPE_REAL)
     {
-        this->programFile << format("mov xmm0,[qword M+%ld]", exp->getTokenAddr()) << "\n";
-        this->programFile << format("mov [qword M+%ld], xmm0", id->getTokenAddr()) << "\n";
+        this->programFile << format("movss xmm0,[qword M+%ld]", exp->getTokenAddr()) << "\n";
+        this->programFile << format("movss [qword M+%ld], xmm0", id->getTokenAddr()) << "\n";
     }
     else if (id->getTokenType() == TOKEN_TYPE_CHAR || id->getTokenType() == TOKEN_TYPE_BOOLEAN)
     {
         this->programFile << format("mov al,[qword M+%ld]", exp->getTokenAddr()) << "\n";
         this->programFile << format("mov [qword M+%ld], al", id->getTokenAddr()) << "\n";
+    }else if(id->getTokenType() == TOKEN_TYPE_STRING){
+        id->setTokenSize(exp->getTokeSize());
+        int label1 = newLabel();
+        int label2 = newLabel();
+        this->programFile << format("mov rsi, qword M+%ld",id->getTokenAddr())<<"\n";
+        this->programFile << format("mov rdi, qword M+%ld",exp->getTokenAddr())<<"\n";
+        this->programFile << format("Rot%d:",label1)<<"\n";
+        this->programFile << "mov al, [rdi]\n";
+        this->programFile << "mov [rsi],al\n";
+        this->programFile << "cmp al, '' \n";
+        this->programFile << format("je Rot%d",label2)<<"\n";
+        this->programFile <<"add rdi, 1\n";
+        this->programFile <<"add rsi, 1\n";
+        this->programFile << format("jmp Rot%d",label1)<<"\n";
+        this->programFile << format("Rot%d:",label2)<<"\n";
     }
 }
 // inverte valor da expressão
@@ -600,7 +616,8 @@ void CodeGen::write(Token *t)
         this->programFile <<"syscall"<<"\n";
     }
 }
-
+//Escreve no terminal e quebra a linha
+void CodeGen::writeLine(Token *t){}
 /**
  * @brief escreve dentro da variavel para o arquivo
  */

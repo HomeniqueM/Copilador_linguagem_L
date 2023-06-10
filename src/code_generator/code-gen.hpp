@@ -75,7 +75,10 @@ class CodeGen{
         void negExpression(Token *exp);
         void cvtToReal(Token *t);
         void cvtToInt(Token *t);
+
         void write(Token *t);
+        void writeLine(Token *t);
+        
         int newLabel() {
             return label_counter++;
         }
