@@ -617,7 +617,67 @@ void CodeGen::write(Token *t)
     }
 }
 //Escreve no terminal e quebra a linha
-void CodeGen::writeLine(Token *t){}
+void CodeGen::writeln(Token *t){}
+
+/**
+ * @brief Montagem de codigo para leitura do teclado
+ */
+void CodeGen::readln(Token *t)
+{
+    if (t->getTokenType() == TOKEN_TYPE_STRING)
+    {
+        writeInProgramFile(format("mov rsi, M + %ld", t->getTokenAddr()));
+        writeInProgramFile("rdx, 100h");
+        writeInProgramFile("mov, rax, 0");
+        writeInProgramFile("mov rdi, 0");
+        writeInProgramFile("syscall");
+        writeInProgramFile((format("mov byte [M+%ld+rax-1], 0", t->getTokenAddr())));
+    }
+    else if (t->getTokenType() == TOKEN_TYPE_CHAR)
+    {
+        writeInProgramFile(format("mov rsi, M + %ld", t->getTokenAddr()));
+        writeInProgramFile("mov rdx, 1");
+        writeInProgramFile("mov rax, 0");
+        writeInProgramFile("mov rdi, 0");
+        writeInProgramFile("syscall");
+    }
+    else if (t->getTokenType() == TOKEN_TYPE_INTEGER)
+    {
+        int label1 = newLabel();
+        int label2 = newLabel();
+        int label3 = newLabel();
+        
+    }
+    else if (t->getTokenType() == TOKEN_TYPE_REAL)
+    {
+    }
+}
+
+long CodeGen::newTmpByTokenType(TokenType tt)
+{
+    long point = this->tmp_count;
+    if (tt == TOKEN_TYPE_CHAR)
+    {
+        this->tmp_count += this->char_size;
+    }
+    else if (tt == TOKEN_TYPE_STRING)
+    {
+        this->tmp_count += this->string_size;
+    }
+    else if (tt == TOKEN_TYPE_BOOLEAN)
+    {
+        this->tmp_count += this->char_size;
+    }
+    else if (tt == TOKEN_TYPE_INTEGER)
+    {
+        this->tmp_count += this->number_size;
+    }
+    else if (tt == TOKEN_TYPE_REAL)
+    {
+        this->tmp_count += this->number_size;
+    }
+    return point;
+}
 /**
  * @brief escreve dentro da variavel para o arquivo
  */
@@ -651,4 +711,8 @@ void CodeGen::finalizeConditionalChain(bool onElse, int startLabel, int endLabel
         writeInProgramFile(format("Rot%d:", endLabel)) // Se estamos terminando um bloco else, marque com o rótulo de fim
     : 
         writeInProgramFile(format("Rot%d:", startLabel)); // Se estamos terminando um bloco if, marque com o rótulo de início
+}
+
+void CodeGen::writeRot(int rot){
+    writeInProgramFile(format("Rot%d:",rot));
 }

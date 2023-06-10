@@ -77,12 +77,14 @@ class CodeGen{
         void cvtToInt(Token *t);
 
         void write(Token *t);
-        void writeLine(Token *t);
-        
+        void writeln(Token *t);
+        void readln(Token *t);
+        long newTmpByTokenType(TokenType tt);
         int newLabel() {
             return label_counter++;
         }
         void initCondition(Token *t, int startLabel);
         void finalizeBlock(int startLabel, int endLabel);
-        void finalizeConditionalChain(bool onElse, int startLabel, int endLabel); 
+        void finalizeConditionalChain(bool onElse, int startLabel, int endLabel);
+        void writeRot(int rot);
 };
