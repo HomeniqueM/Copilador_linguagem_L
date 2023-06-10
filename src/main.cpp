@@ -31,7 +31,7 @@ int main(int argc, char const *argv[])
     try
     {
         ArgHandler handler;
-        FileHandler fh("../docs/t.l");
+        FileHandler fh("../docs/t7.l");
         // FileHandler fh(handler.handleArgs(argc, argv));
         SymbolTable st = SymbolTable();
         LexerAnalysis la(&fh, &st);

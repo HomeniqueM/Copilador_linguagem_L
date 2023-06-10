@@ -506,7 +506,7 @@ Token SyntaticAnalysis::productionExp()
     Token tokenExp1;
     // Regra 14;
     tokenExp = productionExp1();
-    while (token->getTokenid() == TOKEN_ID_ENQUALS || token->getTokenid() == TOKEN_ID_GREATER_THEN || token->getTokenid() == TOKEN_ID_GREATER_EQUAL_TO || token->getTokenid() == TOKEN_ID_LESS_THAN || token->getTokenid() == TOKEN_ID_LESS_EQUAL_TO)
+    while (token->getTokenid() == TOKEN_ID_ENQUALS || token->getTokenid() == TOKEN_ID_GREATER_THEN || token->getTokenid() == TOKEN_ID_GREATER_EQUAL_TO || token->getTokenid() == TOKEN_ID_LESS_THAN || token->getTokenid() == TOKEN_ID_LESS_EQUAL_TO ||  token->getTokenid() == TOKEN_ID_DIFFERENT)
     {
         // Regra [21]
         operador = token->clone();
@@ -526,6 +526,8 @@ Token SyntaticAnalysis::productionExp()
         {
             matchToken(TOKEN_ID_LESS_THAN);
         }
+        else if (token->getTokenid() == TOKEN_ID_DIFFERENT)
+            matchToken(TOKEN_ID_DIFFERENT);
         else
         {
             matchToken(TOKEN_ID_LESS_EQUAL_TO);
@@ -588,21 +590,21 @@ Token SyntaticAnalysis::productionExp1()
 Token SyntaticAnalysis::productionExp2()
 {
     //(2*4)
-    Token tokenEXP2 = productionExp3(); //2
-    while (token->getTokenid() == TOKEN_ID_MULTIPLICATION || token->getTokenid() == TOKEN_ID_DIVISION || token->getTokenid() == TOKEN_ID_MODULO || token->getTokenid() == TOKEN_ID_AND || token->getTokenid() == TOKEN_ID_DIFFERENT)
+    Token tokenEXP2 = productionExp3();
+    Token operatorToken = token->clone(); //2
+    while (token->getTokenid() == TOKEN_ID_MULTIPLICATION || token->getTokenid() == TOKEN_ID_DIVISION || token->getTokenid() == TOKEN_ID_MODULO || token->getTokenid() == TOKEN_ID_AND)
     {
-        if (token->getTokenid() == TOKEN_ID_MULTIPLICATION)
+        if (token->getTokenid() == TOKEN_ID_MULTIPLICATION){
             matchToken(TOKEN_ID_MULTIPLICATION);
-            // 2 // token
+        }
         else if (token->getTokenid() == TOKEN_ID_DIVISION)
             matchToken(TOKEN_ID_DIVISION);
         else if (token->getTokenid() == TOKEN_ID_MODULO)
             matchToken(TOKEN_ID_MODULO);
-        else if (token->getTokenid() == TOKEN_ID_DIFFERENT)
-            matchToken(TOKEN_ID_DIFFERENT);
         else
             matchToken(TOKEN_ID_AND);
         Token tokenAux = productionExp3();
+        this->se->rulle25(&tokenEXP2, &tokenAux, &operatorToken);
         // tokenEXP2 tokenAux
     }
     return tokenEXP2;
@@ -614,7 +616,7 @@ Token SyntaticAnalysis::productionExp2()
  */
 Token SyntaticAnalysis::productionExp3()
 {
-    Token tokenExp3;
+    Token tokenExp3;    
     bool isNot = false;
     if (token->getTokenid() == TOKEN_ID_NOT)
     {
@@ -691,7 +693,7 @@ Token* SyntaticAnalysis::productionExp5()
         {
             matchToken(TOKEN_ID_OPEN_BRACKET);
             this->se->ifTokenTypehasDiff(token, TOKEN_TYPE_INTEGER);
-             this->se->ifTokenVectorInRange(tokenExp5 , token);
+            this->se->ifTokenVectorInRange(tokenExp5 , token);
             matchToken(TOKEN_ID_CONSTANT);
             matchToken(TOKEN_ID_CLOSE_BRACKET);
         }
@@ -700,8 +702,9 @@ Token* SyntaticAnalysis::productionExp5()
     {
         // relizar ajuste
         matchToken(TOKEN_ID_OPEN_PARANTHESES);
-        productionExp();
+        Token a = productionExp();
         matchToken(TOKEN_ID_CLOSE_PARANTHESES);
+        tokenExp5 = &a;
     }
     return tokenExp5;
 }
