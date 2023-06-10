@@ -30,7 +30,7 @@ OBJ = $(SRC:$(SRCDIR)/%.cpp=$(BUILDDIR)/%.o)
 
 # Set the flags
 # CFLAGS são as flags do compilador
-CFLAGS = -g -Wall -lstdc++fs
+CFLAGS = -Wall -lstdc++fs
 
 # A target 'all' é a target padrão quando você executa 'make'
 # Ela depende de TARGET, então 'make' irá garantir que TARGET seja construído
@@ -65,9 +65,9 @@ endif
 # A target 'run' executa o programa compilado
 run: all
 ifeq ($(OS), Linux)
-	./$(TARGET)
+	./$(TARGET) $(FILE)
 else ifeq ($(OS), Windows_NT)
-	$(TARGET)
+	$(TARGET) $(FILE)
 else
 	echo "Unsupported OS"
 endif

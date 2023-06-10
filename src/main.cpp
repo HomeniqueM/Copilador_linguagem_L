@@ -18,6 +18,7 @@
 #include "analyzers/syntatic-analysis.hpp"
 #include "utils/arg-handler.hpp"
 #include "utils/file.hpp"
+#include "code_generator/code-gen.hpp"
 #include <string>
 
 int main(int argc, char const *argv[])
@@ -25,10 +26,12 @@ int main(int argc, char const *argv[])
     try
     {
         ArgHandler handler;
+        //FileHandler fh("docs/t.l");
         FileHandler fh(handler.handleArgs(argc, argv));
         SymbolTable st = SymbolTable();
         LexerAnalysis la(&fh, &st);
-        SyntaticAnalysis sa = SyntaticAnalysis(&la);
+        SemanticAnalysis se = SemanticAnalysis(&la);
+        SyntaticAnalysis sa = SyntaticAnalysis(&la, &se, &st);
         sa.Start(la.getNextToken());
         std::cout << "[" << la.getCurrentLine() -1 << "] Linhas Compiladas.";
     }
@@ -39,3 +42,24 @@ int main(int argc, char const *argv[])
 
     return 0;
 }
+/*
+int main(){
+    CodeGen cg("program.asm");
+    Token *id = new Token();
+    Token *constant = new Token();
+    Token *t = new Token();
+    t->setTokenType(TOKEN_TYPE_STRING);
+    id->setTokenType(TOKEN_TYPE_STRING);
+    constant->setTokenType(TOKEN_TYPE_STRING);
+    constant->setLexeme("Banana");
+    constant->setTokenSize(6);
+    cg.startData();
+    cg.DeclareVariable(id);
+    cg.startText();
+    cg.storeConstOnTmp(t,constant);
+    cg.atributionCommand(id,t);
+    cg.write(id);
+    cg.end();
+    return 0;
+}
+*/

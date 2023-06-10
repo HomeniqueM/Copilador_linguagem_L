@@ -13,7 +13,6 @@
 #include <memory>
 #include <algorithm>
 
-
 #include "../error/l_exception.cpp"
 #include "../symbols/token.hpp"
 #include "../symbols/token-type.hpp"
@@ -31,8 +30,7 @@
 
 StatePackage StartState::handle(char c)
 {
-
-    StatePackage package;
+    StatePackage package = StatePackage();
 
     if (isALexemeDelimiter(c))
     {
@@ -67,9 +65,9 @@ StatePackage StartState::handle(char c)
     else if (c == '\'')
     {
         package.identifier = +c;
-
         package.tokenType = TOKEN_TYPE_CHAR;
         package.tokenId = TOKEN_ID_CONSTANT;
+
         nextState = std::make_shared<State19>();
     }
     else if (c == '"')
@@ -104,7 +102,7 @@ StatePackage StartState::handle(char c)
     }
     else if (isdigit(c))
     {
-        package.tokenType = TOKEN_TYPE_CHAR;
+        package.tokenType = TOKEN_TYPE_INTEGER;
         package.tokenId = TOKEN_ID_CONSTANT;
         package.identifier = +c;
         nextState = std::make_shared<State07>();
@@ -134,9 +132,10 @@ StatePackage StartState::handle(char c)
     return package;
 }
 
+
 StatePackage State03::handle(char c)
 {
-    StatePackage package;
+    StatePackage package = StatePackage();
     if (isalpha(c) || isdigit(c) || c == '_')
     {
         package.identifier = +c;
@@ -153,7 +152,7 @@ StatePackage State03::handle(char c)
 
 StatePackage State04::handle(char c)
 {
-    StatePackage package;
+    StatePackage package = StatePackage();
     if (isItaAlphabetHexa(c) || isdigit(c))
     {
         nextState = std::make_shared<State05>();
@@ -182,7 +181,7 @@ StatePackage State04::handle(char c)
 StatePackage State05::handle(char c)
 {
 
-    StatePackage package;
+    StatePackage package = StatePackage();
     if (c == 'h')
     {
         package.identifier = +c;
@@ -217,9 +216,11 @@ StatePackage State05::handle(char c)
 StatePackage State06::handle(char c)
 {
 
-    StatePackage package;
+    StatePackage package = StatePackage();
     if (isalpha(c) || isdigit(c) || c == '_')
     {
+        package.tokenId = TOKEN_ID_IDENTIFIER; 
+        package.tokenType = TOKEN_TYPE_UNDEFINED;
         package.identifier = +c;
         nextState = std::make_shared<State03>();
     }
@@ -234,7 +235,7 @@ StatePackage State06::handle(char c)
 
 StatePackage State07::handle(char c)
 {
-    StatePackage package;
+    StatePackage package = StatePackage();
     if (isdigit(c))
     {
         package.identifier = +c;
@@ -243,6 +244,7 @@ StatePackage State07::handle(char c)
     else if (isItaAlphabetHexa(c))
     {
         package.identifier = +c;
+        package.tokenType = TOKEN_TYPE_CHAR;
         nextState = std::make_shared<State09>();
     }
     else if (c == '.')
@@ -263,21 +265,23 @@ StatePackage State07::handle(char c)
 
 StatePackage State08::handle(char c)
 {
-    StatePackage package;
+    StatePackage package = StatePackage();
     if (c == 'h')
     {
+        package.tokenType = TOKEN_TYPE_CHAR;
         package.identifier = +c;
         this->completed = true;
     }
     else if (isdigit(c))
     {
-        package.tokenType = TOKEN_TYPE_REAL;
+        package.tokenType = TOKEN_TYPE_INTEGER;
         package.identifier = +c;
         nextState = std::make_shared<State11>();
     }
     else if (c == '.')
     {
         package.identifier = +c;
+        package.tokenType = TOKEN_TYPE_REAL;
         nextState = std::make_shared<State12>();
     }
 
@@ -292,16 +296,16 @@ StatePackage State08::handle(char c)
 
 StatePackage State09::handle(char c)
 {
-    StatePackage package;
+    StatePackage package = StatePackage();
     if (c == 'h')
     {
         package.identifier = +c;
+        package.tokenType = TOKEN_TYPE_CHAR;
         this->completed = true;
     }
     else
     {
-        std::string msg = "Erra esperando a letra a h porém o que foi lido foi " + c;
-        throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine, msg);
+        throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine);
     }
 
     return package;
@@ -309,7 +313,7 @@ StatePackage State09::handle(char c)
 
 StatePackage State11::handle(char c)
 {
-    StatePackage package;
+    StatePackage package = StatePackage();
     if (isdigit(c))
     {
         package.identifier = +c;
@@ -318,6 +322,7 @@ StatePackage State11::handle(char c)
     else if (c == '.')
     {
         package.identifier = +c;
+        package.tokenType = TOKEN_TYPE_REAL;
         nextState = std::make_shared<State12>();
     }
     else
@@ -332,7 +337,7 @@ StatePackage State11::handle(char c)
 
 StatePackage State12::handle(char c)
 {
-    StatePackage package;
+    StatePackage package = StatePackage();
     if (isdigit(c))
     {
         package.tokenType = TOKEN_TYPE_REAL;
@@ -342,8 +347,7 @@ StatePackage State12::handle(char c)
     }
     else
     {
-        std::string msg = "Erra esperando um valor numerico porém foi lido " + c;
-        throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine, msg);
+        throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine);
     }
 
     return package;
@@ -351,7 +355,7 @@ StatePackage State12::handle(char c)
 
 StatePackage State13::handle(char c)
 {
-    StatePackage package;
+    StatePackage package = StatePackage();
     if (isdigit(c))
     {
         package.identifier = +c;
@@ -373,7 +377,7 @@ StatePackage State13::handle(char c)
 
 StatePackage State14::handle(char c)
 {
-    StatePackage package;
+    StatePackage package = StatePackage();
     if (isdigit(c))
     {
         package.identifier = +c;
@@ -386,8 +390,7 @@ StatePackage State14::handle(char c)
     }
     else
     {
-        std::string msg = "Erra esperando um valor numerico ou simbolo[+ ou -] porém foi lido " + c;
-        throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine, msg);
+        throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine);
     }
 
     return package;
@@ -395,7 +398,7 @@ StatePackage State14::handle(char c)
 
 StatePackage State15::handle(char c)
 {
-    StatePackage package;
+    StatePackage package = StatePackage();
     if (isdigit(c))
     {
         package.identifier = +c;
@@ -403,8 +406,7 @@ StatePackage State15::handle(char c)
     }
     else
     {
-        std::string msg = "Erra esperando um valor numerico porém foi lido " + c;
-        throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine, msg);
+        throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine);
     }
 
     return package;
@@ -412,7 +414,7 @@ StatePackage State15::handle(char c)
 
 StatePackage State16::handle(char c)
 {
-    StatePackage package;
+    StatePackage package = StatePackage();
     if (isdigit(c))
     {
         package.identifier = +c;
@@ -429,7 +431,7 @@ StatePackage State16::handle(char c)
 
 StatePackage State17::handle(char c)
 {
-    StatePackage package;
+    StatePackage package = StatePackage();
     if (c == '=')
     {
         package.tokenId = TOKEN_ID_LESS_EQUAL_TO;
@@ -452,7 +454,7 @@ StatePackage State17::handle(char c)
 
 StatePackage State18::handle(char c)
 {
-    StatePackage package;
+    StatePackage package = StatePackage();
     if (c == '=')
     {
         package.tokenId = TOKEN_ID_ENQUALS;
@@ -470,7 +472,7 @@ StatePackage State18::handle(char c)
 
 StatePackage State19::handle(char c)
 {
-    StatePackage package;
+    StatePackage package = StatePackage();
 
     package.identifier = +c;
     nextState = std::make_shared<State20>();
@@ -480,7 +482,7 @@ StatePackage State19::handle(char c)
 
 StatePackage State20::handle(char c)
 {
-    StatePackage package;
+    StatePackage package = StatePackage();
     if (c == '\'')
     {
         package.identifier = +c;
@@ -488,15 +490,15 @@ StatePackage State20::handle(char c)
     }
     else
     {
-        std::string msg = ": Erra esperado \' porém veio " + c;
-        throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine, msg);
+       
+        throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine);
     }
     return package;
 }
 
 StatePackage State21::handle(char c)
 {
-    StatePackage package;
+    StatePackage package = StatePackage();
     if (c == '"')
     {
         // package.identifier = +c;
@@ -504,7 +506,7 @@ StatePackage State21::handle(char c)
     }
     else if (c == LEXEME_BREAK_LINE)
     {
-        throw LException(ErrorCode::STRING_BREAK_LINE, currentLine, "");
+        throw LException(ErrorCode::INVALIDCHARACTER, currentLine);
     }
 
     else
@@ -519,7 +521,7 @@ StatePackage State21::handle(char c)
 
 StatePackage State22::handle(char c)
 {
-    StatePackage package;
+    StatePackage package = StatePackage();
     if (c == '=')
     {
         package.identifier = +c;
@@ -535,15 +537,17 @@ StatePackage State22::handle(char c)
 
 StatePackage CommentState::handle(char c)
 {
-    StatePackage package;
+
+
+    StatePackage package = StatePackage();
     if (c == '}')
     {
         nextState = std::make_shared<StartState>();
     }
-    if (c == LEXEME_EOF)
+    else if (c == LEXEME_EOF)
     {
-        std::string str(1, c);
-        throw LException(ErrorCode::UNEXPECTED_TOKEN_EOF, currentLine, str);
+
+        throw LException(ErrorCode::UNEXPECTED_EOF, currentLine);
     }
     else
     {
@@ -681,6 +685,7 @@ LexerAnalysis::LexerAnalysis(FileHandler *fh, SymbolTable *symboltable) : curren
 Token *LexerAnalysis::getNextToken()
 {
     currentState = std::make_shared<StartState>();
+    StatePackage result = StatePackage();
     std::string lexeme = "";
     TokenType tokentype = TOKEN_TYPE_UNDEFINED;
 
@@ -697,7 +702,7 @@ Token *LexerAnalysis::getNextToken()
 
         if (symboltable->isItAValidChar(cc))
         {
-            StatePackage result = currentState->handle(cc);
+            result = currentState->handle(cc);
             lexeme += result.identifier;
             if (result.returnChar)
             {

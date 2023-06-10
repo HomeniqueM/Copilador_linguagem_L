@@ -4,7 +4,7 @@
  * Disciplina de Compiladores
  * Prof Alexei Machado
  * @authors Guilherme Côsso Lima Pimenta, Homenique Vieira Martins, Iago Augusto Coelho Morgado
-*/
+ */
 #ifndef ERROR_ERROR_CODE
 #define ERROR_ERROR_CODE
 #include <string>
@@ -15,12 +15,18 @@
 
 enum class ErrorCode
 {
-    INVALIDCHARACTER,
-    UNEXPECTED_CHARACTER,
-    UNEXPECTED_TOKEN,
-    UNEXPECTED_TOKEN_EOF,
+    // Erros solicitados
+    INVALIDCHARACTER,            // Pdf 01
+    INVALIDLEX,                  // PDF 01
+    UNEXPECTED_EOF,              // PDF 01
+    UNEXPECTED_TOKEN,            // PDF 02
+    UNDECLARED_IDENTIFIER,       // PDF 03
+    IDENTIFIER_ALREADY_DECLARED, // PDF 03
+    MISMATCHED_IDENTIFIER,
+    INCOMPATIBLE_TYPES,
+    // Erros Customizados
     NO_FILE_PATH_FOUND,
-    STRING_BREAK_LINE,
+    UNEXPECTED_CHARACTER,
     OVERFLOW_SIZE_INTEGER,
     OVERFLOW_SIZE_REAL,
     UNDERFLOW_SIZE_INTEGER,
@@ -29,17 +35,9 @@ enum class ErrorCode
     ENCEEDED_LIMIT_IDENTIFIER_MAX_SIZE,
     FILE_OPENNING_FAIL,
     // Adicionado Erros do Semantico
-    IDENTIFIERNODECLARED,
-    IDENTIFIERALREADYDECLARED,
-    MISMATCHEDIDENTIFIERCLASS,
-    INCOMPATIBLETYPES,
+    IDENTIFIER_NO_DECLARED,
+    MISMATCHED_IDENTIFIER_CLASS,
     UNKNOWN
-};
-
-// Mapeamento de códigos de erro para mensagens de erro
-const std::map<ErrorCode, std::string_view> errorMessages = {
-    {ErrorCode::INVALIDCHARACTER, "character invalido"},
-     {ErrorCode::UNEXPECTED_CHARACTER, "character nao esperado"},
 };
 
 /**
@@ -71,15 +69,18 @@ private:
         switch (code_)
         {
         case ErrorCode::INVALIDCHARACTER:
-            oss << "character invalido";
+            oss << "caractere invalido";
             break;
         case ErrorCode::UNEXPECTED_CHARACTER:
-            oss << "character nao esperado ";
+            oss << "caractere invalido";
+            break;
+        case ErrorCode::INVALIDLEX:
+            oss << "lexema nao identificado";
             break;
         case ErrorCode::UNEXPECTED_TOKEN:
             oss << "token nao esperado";
             break;
-        case ErrorCode::UNEXPECTED_TOKEN_EOF:
+        case ErrorCode::UNEXPECTED_EOF:
             oss << "fim de arquivo nao esperado";
             break;
         case ErrorCode::NO_FILE_PATH_FOUND:
@@ -92,33 +93,36 @@ private:
             oss << "Valor de acuracia maximo excedido";
             break;
         case ErrorCode::OVERFLOW_SIZE_REAL:
-            oss << "Valor maximo excedido, valor maximo suportado "<<CONSTANTS_REAL_MAX_VALUE;
+            oss << "Valor maximo excedido, valor maximo suportado " << CONSTANTS_REAL_MAX_VALUE;
             break;
         case ErrorCode::UNDERFLOW_SIZE_REAL:
-            oss << "Valor minimo nao suportado "<<CONSTANTS_REAL_MIN_VALUE;
+            oss << "Valor minimo nao suportado " << CONSTANTS_REAL_MIN_VALUE;
             break;
         case ErrorCode::OVERFLOW_SIZE_INTEGER:
-            oss << "Valor maximo excedido, valor maximo suportado "<<CONSTANTS_INTEGER_MAX_VALUE;
+            oss << "Valor maximo excedido, valor maximo suportado " << CONSTANTS_INTEGER_MAX_VALUE;
             break;
         case ErrorCode::UNDERFLOW_SIZE_INTEGER:
-            oss << "Valor minimo nao suportado "<<CONSTANTS_INTEGER_MIN_VALUE;
+            oss << "Valor minimo nao suportado " << CONSTANTS_INTEGER_MIN_VALUE;
             break;
         case ErrorCode::FILE_OPENNING_FAIL:
             oss << "Falha ao abrir arquivo";
             break;
-        case ErrorCode::STRING_BREAK_LINE:
-            oss << "String não pode possuir quebra de linhas";
+        case ErrorCode::UNDECLARED_IDENTIFIER:
+            oss << "identificador nao declarado";
             break;
-        case ErrorCode::IDENTIFIERNODECLARED:
+        case ErrorCode::MISMATCHED_IDENTIFIER:
+            oss << "classe de identificador incompatível";
+            break;
+        case ErrorCode::IDENTIFIER_NO_DECLARED:
             oss << "Identificador nao declarado";
             break;
-        case ErrorCode::IDENTIFIERALREADYDECLARED:
+        case ErrorCode::IDENTIFIER_ALREADY_DECLARED:
             oss << " Identificador ja declarado ";
             break;
-        case ErrorCode::MISMATCHEDIDENTIFIERCLASS:
+        case ErrorCode::MISMATCHED_IDENTIFIER_CLASS:
             oss << "Classe de identificador incompatível";
             break;
-        case ErrorCode::INCOMPATIBLETYPES:
+        case ErrorCode::INCOMPATIBLE_TYPES:
             oss << "Tipos incompativeis";
             break;
         default:
@@ -127,7 +131,7 @@ private:
         }
         if (!mOptional_.empty())
         {
-            oss << " : " << mOptional_;
+            oss << " [" << mOptional_ << "].";
         }
         return oss.str();
     }
