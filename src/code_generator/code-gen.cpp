@@ -757,7 +757,7 @@ void CodeGen::vectorAccess(Token *id, Token *exp, Token *t){
     writeInProgramFile(format("mov [qword M+%ld], eax",tmpAddr));
 }
 /**
- * @brief Operadores relacionais
+ * @brief Operadores relacionais de char
 */
 void CodeGen::charRelacionalOperator(Token *op1, Token *op2, TokenID op){
     int label1=this->newLabel();
