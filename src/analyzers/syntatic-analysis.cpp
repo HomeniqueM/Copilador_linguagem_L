@@ -113,7 +113,7 @@ void SyntaticAnalysis::productionD()
         }
         Token *constante = token;
         matchToken(TOKEN_ID_CONSTANT);
-        this->se->isTokenTypeEquals(constante, identifier, negate);
+        this->se->FinalVerify(constante, identifier, negate);
 
         cg->DeclareConst(identifier,constante);
     }
