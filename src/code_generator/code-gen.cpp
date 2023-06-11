@@ -175,6 +175,18 @@ void CodeGen::storeConstOnTmp(Token *t,Token *constant)
         this->programFile << format("\tmov eax, %s", constant->getLexeme().c_str())<<"\n";
         this->programFile << format("\tmov [qword M+%ld], eax", addr) << "\n";
     }
+    else if(constant->getTokenType() == TOKEN_TYPE_BOOLEAN)
+    {
+        long addr = this->NewTmp(constant);
+        t->setTokenAddr(addr);
+        if(constant->getTokenid()==TOKEN_ID_TRUE){
+            this->programFile << "\tmov al, 1"<<"\n";
+            this->programFile << format("\tmov [qword M+%ld], al", addr) << "\n";
+        }else{
+            this->programFile << "\tmov al, 0"<<"\n";
+            this->programFile << format("\tmov [qword M+%ld], al", addr) << "\n";
+        }
+    }
 }
 // comando de atribuição
 void CodeGen::atributionCommand(Token *id, Token *exp)
@@ -490,6 +502,7 @@ void CodeGen::cvtToInt(Token *t)
 */
 void CodeGen::write(Token *t)
 {
+    this->programFile << ";Escrevendo na saida do terminal"<<"\n";
     long bufferAddr;
     int label1;
     int label2;

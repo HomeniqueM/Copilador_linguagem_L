@@ -7,6 +7,7 @@
  */
 
 #include "syntatic-analysis.hpp"
+#include <iostream>
 
 SyntaticAnalysis::SyntaticAnalysis(LexerAnalysis *la, SemanticAnalysis *se, SymbolTable *st, CodeGen *cg)
 {
@@ -652,16 +653,19 @@ Token *SyntaticAnalysis::productionExp5()
     {
         // [28] nao existe
         matchToken(TOKEN_ID_CONSTANT);
+        cg->storeConstOnTmp(tokenExp5,tokenExp5);
     }
     else if (token->getTokenid() == TOKEN_ID_TRUE)
     {
         this->se->defineNewType(tokenExp5, TOKEN_TYPE_BOOLEAN);
         matchToken(TOKEN_ID_TRUE);
+        //cg->storeConstOnTmp(tokenExp5,token);
     }
     else if (token->getTokenid() == TOKEN_ID_FALSE)
     {
         this->se->defineNewType(tokenExp5, TOKEN_TYPE_BOOLEAN);
         matchToken(TOKEN_ID_FALSE);
+        //cg->storeConstOnTmp(tokenExp5,token);
     }
     else if (token->getTokenid() == TOKEN_ID_IDENTIFIER)
     {
