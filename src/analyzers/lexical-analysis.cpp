@@ -455,7 +455,7 @@ StatePackage State18::handle(char c)
     StatePackage package = StatePackage();
     if (c == '=')
     {
-        package.tokenId = TOKEN_ID_ENQUALS;
+        package.tokenId = TOKEN_ID_EQUALS;
         package.identifier = +c;
     }
     else

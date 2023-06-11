@@ -86,5 +86,11 @@ class CodeGen{
         void initCondition(Token *t, int startLabel);
         void finalizeBlock(int startLabel, int endLabel);
         void finalizeConditionalChain(bool onElse, int startLabel, int endLabel);
+        
         void writeRot(int rot);
+        void writeJump(int rot);
+        void compareForExpression(Token *exp, int rot);
+        void vectorAccess(Token *id, Token *exp, Token *t);
+
+        void charRelacionalOperator(Token *op1, Token *op2,TokenID op);
 };

@@ -194,7 +194,7 @@ void CodeGen::atributionCommand(Token *id, Token *exp)
         this->programFile << format("mov rdi, qword M+%ld",exp->getTokenAddr())<<"\n";
         this->programFile << format("Rot%d:",label1)<<"\n";
         this->programFile << "mov al, [rdi]\n";
-        this->programFile << "mov [rsi],al\n";
+        this->programFile << "mov [rsi], al\n";
         this->programFile << "cmp al, '' \n";
         this->programFile << format("je Rot%d",label2)<<"\n";
         this->programFile <<"add rdi, 1\n";
@@ -345,7 +345,7 @@ void CodeGen::multiplyOperation(Token *op1, Token *op2)
         {
             this->programFile << format("mov eax, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("mov ebx, [qword M+%ld]", op2->getTokenAddr()) << "\n";
-            this->programFile << "imul eax,ebx";
+            this->programFile << "imul ebx";
             long tmpAddr = this->NewTmp(op1);
             op1->setTokenAddr(tmpAddr);
             this->programFile << format("mov [qword M+%ld], eax", tmpAddr) << "\n";
@@ -392,7 +392,7 @@ void CodeGen::divideOperation(Token *op1, Token *op2)
         {
             this->programFile << format("mov eax, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("mov ebx, [qword M+%ld]", op2->getTokenAddr()) << "\n";
-            this->programFile << "idiv eax,ebx";
+            this->programFile << "idiv ebx";
             long tmpAddr = this->NewTmp(op1);
             op1->setTokenAddr(tmpAddr);
             this->programFile << format("mov [qword M+%ld], eax", tmpAddr) << "\n";
@@ -476,7 +476,9 @@ void CodeGen::cvtToInt(Token *t)
              << "\n";
     this->programFile << format("mov [qword M+%d], rax", tmpAddr);
 }
-//Escreve no terminal
+/**
+ * @brief Escreve no terminal
+*/
 void CodeGen::write(Token *t)
 {
     long bufferAddr;
@@ -616,7 +618,9 @@ void CodeGen::write(Token *t)
         this->programFile <<"syscall"<<"\n";
     }
 }
-//Escreve no terminal e quebra a linha
+/**
+ * @brief Escreve no terminal e quebra a linha
+*/
 void CodeGen::writeln(Token *t){}
 
 /**
@@ -705,14 +709,87 @@ void CodeGen::finalizeBlock( int startLabel, int endLabel) {
 /**
  * @brief Finaliza uma cadeia condicional (if/else)
  */
-
 void CodeGen::finalizeConditionalChain(bool onElse, int startLabel, int endLabel) {
     onElse?
         writeInProgramFile(format("Rot%d:", endLabel)) // Se estamos terminando um bloco else, marque com o rótulo de fim
     : 
         writeInProgramFile(format("Rot%d:", startLabel)); // Se estamos terminando um bloco if, marque com o rótulo de início
 }
-
+/**
+ * @brief Escreve um rótulo no programa
+ */
 void CodeGen::writeRot(int rot){
     writeInProgramFile(format("Rot%d:",rot));
+}
+/**
+ * @brief Escreve um jump no programa
+ */
+void CodeGen::writeJump(int rot){
+    writeInProgramFile(format("jmp Rot%d",rot));
+}
+/**
+ * @brief Compara a expressão do comando de for
+ * pula para fora do loop em caso da expressão ser falsa
+ */
+void CodeGen::compareForExpression(Token *exp,int rot){
+    writeInProgramFile(format("mov al, [qword M+%ld]",exp->getTokenAddr()));
+    writeInProgramFile("cmp al, 1");
+    writeInProgramFile(format("jne Rot%d",rot));
+}
+/**
+ * @brief Move o elemento de uma posição de um vetor para um temporário
+*/
+void CodeGen::vectorAccess(Token *id, Token *exp, Token *t){
+    long tmpAddr = NewTmp(t);
+    t->setTokenAddr(tmpAddr);
+    writeInProgramFile(format("mov rcx, qword M+%ld",id->getTokenAddr()));
+    writeInProgramFile(format("mov ebx, [qword M+%ld]",exp->getTokenAddr()));
+    if(t->getTokenType() == TOKEN_TYPE_INTEGER || t->getTokenType() == TOKEN_TYPE_REAL){
+        writeInProgramFile("add ebx, ebx");
+        writeInProgramFile("add ebx, ebx");
+    }else if(t->getTokenType() == TOKEN_TYPE_STRING){
+        writeInProgramFile("mov eax, 100h");
+        writeInProgramFile("imul ebx");
+        writeInProgramFile("mov ebx,eax ");
+    }
+    writeInProgramFile("add ecx, ebx");
+    writeInProgramFile("mov ecx, [rcx]");
+    writeInProgramFile(format("mov [qword M+%ld], eax",tmpAddr));
+}
+/**
+ * @brief Operadores relacionais
+*/
+void CodeGen::charRelacionalOperator(Token *op1, Token *op2, TokenID op){
+    int label1=this->newLabel();
+    int label2=this->newLabel();
+
+    writeInProgramFile(format("mov al, [qword M+%ld]", op1->getTokenAddr()));
+    writeInProgramFile(format("mov bl, [qword M+%ld]", op2->getTokenAddr()));
+    writeInProgramFile("cmp al,bl");
+    
+    if(op==TOKEN_ID_EQUALS){
+        writeInProgramFile(format("je Rot%d",label1));
+    }else if(op==TOKEN_ID_LESS_THAN){
+        writeInProgramFile(format("jl Rot%d",label1));
+    }else if(op==TOKEN_ID_LESS_EQUAL_TO){
+        writeInProgramFile(format("jle Rot%d",label1));
+    }else if(op==TOKEN_ID_GREATER_THEN){
+        writeInProgramFile(format("jg Rot%d",label1));
+    }else if(op==TOKEN_ID_GREATER_EQUAL_TO){
+        writeInProgramFile(format("jge Rot%d",label1));
+    }else if(op==TOKEN_ID_DIFFERENT){
+        writeInProgramFile(format("jne Rot%d",label1));
+    }
+
+    long tmpAddr = this->NewTmp(op1);
+    writeInProgramFile(format("mov cl, 0",tmpAddr));
+    writeInProgramFile(format("mov [qword M+%ld], cl",tmpAddr));
+    writeInProgramFile(format("jmp Rot%d",label2));
+    writeInProgramFile(format("Rot%d",label1));
+    writeInProgramFile(format("mov cl, 1",tmpAddr));
+    writeInProgramFile(format("mov [qword M+%ld], cl",tmpAddr));
+    writeInProgramFile(format("Rot%d",label2));
+
+    op1->setTokenAddr(tmpAddr);
+    op1->setTokenType(TOKEN_TYPE_BOOLEAN);
 }
