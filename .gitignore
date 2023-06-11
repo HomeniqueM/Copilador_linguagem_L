@@ -44,3 +44,5 @@ My_test/*
 .exe
 .l
 build/*
+teste
+program.asm

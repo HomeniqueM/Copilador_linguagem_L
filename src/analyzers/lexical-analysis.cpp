@@ -64,7 +64,6 @@ StatePackage StartState::handle(char c)
     }
     else if (c == '\'')
     {
-        package.identifier = +c;
         package.tokenType = TOKEN_TYPE_CHAR;
         package.tokenId = TOKEN_ID_CONSTANT;
 
@@ -72,7 +71,6 @@ StatePackage StartState::handle(char c)
     }
     else if (c == '"')
     {
-        package.identifier = +c;
         package.tokenType = TOKEN_TYPE_STRING;
         package.tokenId = TOKEN_ID_CONSTANT;
         nextState = std::make_shared<State21>();
@@ -125,9 +123,7 @@ StatePackage StartState::handle(char c)
     else
     {
         // Tratativa a ser feita
-
-        std::string str(1, c);
-        throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine, str);
+        throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine);
     }
     return package;
 }
@@ -457,7 +453,7 @@ StatePackage State18::handle(char c)
     StatePackage package = StatePackage();
     if (c == '=')
     {
-        package.tokenId = TOKEN_ID_ENQUALS;
+        package.tokenId = TOKEN_ID_EQUALS;
         package.identifier = +c;
     }
     else

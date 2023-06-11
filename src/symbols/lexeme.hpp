@@ -82,6 +82,8 @@ const std::vector<char> LEXEME_VALID_ALPHABET_HEXA_SYMBOLS{
 const std::vector<char> LEXEME_DELIMITER{
     ' ',
     '\n',
+    '\r',
+    '\t'
 };
 
 bool isItaAlphabetHexa(char c);

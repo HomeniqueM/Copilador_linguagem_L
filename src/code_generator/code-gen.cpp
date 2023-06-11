@@ -6,6 +6,7 @@
 #include <memory>
 #include <stdexcept>
 #include <cstdio>
+#include <iostream>
 
 //Construtor
 CodeGen::CodeGen(std::string asmFileName)
@@ -92,7 +93,8 @@ void CodeGen::startProgram()
 }
 //comando de declaração de variável
 void CodeGen::DeclareVariable(Token *t)
-{
+{   
+    this->programFile << ";Declaração de Variável\n";
     t->setTokenAddr(this->mem_count);
     if (t->getTokenType() == TOKEN_TYPE_CHAR || t->getTokenType()== TOKEN_TYPE_BOOLEAN)
     {
@@ -115,7 +117,8 @@ void CodeGen::DeclareVariable(Token *t)
 }
 //comando de declaração de constante (final)
 void CodeGen::DeclareConst(Token *t, Token *constant)
-{
+{   
+    this->programFile << ";Declaração de constante(final)\n";
     t->setTokenAddr(this->mem_count);
     if (t->getTokenType() == TOKEN_TYPE_CHAR || t->getTokenType()== TOKEN_TYPE_BOOLEAN)
     {
@@ -137,12 +140,14 @@ void CodeGen::DeclareConst(Token *t, Token *constant)
 // guarda valor de uma constante em um temporário
 void CodeGen::storeConstOnTmp(Token *t,Token *constant)
 {
+    this->programFile <<";guardando valor constante "<<constant->getLexeme().c_str()<< " em temporário\n";
+
     if (constant->getTokenType() == TOKEN_TYPE_REAL)
     {
         t->setTokenAddr(this->mem_count);
         this->mem_count += this->number_size;
         this->startData();
-        this->programFile << format("dd %s", constant->getLexeme().c_str()) << "\n";
+        this->programFile << format("\tdd %s", constant->getLexeme().c_str()) << "\n";
         this->startText();
     }
     else if (constant->getTokenType() == TOKEN_TYPE_STRING)
@@ -151,55 +156,59 @@ void CodeGen::storeConstOnTmp(Token *t,Token *constant)
         t->setTokenSize(constant->getLexeme().size());
         this->mem_count += constant->getLexeme().size();
         this->startData();
-        this->programFile << format("db \'%s\', %d", constant->getLexeme().c_str(),constant->getLexeme().size()) << "\n";
+        this->programFile << format("\tdb \'%s\', %d", constant->getLexeme().c_str(),constant->getLexeme().size()) << "\n";
         this->startText();
     }
     else if (constant->getTokenType() == TOKEN_TYPE_CHAR)
     {
         long addr = this->NewTmp(constant);
         t->setTokenAddr(addr);
-        this->programFile << format("mov al, \'%s\'", constant->getLexeme().c_str()) << "\n";
-        this->programFile << format("mov [qword M+%ld], al", addr) << "\n";
+        this->startText();
+        this->programFile << format("\tmov al, \'%s\'", constant->getLexeme().c_str())<<"\n";
+        this->programFile << format("\tmov [qword M+%ld], al", addr) << "\n";
     }
     else if (constant->getTokenType() == TOKEN_TYPE_INTEGER)
     {
         long addr = this->NewTmp(constant);
         t->setTokenAddr(addr);
-        this->programFile << format("mov eax, %s", constant->getLexeme().c_str()) << "\n";
-        this->programFile << format("mov [qword M+%ld], eax", addr) << "\n";
+        this->startText();
+        this->programFile << format("\tmov eax, %s", constant->getLexeme().c_str())<<"\n";
+        this->programFile << format("\tmov [qword M+%ld], eax", addr) << "\n";
     }
 }
 // comando de atribuição
 void CodeGen::atributionCommand(Token *id, Token *exp)
 {
+    this->programFile<<";Comando de atribuição\n";
+    this->startText();
     if (id->getTokenType() == TOKEN_TYPE_INTEGER)
     {
-        this->programFile << format("mov eax,[qword M+%ld]", exp->getTokenAddr()) << "\n";
-        this->programFile << format("mov [qword M+%ld], eax", id->getTokenAddr()) << "\n";
+        this->programFile << format("\tmov eax,[qword M+%ld]", exp->getTokenAddr()) << "\n";
+        this->programFile << format("\tmov [qword M+%ld], eax", id->getTokenAddr()) << "\n";
     }
     else if (id->getTokenType() == TOKEN_TYPE_REAL)
     {
-        this->programFile << format("movss xmm0,[qword M+%ld]", exp->getTokenAddr()) << "\n";
-        this->programFile << format("movss [qword M+%ld], xmm0", id->getTokenAddr()) << "\n";
+        this->programFile << format("\tmovss xmm0,[qword M+%ld]", exp->getTokenAddr()) << "\n";
+        this->programFile << format("\tmovss [qword M+%ld], xmm0", id->getTokenAddr()) << "\n";
     }
     else if (id->getTokenType() == TOKEN_TYPE_CHAR || id->getTokenType() == TOKEN_TYPE_BOOLEAN)
     {
-        this->programFile << format("mov al,[qword M+%ld]", exp->getTokenAddr()) << "\n";
-        this->programFile << format("mov [qword M+%ld], al", id->getTokenAddr()) << "\n";
+        this->programFile << format("\tmov al,[qword M+%ld]", exp->getTokenAddr()) << "\n";
+        this->programFile << format("\tmov [qword M+%ld], al", id->getTokenAddr()) << "\n";
     }else if(id->getTokenType() == TOKEN_TYPE_STRING){
         id->setTokenSize(exp->getTokeSize());
         int label1 = newLabel();
         int label2 = newLabel();
-        this->programFile << format("mov rsi, qword M+%ld",id->getTokenAddr())<<"\n";
-        this->programFile << format("mov rdi, qword M+%ld",exp->getTokenAddr())<<"\n";
+        this->programFile << format("\tmov rsi, qword M+%ld",id->getTokenAddr())<<"\n";
+        this->programFile << format("\tmov rdi, qword M+%ld",exp->getTokenAddr())<<"\n";
         this->programFile << format("Rot%d:",label1)<<"\n";
-        this->programFile << "mov al, [rdi]\n";
-        this->programFile << "mov [rsi],al\n";
-        this->programFile << "cmp al, '' \n";
-        this->programFile << format("je Rot%d",label2)<<"\n";
-        this->programFile <<"add rdi, 1\n";
-        this->programFile <<"add rsi, 1\n";
-        this->programFile << format("jmp Rot%d",label1)<<"\n";
+        this->programFile << "\tmov al, [rdi]\n";
+        this->programFile << "\tmov [rsi], al\n";
+        this->programFile << "\tcmp al, '' \n";
+        this->programFile << format("\tje Rot%d",label2)<<"\n";
+        this->programFile <<"\tadd rdi, 1\n";
+        this->programFile <<"\tadd rsi, 1\n";
+        this->programFile << format("\tjmp Rot%d",label1)<<"\n";
         this->programFile << format("Rot%d:",label2)<<"\n";
     }
 }
@@ -345,7 +354,7 @@ void CodeGen::multiplyOperation(Token *op1, Token *op2)
         {
             this->programFile << format("mov eax, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("mov ebx, [qword M+%ld]", op2->getTokenAddr()) << "\n";
-            this->programFile << "imul eax,ebx";
+            this->programFile << "imul ebx";
             long tmpAddr = this->NewTmp(op1);
             op1->setTokenAddr(tmpAddr);
             this->programFile << format("mov [qword M+%ld], eax", tmpAddr) << "\n";
@@ -392,7 +401,7 @@ void CodeGen::divideOperation(Token *op1, Token *op2)
         {
             this->programFile << format("mov eax, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("mov ebx, [qword M+%ld]", op2->getTokenAddr()) << "\n";
-            this->programFile << "idiv eax,ebx";
+            this->programFile << "idiv ebx";
             long tmpAddr = this->NewTmp(op1);
             op1->setTokenAddr(tmpAddr);
             this->programFile << format("mov [qword M+%ld], eax", tmpAddr) << "\n";
@@ -476,7 +485,9 @@ void CodeGen::cvtToInt(Token *t)
              << "\n";
     this->programFile << format("mov [qword M+%d], rax", tmpAddr);
 }
-//Escreve no terminal
+/**
+ * @brief Escreve no terminal
+*/
 void CodeGen::write(Token *t)
 {
     long bufferAddr;
@@ -610,14 +621,52 @@ void CodeGen::write(Token *t)
         this->programFile <<"cmp rcx, 0"<<"\n";
         this->programFile <<format("jne Rot%d", label3)<<"\n";
         this->programFile <<format("mov rsi, M+%ld",bufferAddr)<<"\n";
-        this->programFile << "mov rdx, 1"<<"\n";
         this->programFile <<"mov rax, 1"<<"\n";
         this->programFile <<"mov rdi, 1"<<"\n";
         this->programFile <<"syscall"<<"\n";
     }
 }
-//Escreve no terminal e quebra a linha
-void CodeGen::writeLine(Token *t){}
+/**
+ * @brief Escreve uma quebra de linha
+*/
+void CodeGen::writeln(){
+    long line_break = newTmpByTokenType(TOKEN_TYPE_CHAR);
+    this->programFile << "mov al, 0ah"<<"\n";
+    this->programFile << format("mov [qword M+%ld], al", line_break)<<"\n";
+    this->programFile << format("mov rsi, M+%ld", line_break)<<"\n";
+    this->programFile << "mov rdx, 1"<<"\n";
+    this->programFile << "mov rax, 1"<<"\n";
+    this->programFile << "mov rdi, 1"<<"\n";
+    this->programFile << "syscall"<<"\n";
+}
+/**
+ * @brief Cria um temporário a partir do token type
+*/
+long CodeGen::newTmpByTokenType(TokenType tt)
+{
+    long point = this->tmp_count;
+    if (tt == TOKEN_TYPE_CHAR)
+    {
+        this->tmp_count += this->char_size;
+    }
+    else if (tt == TOKEN_TYPE_STRING)
+    {
+        this->tmp_count += this->string_size;
+    }
+    else if (tt == TOKEN_TYPE_BOOLEAN)
+    {
+        this->tmp_count += this->char_size;
+    }
+    else if (tt == TOKEN_TYPE_INTEGER)
+    {
+        this->tmp_count += this->number_size;
+    }
+    else if (tt == TOKEN_TYPE_REAL)
+    {
+        this->tmp_count += this->number_size;
+    }
+    return point;
+}
 /**
  * @brief escreve dentro da variavel para o arquivo
  */
@@ -645,10 +694,283 @@ void CodeGen::finalizeBlock( int startLabel, int endLabel) {
 /**
  * @brief Finaliza uma cadeia condicional (if/else)
  */
-
 void CodeGen::finalizeConditionalChain(bool onElse, int startLabel, int endLabel) {
     onElse?
         writeInProgramFile(format("Rot%d:", endLabel)) // Se estamos terminando um bloco else, marque com o rótulo de fim
     : 
         writeInProgramFile(format("Rot%d:", startLabel)); // Se estamos terminando um bloco if, marque com o rótulo de início
+}
+/**
+ * @brief Escreve um rótulo no programa
+ */
+void CodeGen::writeRot(int rot){
+    writeInProgramFile(format("Rot%d:",rot));
+}
+/**
+ * @brief Escreve um jump no programa
+ */
+void CodeGen::writeJump(int rot){
+    writeInProgramFile(format("jmp Rot%d",rot));
+}
+/**
+ * @brief Compara a expressão do comando de for
+ * pula para fora do loop em caso da expressão ser falsa
+ */
+void CodeGen::compareForExpression(Token *exp,int rot){
+    writeInProgramFile(format("mov al, [qword M+%ld]",exp->getTokenAddr()));
+    writeInProgramFile("cmp al, 1");
+    writeInProgramFile(format("jne Rot%d",rot));
+}
+/**
+ * @brief Move o elemento de uma posição de um vetor para um temporário
+*/
+void CodeGen::vectorAccess(Token *id, Token *exp, Token *t){
+    long tmpAddr = NewTmp(t);
+    t->setTokenAddr(tmpAddr);
+    writeInProgramFile(format("mov rcx, qword M+%ld",id->getTokenAddr()));
+    writeInProgramFile(format("mov ebx, [qword M+%ld]",exp->getTokenAddr()));
+    if(t->getTokenType() == TOKEN_TYPE_INTEGER || t->getTokenType() == TOKEN_TYPE_REAL){
+        writeInProgramFile("add ebx, ebx");
+        writeInProgramFile("add ebx, ebx");
+    }else if(t->getTokenType() == TOKEN_TYPE_STRING){
+        writeInProgramFile("mov eax, 100h");
+        writeInProgramFile("imul ebx");
+        writeInProgramFile("mov ebx,eax ");
+    }
+    writeInProgramFile("add ecx, ebx");
+    writeInProgramFile("mov ecx, [rcx]");
+    writeInProgramFile(format("mov [qword M+%ld], eax",tmpAddr));
+}
+/**
+ * @brief Operadores relacionais de char
+*/
+void CodeGen::RelacionalOperator(Token *op1, Token *op2, TokenID op){
+    int label1=this->newLabel();
+    int label2=this->newLabel();
+
+    if(op1->getTokenType() == TOKEN_TYPE_CHAR || op1->getTokenType() == TOKEN_TYPE_BOOLEAN){
+        writeInProgramFile(format("mov al, [qword M+%ld]", op1->getTokenAddr()));
+        writeInProgramFile(format("mov bl, [qword M+%ld]", op2->getTokenAddr()));
+        writeInProgramFile("cmp al,bl");
+        if(op==TOKEN_ID_EQUALS){
+            writeInProgramFile(format("je Rot%d",label1));
+        }else if(op==TOKEN_ID_LESS_THAN){
+            writeInProgramFile(format("jl Rot%d",label1));
+        }else if(op==TOKEN_ID_LESS_EQUAL_TO){
+            writeInProgramFile(format("jle Rot%d",label1));
+        }else if(op==TOKEN_ID_GREATER_THEN){
+            writeInProgramFile(format("jg Rot%d",label1));
+        }else if(op==TOKEN_ID_GREATER_EQUAL_TO){
+            writeInProgramFile(format("jge Rot%d",label1));
+        }else if(op==TOKEN_ID_DIFFERENT){
+            writeInProgramFile(format("jne Rot%d",label1));
+        }
+    }else if(op1->getTokenType() == TOKEN_TYPE_INTEGER){
+        writeInProgramFile(format("mov eax, [qword M+%ld]", op1->getTokenAddr()));
+        writeInProgramFile(format("mov ebx, [qword M+%ld]", op2->getTokenAddr()));
+        writeInProgramFile("cmp eax, ebx");
+
+        if(op==TOKEN_ID_EQUALS){
+            writeInProgramFile(format("je Rot%d",label1));
+        }else if(op==TOKEN_ID_LESS_THAN){
+            writeInProgramFile(format("jl Rot%d",label1));
+        }else if(op==TOKEN_ID_LESS_EQUAL_TO){
+            writeInProgramFile(format("jle Rot%d",label1));
+        }else if(op==TOKEN_ID_GREATER_THEN){
+            writeInProgramFile(format("jg Rot%d",label1));
+        }else if(op==TOKEN_ID_GREATER_EQUAL_TO){
+            writeInProgramFile(format("jge Rot%d",label1));
+        }else if(op==TOKEN_ID_DIFFERENT){
+            writeInProgramFile(format("jne Rot%d",label1));
+        }
+    }else if(op1->getTokenType() == TOKEN_TYPE_REAL){
+        writeInProgramFile(format("movss xmm0, [qword M+%ld]", op1->getTokenAddr()));
+        writeInProgramFile(format("movss xmm1, [qword M+%ld]", op2->getTokenAddr()));
+        writeInProgramFile("cmp xmm0, xmm1");
+
+        if(op==TOKEN_ID_EQUALS){
+            writeInProgramFile(format("je Rot%d",label1));
+        }else if(op==TOKEN_ID_LESS_THAN){
+            writeInProgramFile(format("jl Rot%d",label1));
+        }else if(op==TOKEN_ID_LESS_EQUAL_TO){
+            writeInProgramFile(format("jle Rot%d",label1));
+        }else if(op==TOKEN_ID_GREATER_THEN){
+            writeInProgramFile(format("jg Rot%d",label1));
+        }else if(op==TOKEN_ID_GREATER_EQUAL_TO){
+            writeInProgramFile(format("jge Rot%d",label1));
+        }else if(op==TOKEN_ID_DIFFERENT){
+            writeInProgramFile(format("jne Rot%d",label1));
+        }
+    }
+
+    long tmpAddr = this->newTmpByTokenType(TOKEN_TYPE_BOOLEAN);
+    writeInProgramFile(format("mov cl, 0",tmpAddr));
+    writeInProgramFile(format("mov [qword M+%ld], cl",tmpAddr));
+    writeInProgramFile(format("jmp Rot%d",label2));
+    writeInProgramFile(format("Rot%d",label1));
+    writeInProgramFile(format("mov cl, 1",tmpAddr));
+    writeInProgramFile(format("mov [qword M+%ld], cl",tmpAddr));
+    writeInProgramFile(format("Rot%d",label2));
+
+    op1->setTokenAddr(tmpAddr);
+    op1->setTokenType(TOKEN_TYPE_BOOLEAN);
+}
+/**
+ * @brief Montagem de codigo para leitura do teclado
+ */
+void CodeGen::readln(Token *t)
+{
+    if (t->getTokenType() == TOKEN_TYPE_STRING)
+    {
+        writeInProgramFile(format("mov rsi, M + %ld", t->getTokenAddr()));
+        writeInProgramFile("rdx, 100h");
+        writeInProgramFile("mov, rax, 0");
+        writeInProgramFile("mov rdi, 0");
+        writeInProgramFile("syscall");
+        writeInProgramFile((format("mov byte [M+%ld+rax-1], 0", t->getTokenAddr())));
+    }
+    else if (t->getTokenType() == TOKEN_TYPE_CHAR)
+    {
+        writeInProgramFile(format("mov rsi, M + %ld", t->getTokenAddr()));
+        writeInProgramFile("mov rdx, 1");
+        writeInProgramFile("mov rax, 0");
+        writeInProgramFile("mov rdi, 0");
+        writeInProgramFile("syscall");
+    }
+    else if (t->getTokenType() == TOKEN_TYPE_INTEGER)
+    {
+        int label0 = newLabel();
+        int label1 = newLabel();
+        int label2 = newLabel();
+        int label3 = newLabel();
+
+        long tmpbuff = newTmpByTokenType(TOKEN_TYPE_STRING);
+        t->setTokenAddr(tmpbuff);
+
+        // Leitura da String
+        writeInProgramFile(format("mov rsi, M + %ld", t->getTokenAddr()));
+        writeInProgramFile("rdx, 100h");
+        writeInProgramFile("mov, rax, 0");
+        writeInProgramFile("mov rdi, 0");
+        writeInProgramFile("syscall");
+        writeInProgramFile((format("mov byte [M+%ld+rax-1], 0", t->getTokenAddr())));
+
+        writeInProgramFile("mov eax, 0                  ;acumulador");
+        writeInProgramFile("mov ebx, 0                  ;caractere");
+        writeInProgramFile("mov ecx, 10                 ;base 10");
+        writeInProgramFile("mov dx, 1                   ;sinal");
+
+        writeInProgramFile(format("mov rsi, M + %ld", t->getTokenAddr()));
+        writeInProgramFile("mov bl,[rsi]                ;carrega caractere");
+        writeInProgramFile("cmp bl, '-'                 ;sinal?");
+        writeInProgramFile(format("jne Rot%d                    ;se dif -, salta", label0));
+        writeInProgramFile("mov dx, -1                  ;senão, armazena -");
+        writeInProgramFile("add rsi, 1                  ;inc. ponteiro string");
+        writeInProgramFile("mov bl, [rsi]               ;carrega caractere");
+
+        // Rotulo 0
+        writeInProgramFile(format("Rot%d:", label0));
+        writeInProgramFile("push dx                     ;empilha sinal");
+        writeInProgramFile("mov edx, 0                  ;reg. multiplicação");
+
+        // Rotulo 1
+        writeInProgramFile(format("Rot%d:", label1));
+        writeInProgramFile("cmp bl, 0Ah                 ;verifica fim string");
+        writeInProgramFile(format("je Rot%d                    ;salta se fim string", label2));
+        writeInProgramFile("imul ecx                    ;mult. eax por 10");
+        writeInProgramFile("sub bl, '0'                 ;converte caractere");
+        writeInProgramFile("add eax, ebx                ;soma valor caractere");
+        writeInProgramFile("add rsi, 1                  ;incrementa base");
+        writeInProgramFile("mov bl, [rsi]               ;carrega caractere");
+        writeInProgramFile(format("jmp Rot%d                    ;se dif -, salta", label1));
+
+        // ROtulo 2
+        writeInProgramFile(format("Rot%d:", label2));
+        writeInProgramFile("pop cx                      ;desempilha sinal");
+        writeInProgramFile("cmp cx, 0");
+        writeInProgramFile(format("jg Rot%d", label3));
+        writeInProgramFile("neg eax                     ;mult. sinal");
+
+        // Rotulo 3
+        writeInProgramFile(format("Rot%d:", label3));
+    }
+    else if (t->getTokenType() == TOKEN_TYPE_REAL)
+    {
+        int label0 = newLabel();
+        int label1 = newLabel();
+        int label2 = newLabel();
+        int label3 = newLabel();
+
+        long tmpbuff = newTmpByTokenType(TOKEN_TYPE_STRING);
+        t->setTokenAddr(tmpbuff);
+
+        // Leitura da String
+        writeInProgramFile(format("mov rsi, M + %ld", t->getTokenAddr()));
+        writeInProgramFile("rdx, 100h");
+        writeInProgramFile("mov, rax, 0");
+        writeInProgramFile("mov rdi, 0");
+        writeInProgramFile("syscall");
+        writeInProgramFile((format("mov byte [M+%ld+rax-1], 0", t->getTokenAddr())));
+
+        writeInProgramFile("mov rax, 0                  ;acumul. parte int.");
+        writeInProgramFile("subss xmm0,xmm0             ;acumul. parte frac.");
+        writeInProgramFile("mov rbx, 0                  ;caractere");
+        writeInProgramFile("mov rcx, 10                 ;base 10");
+        writeInProgramFile("cvtsi2ss xmm3,rcx           ;base 10");
+        writeInProgramFile("movss xmm2,xmm3             ;potência de 10");
+        writeInProgramFile("mov rdx, 1                  ;sinal");
+        writeInProgramFile(format("mov rsi, M + %ld", t->getTokenAddr()));
+
+        writeInProgramFile("mov bl,[rsi]                ;carrega caractere");
+        writeInProgramFile("cmp bl, '-'                 ;sinal?");
+        writeInProgramFile(format("jne Rot%d                    ;se dif -, salta", label0));
+        writeInProgramFile("mov rdx, -1                 ;senão, armazena -");
+        writeInProgramFile("add rsi, 1                  ;inc. ponteiro string");
+        writeInProgramFile("mov bl, [rsi]               ;carrega caractere");
+
+        // Rotulo 0
+        writeInProgramFile(format("Rot%d:", label0));
+        writeInProgramFile("push rdx                     ;empilha sinal");
+        writeInProgramFile("mov rdx, 0                  ;reg. multiplicação");
+
+        // Rotulo 1
+        writeInProgramFile(format("Rot%d:", label1));
+        writeInProgramFile("cmp bl, 0Ah                     ;verifica fim string");
+        writeInProgramFile(format("je Rot%d", label2));
+        writeInProgramFile("cmp bl, '.'                     ;senão verifica ponto");
+        writeInProgramFile(format("je Rot%d", label3));
+        writeInProgramFile("imul ecx                        ;mult. eax por 10");
+        writeInProgramFile("sub bl, '0'                     ;converte caractere");
+        writeInProgramFile("add eax, ebx                    ;soma valor caractere");
+        writeInProgramFile("add rsi, 1                      ;incrementa base");
+        writeInProgramFile("mov bl, [rsi]                   ;carrega caractere");
+        writeInProgramFile(format("jmp Rot%d", label1));
+        
+        // Rotulo 3
+        writeInProgramFile(format("Rot%d:", label3));
+        writeInProgramFile(";calcula parte fracionária em xmm0");
+        writeInProgramFile("add rsi, 1                      ;inc. ponteiro string");
+        writeInProgramFile("cmp bl, 0Ah                     ;*verifica fim string");
+        writeInProgramFile("cmp bl, 0Ah                     ;*verifica fim string");
+        writeInProgramFile(format("je Rot%d", label2));
+        writeInProgramFile("sub bl, '0'                     ;converte caractere");
+        writeInProgramFile("cvtsi2ss xmm1,rbx               ;conv real");
+        writeInProgramFile("divss xmm1,xmm2                 ;transf. casa decimal");
+        writeInProgramFile("addss xmm0,xmm1                 ;soma acumul.");
+        writeInProgramFile("mulss xmm2,xmm3                 ;atualiza potência");
+        writeInProgramFile(format("jmp Rot%d", label3));
+
+
+        // Rotulo 2
+        writeInProgramFile(format("Rot%d:", label2));
+        writeInProgramFile("cvtsi2ss xmm1,rax               ;conv parte inteira");
+        writeInProgramFile("addss xmm0,xmm1                 ;soma parte frac.");
+        writeInProgramFile("pop rcx                         ;desempilha sinal");
+        writeInProgramFile("cvtsi2ss xmm1,rcx               ;conv sinal");
+        writeInProgramFile("mulss xmm0,xmm1                 ;mult. sinal");
+
+    }
+    else if (t->getTokenType() == TOKEN_TYPE_BOOLEAN)
+    {
+    }
 }

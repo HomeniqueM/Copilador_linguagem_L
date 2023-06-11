@@ -48,7 +48,7 @@ class CodeGen{
         const int string_size=0x100;
 
     public:
-        CodeGen(std::string asmFileName = "program.asm");
+        CodeGen(std::string asmFileName);
         ~CodeGen();
         long NewTmp(Token* t);
         void end();
@@ -77,12 +77,20 @@ class CodeGen{
         void cvtToInt(Token *t);
 
         void write(Token *t);
-        void writeLine(Token *t);
-        
+        void writeln();
+        void readln(Token *t);
+        long newTmpByTokenType(TokenType tt);
         int newLabel() {
             return label_counter++;
         }
         void initCondition(Token *t, int startLabel);
         void finalizeBlock(int startLabel, int endLabel);
-        void finalizeConditionalChain(bool onElse, int startLabel, int endLabel); 
+        void finalizeConditionalChain(bool onElse, int startLabel, int endLabel);
+        
+        void writeRot(int rot);
+        void writeJump(int rot);
+        void compareForExpression(Token *exp, int rot);
+        void vectorAccess(Token *id, Token *exp, Token *t);
+
+        void RelacionalOperator(Token *op1, Token *op2,TokenID op);
 };
