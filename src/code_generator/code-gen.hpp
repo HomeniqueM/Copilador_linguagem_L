@@ -92,5 +92,5 @@ class CodeGen{
         void compareForExpression(Token *exp, int rot);
         void vectorAccess(Token *id, Token *exp, Token *t);
 
-        void charRelacionalOperator(Token *op1, Token *op2,TokenID op);
+        void RelacionalOperator(Token *op1, Token *op2,TokenID op);
 };

@@ -727,29 +727,66 @@ void CodeGen::vectorAccess(Token *id, Token *exp, Token *t){
 /**
  * @brief Operadores relacionais de char
 */
-void CodeGen::charRelacionalOperator(Token *op1, Token *op2, TokenID op){
+void CodeGen::RelacionalOperator(Token *op1, Token *op2, TokenID op){
     int label1=this->newLabel();
     int label2=this->newLabel();
 
-    writeInProgramFile(format("mov al, [qword M+%ld]", op1->getTokenAddr()));
-    writeInProgramFile(format("mov bl, [qword M+%ld]", op2->getTokenAddr()));
-    writeInProgramFile("cmp al,bl");
-    
-    if(op==TOKEN_ID_EQUALS){
-        writeInProgramFile(format("je Rot%d",label1));
-    }else if(op==TOKEN_ID_LESS_THAN){
-        writeInProgramFile(format("jl Rot%d",label1));
-    }else if(op==TOKEN_ID_LESS_EQUAL_TO){
-        writeInProgramFile(format("jle Rot%d",label1));
-    }else if(op==TOKEN_ID_GREATER_THEN){
-        writeInProgramFile(format("jg Rot%d",label1));
-    }else if(op==TOKEN_ID_GREATER_EQUAL_TO){
-        writeInProgramFile(format("jge Rot%d",label1));
-    }else if(op==TOKEN_ID_DIFFERENT){
-        writeInProgramFile(format("jne Rot%d",label1));
+    if(op1->getTokenType() == TOKEN_TYPE_CHAR || op1->getTokenType() == TOKEN_TYPE_BOOLEAN){
+        writeInProgramFile(format("mov al, [qword M+%ld]", op1->getTokenAddr()));
+        writeInProgramFile(format("mov bl, [qword M+%ld]", op2->getTokenAddr()));
+        writeInProgramFile("cmp al,bl");
+        if(op==TOKEN_ID_EQUALS){
+            writeInProgramFile(format("je Rot%d",label1));
+        }else if(op==TOKEN_ID_LESS_THAN){
+            writeInProgramFile(format("jl Rot%d",label1));
+        }else if(op==TOKEN_ID_LESS_EQUAL_TO){
+            writeInProgramFile(format("jle Rot%d",label1));
+        }else if(op==TOKEN_ID_GREATER_THEN){
+            writeInProgramFile(format("jg Rot%d",label1));
+        }else if(op==TOKEN_ID_GREATER_EQUAL_TO){
+            writeInProgramFile(format("jge Rot%d",label1));
+        }else if(op==TOKEN_ID_DIFFERENT){
+            writeInProgramFile(format("jne Rot%d",label1));
+        }
+    }else if(op1->getTokenType() == TOKEN_TYPE_INTEGER){
+        writeInProgramFile(format("mov eax, [qword M+%ld]", op1->getTokenAddr()));
+        writeInProgramFile(format("mov ebx, [qword M+%ld]", op2->getTokenAddr()));
+        writeInProgramFile("cmp eax, ebx");
+
+        if(op==TOKEN_ID_EQUALS){
+            writeInProgramFile(format("je Rot%d",label1));
+        }else if(op==TOKEN_ID_LESS_THAN){
+            writeInProgramFile(format("jl Rot%d",label1));
+        }else if(op==TOKEN_ID_LESS_EQUAL_TO){
+            writeInProgramFile(format("jle Rot%d",label1));
+        }else if(op==TOKEN_ID_GREATER_THEN){
+            writeInProgramFile(format("jg Rot%d",label1));
+        }else if(op==TOKEN_ID_GREATER_EQUAL_TO){
+            writeInProgramFile(format("jge Rot%d",label1));
+        }else if(op==TOKEN_ID_DIFFERENT){
+            writeInProgramFile(format("jne Rot%d",label1));
+        }
+    }else if(op1->getTokenType() == TOKEN_TYPE_REAL){
+        writeInProgramFile(format("movss xmm0, [qword M+%ld]", op1->getTokenAddr()));
+        writeInProgramFile(format("movss xmm1, [qword M+%ld]", op2->getTokenAddr()));
+        writeInProgramFile("cmp xmm0, xmm1");
+
+        if(op==TOKEN_ID_EQUALS){
+            writeInProgramFile(format("je Rot%d",label1));
+        }else if(op==TOKEN_ID_LESS_THAN){
+            writeInProgramFile(format("jl Rot%d",label1));
+        }else if(op==TOKEN_ID_LESS_EQUAL_TO){
+            writeInProgramFile(format("jle Rot%d",label1));
+        }else if(op==TOKEN_ID_GREATER_THEN){
+            writeInProgramFile(format("jg Rot%d",label1));
+        }else if(op==TOKEN_ID_GREATER_EQUAL_TO){
+            writeInProgramFile(format("jge Rot%d",label1));
+        }else if(op==TOKEN_ID_DIFFERENT){
+            writeInProgramFile(format("jne Rot%d",label1));
+        }
     }
 
-    long tmpAddr = this->NewTmp(op1);
+    long tmpAddr = this->newTmpByTokenType(TOKEN_TYPE_BOOLEAN);
     writeInProgramFile(format("mov cl, 0",tmpAddr));
     writeInProgramFile(format("mov [qword M+%ld], cl",tmpAddr));
     writeInProgramFile(format("jmp Rot%d",label2));
@@ -761,8 +798,6 @@ void CodeGen::charRelacionalOperator(Token *op1, Token *op2, TokenID op){
     op1->setTokenAddr(tmpAddr);
     op1->setTokenType(TOKEN_TYPE_BOOLEAN);
 }
-
-
 /**
  * @brief Montagem de codigo para leitura do teclado
  */
