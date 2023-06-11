@@ -8,11 +8,12 @@
 
 #include "syntatic-analysis.hpp"
 
-SyntaticAnalysis::SyntaticAnalysis(LexerAnalysis *la, SemanticAnalysis *se, SymbolTable *st)
+SyntaticAnalysis::SyntaticAnalysis(LexerAnalysis *la, SemanticAnalysis *se, SymbolTable *st, CodeGen *cg)
 {
     this->la = la;
     this->se = se;
     this->st = st;
+    this->cg = cg;
 }
 /**
  * @brief: Inicia o Analizador Sintatico.

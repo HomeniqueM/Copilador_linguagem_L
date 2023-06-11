@@ -18,6 +18,7 @@
 #include "../symbols/token-type.hpp"
 #include "../analyzers/lexical-analysis.hpp"
 #include "../analyzers/semantic-analysis.hpp"
+#include "../code_generator/code-gen.hpp"
 
 class SyntaticAnalysis
 {
@@ -25,6 +26,7 @@ private:
     LexerAnalysis *la;
     SemanticAnalysis *se;
     SymbolTable *st;
+    CodeGen *cg;
     Token *token;
     void setToken(Token *token);
     void matchToken(TokenID expectedToken);
@@ -50,6 +52,6 @@ private:
     Token* productionExp5();
 
 public:
-    SyntaticAnalysis(LexerAnalysis *la, SemanticAnalysis *se , SymbolTable *st);
+    SyntaticAnalysis(LexerAnalysis *la, SemanticAnalysis *se , SymbolTable *st, CodeGen *cg);
     void Start(Token *token);
 };

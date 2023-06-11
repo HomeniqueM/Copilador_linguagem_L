@@ -29,9 +29,10 @@ int main(int argc, char const *argv[])
         //FileHandler fh("docs/t.l");
         FileHandler fh(handler.handleArgs(argc, argv));
         SymbolTable st = SymbolTable();
+        CodeGen cg = CodeGen("program.asm");
         LexerAnalysis la(&fh, &st);
         SemanticAnalysis se = SemanticAnalysis(&la);
-        SyntaticAnalysis sa = SyntaticAnalysis(&la, &se, &st);
+        SyntaticAnalysis sa = SyntaticAnalysis(&la, &se, &st, &cg);
         sa.Start(la.getNextToken());
         std::cout << "[" << la.getCurrentLine() -1 << "] Linhas Compiladas.";
     }
