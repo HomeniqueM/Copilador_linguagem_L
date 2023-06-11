@@ -8,7 +8,6 @@ real percentual=.0e0;
 write("Digite seu nome: ");
 readln(nome);
 
-for (n=1+(-1);n<=MAXITER;n=n+1) begin
+for (n=1;n<=MAXITER;n=n+1) begin
   percentual=real(n)/MAXITER;
-  if (n mod 2 == 0) writeln(percentual,": Ola' ",nome);
-end
+  if (n mod 2 == 0) writeln(percentual,": Ola'

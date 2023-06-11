@@ -48,7 +48,7 @@ class CodeGen{
         const int string_size=0x100;
 
     public:
-        CodeGen(std::string asmFileName = "program.asm");
+        CodeGen(std::string asmFileName);
         ~CodeGen();
         long NewTmp(Token* t);
         void end();
@@ -77,7 +77,7 @@ class CodeGen{
         void cvtToInt(Token *t);
 
         void write(Token *t);
-        void writeln(Token *t);
+        void writeln();
         void readln(Token *t);
         long newTmpByTokenType(TokenType tt);
         int newLabel() {
