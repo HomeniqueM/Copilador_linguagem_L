@@ -219,6 +219,8 @@ StatePackage State06::handle(char c)
     StatePackage package = StatePackage();
     if (isalpha(c) || isdigit(c) || c == '_')
     {
+        package.tokenId = TOKEN_ID_IDENTIFIER; 
+        package.tokenType = TOKEN_TYPE_UNDEFINED;
         package.identifier = +c;
         nextState = std::make_shared<State03>();
     }
