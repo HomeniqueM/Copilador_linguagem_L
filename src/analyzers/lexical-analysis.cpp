@@ -125,9 +125,7 @@ StatePackage StartState::handle(char c)
     else
     {
         // Tratativa a ser feita
-
-        std::string str(1, c);
-        throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine, str);
+        throw LException(ErrorCode::UNEXPECTED_CHARACTER, currentLine);
     }
     return package;
 }

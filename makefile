@@ -30,7 +30,7 @@ OBJ = $(SRC:$(SRCDIR)/%.cpp=$(BUILDDIR)/%.o)
 
 # Set the flags
 # CFLAGS são as flags do compilador
-CFLAGS = -Wall -lstdc++fs
+CFLAGS = -g -Wall -lstdc++fs
 
 # A target 'all' é a target padrão quando você executa 'make'
 # Ela depende de TARGET, então 'make' irá garantir que TARGET seja construído
