@@ -4,13 +4,15 @@
  * Disciplina de Compiladores
  * Prof Alexei Machado
  * @authors Guilherme Côsso Lima Pimenta, Homenique Vieira Martins, Iago Augusto Coelho Morgado
-*/
+ */
 
 #include "syntatic-analysis.hpp"
 
-SyntaticAnalysis::SyntaticAnalysis(LexerAnalysis *la)
+SyntaticAnalysis::SyntaticAnalysis(LexerAnalysis *la, SemanticAnalysis *se, SymbolTable *st)
 {
     this->la = la;
+    this->se = se;
+    this->st = st;
 }
 /**
  * @brief: Inicia o Analizador Sintatico.
@@ -36,6 +38,8 @@ void SyntaticAnalysis::matchToken(TokenID expectedToken)
     // std::cout << "Token Esperado :" << tokenToString(expectedToken) << expectedToken << std::endl;
     // std::cout << "Token Encontrado :" << tokenToString(token->getTokenid()) << token->getTokenid() << std::endl;
     // Fazer o match
+    // std::cout << expectedToken << "  " << token->getTokenid();
+
     if (expectedToken == token->getTokenid())
     {
         // Pedir o prx token
@@ -90,14 +94,20 @@ void SyntaticAnalysis::productionD()
 {
     if (token->getTokenid() == TOKEN_ID_FINAL)
     {
+        bool negate = false;
         matchToken(TOKEN_ID_FINAL);
+        this->se->isTokenHasDeclarad(token, TOKEN_CLASS_CONSTANT);
+        Token *identifier = token;
         matchToken(TOKEN_ID_IDENTIFIER);
         matchToken(TOKEN_ID_ASSIGNMENT);
         if (token->getTokenid() == TOKEN_ID_SUBTRACTION)
         {
+            negate = true;
             matchToken(TOKEN_ID_SUBTRACTION);
         }
+        Token *constante = token;
         matchToken(TOKEN_ID_CONSTANT);
+        this->se->isTokenTypeEquals(constante, identifier, negate);
     }
     else
     {
@@ -123,18 +133,23 @@ void SyntaticAnalysis::productionD1()
     {
     case TOKEN_ID_CHAR:
         matchToken(TOKEN_ID_CHAR);
+        this->se->defineNewType(token, TOKEN_TYPE_CHAR);
         break;
     case TOKEN_ID_INTEGER:
         matchToken(TOKEN_ID_INTEGER);
+        this->se->defineNewType(token, TOKEN_TYPE_INTEGER);
         break;
     case TOKEN_ID_REAL:
         matchToken(TOKEN_ID_REAL);
+        this->se->defineNewType(token, TOKEN_TYPE_REAL);
         break;
     case TOKEN_ID_BOOLEAN:
         matchToken(TOKEN_ID_BOOLEAN);
+        this->se->defineNewType(token, TOKEN_TYPE_BOOLEAN);
         break;
     case TOKEN_ID_STRING:
         matchToken(TOKEN_ID_STRING);
+        this->se->defineNewType(token, TOKEN_TYPE_STRING);
         break;
     default:
         std::cout << "ERRO NÃO SEI COMO SE CONSEGUIU ESSA PROESA.";
@@ -148,41 +163,57 @@ void SyntaticAnalysis::productionD1()
  */
 void SyntaticAnalysis::productionC()
 {
+    bool neg = false;
+    Token *tokenVar = token;
     matchToken(TOKEN_ID_IDENTIFIER);
+
+    this->se->isTokenHasDeclarad(tokenVar, TOKEN_CLASS_VARIABLE);
+
     if (token->getTokenid() == TOKEN_ID_ASSIGNMENT)
     {
+        // Regra [5]
         matchToken(TOKEN_ID_ASSIGNMENT);
-        if (token->getTokenid() == TOKEN_ID_SUBTRACTION)
-        {
-            matchToken(TOKEN_ID_SUBTRACTION);
-        }
-
         if (token->getTokenid() == TOKEN_ID_FALSE)
         {
+            // [31]
+            this->se->ifTokenTypeHasEqualsorIntandReal(tokenVar, TOKEN_TYPE_BOOLEAN);
             matchToken(TOKEN_ID_FALSE);
         }
         else if (token->getTokenid() == TOKEN_ID_TRUE)
         {
+            // [31]
+            this->se->ifTokenTypeHasEqualsorIntandReal(tokenVar, TOKEN_TYPE_BOOLEAN);
             matchToken(TOKEN_ID_TRUE);
         }
         else
         {
+            if (token->getTokenid() == TOKEN_ID_SUBTRACTION)
+            {
+                // [3]
+                neg = true;
+                matchToken(TOKEN_ID_SUBTRACTION);
+            }
+            //[4]
+            this->se->isTokenTypeEquals(token, tokenVar, neg);
             matchToken(TOKEN_ID_CONSTANT);
         }
+        // Operação de atribuição
+        // real a = 5;
+        // bool = true;
     }
     else if (token->getTokenid() == TOKEN_ID_OPEN_BRACKET)
     {
+        // Gambiarra
+        tokenVar->setTokenClass(TOKEN_CLASS_UNDEFINED);
+        this->se->isTokenHasDeclarad(tokenVar, TOKEN_CLASS_VETOR);
         matchToken(TOKEN_ID_OPEN_BRACKET);
-        if (token->getTokenid() == TOKEN_ID_IDENTIFIER)
-        {
-            matchToken(TOKEN_ID_IDENTIFIER);
-        }
-        else
-        {
-            matchToken(TOKEN_ID_CONSTANT);
-        }
-
+        // [6]
+        this->se->ifTokenTypehasDiff(token, TOKEN_TYPE_INTEGER);
+        this->se->setMaxTamVet(tokenVar, token);
+        matchToken(TOKEN_ID_CONSTANT);
         matchToken(TOKEN_ID_CLOSE_BRACKET);
+        // Operação de vetor
+        // char a  [20];
     }
 }
 
@@ -214,7 +245,7 @@ void SyntaticAnalysis::productionCMD()
         {
             productionL();
         }
-        else if(token->getTokenid() == TOKEN_ID_WRITE ||token->getTokenid() == TOKEN_ID_WRITELN)
+        else if (token->getTokenid() == TOKEN_ID_WRITE || token->getTokenid() == TOKEN_ID_WRITELN)
         {
             productionE();
         }
@@ -256,19 +287,19 @@ void SyntaticAnalysis::productionCMD1()
  */
 void SyntaticAnalysis::productionA()
 {
+    Token *tokenId = token;
+    Token tokenExp;
     matchToken(TOKEN_ID_IDENTIFIER);
+    // Regra [7]
+    this->se->isTokenNotHasDeclarationAndNotHasConst(tokenId);
+
     if (token->getTokenid() == TOKEN_ID_OPEN_BRACKET)
     {
         matchToken(TOKEN_ID_OPEN_BRACKET);
-        if (token->getTokenid() == TOKEN_ID_IDENTIFIER)
-        {
-            matchToken(TOKEN_ID_IDENTIFIER);
-        }
-        else
-        {
-            matchToken(TOKEN_ID_CONSTANT);
-        }
-
+        // Regra [8]
+        this->se->ifTokenTypehasDiff(token, TOKEN_TYPE_INTEGER);
+        this->se->ifTokenVectorInRange(tokenId, token);
+        matchToken(TOKEN_ID_CONSTANT);
         matchToken(TOKEN_ID_CLOSE_BRACKET);
     }
     matchToken(TOKEN_ID_ASSIGNMENT);
@@ -276,7 +307,10 @@ void SyntaticAnalysis::productionA()
     {
         productionL();
     }
-    productionExp();
+    tokenExp = productionExp();
+    // regra 9
+    // se  id.tipo != Exp1.tipo e !(id.tipo == real e Exp1.tipo == inteiro)
+    this->se->ifTokenTypeHasEqualsorIntandReal(tokenId, tokenExp.getTokenType());
 }
 
 /**
@@ -318,9 +352,12 @@ void SyntaticAnalysis::productionR1()
  */
 void SyntaticAnalysis::productionT()
 {
+    Token tokenExp;
     matchToken(TOKEN_ID_IF);
     matchToken(TOKEN_ID_OPEN_PARANTHESES);
-    productionExp();
+    tokenExp = productionExp();
+    // [10]
+    this->se->ifTokenTypehasDiff(&tokenExp, TOKEN_TYPE_BOOLEAN);
     matchToken(TOKEN_ID_CLOSE_PARANTHESES);
     productionT1();
     if (token->getTokenid() == TOKEN_ID_ELSE)
@@ -359,7 +396,12 @@ void SyntaticAnalysis::productionL()
 {
     matchToken(TOKEN_ID_READLN);
     matchToken(TOKEN_ID_OPEN_PARANTHESES);
+    Token *tokenID = token;
     matchToken(TOKEN_ID_IDENTIFIER);
+    // [5]
+    // Nao fiz a verificaçao de tipo logico,
+    // E possivel ler True or False (0|1)?
+    this->se->isTokenNotHasDeclaration(tokenID);
     matchToken(TOKEN_ID_CLOSE_PARANTHESES);
 }
 
@@ -388,11 +430,16 @@ void SyntaticAnalysis::productionE()
  */
 void SyntaticAnalysis::productionE1()
 {
-    productionExp();
+    Token tokenE1;
+    tokenE1 = productionExp();
+    // Nao fiz a verificaçao de tipo logico,
+    // E possivel escrever True or False (0|1)?
     while (token->getTokenid() == TOKEN_ID_COMMA)
     {
         matchToken(TOKEN_ID_COMMA);
         productionExp();
+        // Nao fiz a verificaçao de tipo logico,
+        // E possivel escrever True or False (0|1)?
     }
 }
 
@@ -400,14 +447,20 @@ void SyntaticAnalysis::productionE1()
  * @brief: Analísa o caso da produção da Gramatica.
  * Exp -> Exp1 { ( == | < | <= | > | >= ) Exp1 }
  */
-void SyntaticAnalysis::productionExp()
+Token SyntaticAnalysis::productionExp()
 {
-    productionExp1();
-    while (token->getTokenid() == TOKEN_ID_ENQUALS || token->getTokenid() == TOKEN_ID_GREATER_THEN || token->getTokenid() == TOKEN_ID_GREATER_EQUAL_TO || token->getTokenid() == TOKEN_ID_LESS_THAN || token->getTokenid() == TOKEN_ID_LESS_EQUAL_TO)
+    Token tokenExp;
+    Token operador;
+    Token tokenExp1;
+    // Regra 14;
+    tokenExp = productionExp1();
+    while (token->getTokenid() == TOKEN_ID_EQUALS || token->getTokenid() == TOKEN_ID_GREATER_THEN || token->getTokenid() == TOKEN_ID_GREATER_EQUAL_TO || token->getTokenid() == TOKEN_ID_LESS_THAN || token->getTokenid() == TOKEN_ID_LESS_EQUAL_TO)
     {
-        if (token->getTokenid() == TOKEN_ID_ENQUALS)
+        // Regra [21]
+        operador = token->clone();
+        if (token->getTokenid() == TOKEN_ID_EQUALS)
         {
-            matchToken(TOKEN_ID_ENQUALS);
+            matchToken(TOKEN_ID_EQUALS);
         }
         else if (token->getTokenid() == TOKEN_ID_GREATER_THEN)
         {
@@ -421,83 +474,126 @@ void SyntaticAnalysis::productionExp()
         {
             matchToken(TOKEN_ID_LESS_THAN);
         }
+        else if (token->getTokenid() == TOKEN_ID_DIFFERENT)
+            matchToken(TOKEN_ID_DIFFERENT);
         else
         {
             matchToken(TOKEN_ID_LESS_EQUAL_TO);
         }
-        productionExp1();
+        tokenExp1 = productionExp1();
+        // Regra [20]
+        this->se->rulle20(&tokenExp, &tokenExp1, &operador);
     }
+    return tokenExp;
 }
 
 /**
  * @brief: Analísa o caso da produção da Gramatica.
  * Exp1 -> [ - ] Exp2 { ( + | - | or ) Exp2 }
  */
-void SyntaticAnalysis::productionExp1()
+Token SyntaticAnalysis::productionExp1()
 {
+    Token tokenExp1;
+    Token operador;
+    Token tokenExp2;
+    bool isNeg = false;
     if (token->getTokenid() == TOKEN_ID_SUBTRACTION)
     {
+        // Regra 19 Da Gramatica
+        isNeg = true;
         matchToken(TOKEN_ID_SUBTRACTION);
     }
-    productionExp2();
+    tokenExp1 = productionExp2();
+    // Regra 15 Da Gramatica
+    this->se->tokenIsIntergerOrReal(&tokenExp1, isNeg);
 
     while (token->getTokenid() == TOKEN_ID_ADDITION || token->getTokenid() == TOKEN_ID_SUBTRACTION || token->getTokenid() == TOKEN_ID_OR)
     {
+        // Regra [22]
+        operador = token->clone();
         if (token->getTokenid() == TOKEN_ID_ADDITION)
+        {
             matchToken(TOKEN_ID_ADDITION);
+            // this->se->tokenIsIntergerOrReal(&tokenExp1, true);
+        }
         else if (token->getTokenid() == TOKEN_ID_SUBTRACTION)
+        {
             matchToken(TOKEN_ID_SUBTRACTION);
+            // this->se->tokenIsIntergerOrReal(&tokenExp1, true);
+        }
         else
+        {
             matchToken(TOKEN_ID_OR);
-        productionExp2();
+            // this->se->ifTokenTypehasDiff(&tokenExp1, TOKEN_TYPE_BOOLEAN);
+        }
+        tokenExp2 = productionExp2();
+        // Regra [23]
+        this->se->rulle23(&tokenExp1, &tokenExp2, &operador);
     }
+    return tokenExp1;
 }
 
 /**
  * @brief: Analísa o caso da produção da Gramatica.
  * Exp2 -> Exp3 { ( *  | mod | (div |/)| and ) Exp3}
  */
-void SyntaticAnalysis::productionExp2()
+Token SyntaticAnalysis::productionExp2()
 {
-    productionExp3();
-    while (token->getTokenid() == TOKEN_ID_MULTIPLICATION || token->getTokenid() == TOKEN_ID_DIVISION || token->getTokenid() == TOKEN_ID_MODULO || token->getTokenid() == TOKEN_ID_AND || token->getTokenid() == TOKEN_ID_DIFFERENT)
+    //(2*4)
+    Token tokenEXP2 = productionExp3();
+    Token operatorToken = token->clone(); // 2
+    while (token->getTokenid() == TOKEN_ID_MULTIPLICATION || token->getTokenid() == TOKEN_ID_DIVISION || token->getTokenid() == TOKEN_ID_MODULO || token->getTokenid() == TOKEN_ID_AND)
     {
         if (token->getTokenid() == TOKEN_ID_MULTIPLICATION)
+        {
             matchToken(TOKEN_ID_MULTIPLICATION);
+        }
         else if (token->getTokenid() == TOKEN_ID_DIVISION)
             matchToken(TOKEN_ID_DIVISION);
         else if (token->getTokenid() == TOKEN_ID_MODULO)
             matchToken(TOKEN_ID_MODULO);
-        else if (token->getTokenid() == TOKEN_ID_DIFFERENT)
-            matchToken(TOKEN_ID_DIFFERENT);
         else
             matchToken(TOKEN_ID_AND);
-        productionExp3();
+        Token tokenAux = productionExp3();
+        this->se->rulle25(&tokenEXP2, &tokenAux, &operatorToken);
+        // tokenEXP2 tokenAux
     }
+    return tokenEXP2;
 }
 
 /**
  * @brief: Analísa o caso da produção da Gramatica.
  * Exp3 -> Exp4 | not Exp4
  */
-void SyntaticAnalysis::productionExp3()
+Token SyntaticAnalysis::productionExp3()
 {
+    Token tokenExp3;
+    bool isNot = false;
     if (token->getTokenid() == TOKEN_ID_NOT)
     {
+        isNot = true;
         matchToken(TOKEN_ID_NOT);
     }
-    productionExp4();
+    //[17]
+    tokenExp3 = productionExp4();
+    // [26]
+    this->se->tokenIsBoolean(&tokenExp3, isNot);
+    return tokenExp3;
 }
 
 /**
  * @brief: Analísa o caso da produção da Gramatica.
  * Exp4 -> Exp5 | real( Exp5 ) | integer( Exp5 )
  */
-void SyntaticAnalysis::productionExp4()
+Token SyntaticAnalysis::productionExp4()
 {
+    Token tokenExp4;
+    Token *tokenExp5 = nullptr;
     if (token->getTokenid() != TOKEN_ID_INTEGER && token->getTokenid() != TOKEN_ID_REAL)
     {
-        productionExp5();
+        // [18]
+        tokenExp5 = productionExp5();
+        tokenExp4 = tokenExp5->clone();
     }
     else
     {
@@ -510,9 +606,13 @@ void SyntaticAnalysis::productionExp4()
             matchToken(TOKEN_ID_REAL);
         }
         matchToken(TOKEN_ID_OPEN_PARANTHESES);
-        productionExp5();
+        tokenExp5 = productionExp5();
+        tokenExp4 = tokenExp5->clone();
+        // [27 && 28]
+        this->se->TokenReplaceType(&tokenExp4);
         matchToken(TOKEN_ID_CLOSE_PARANTHESES);
     }
+    return tokenExp4;
 }
 
 /**
@@ -520,35 +620,53 @@ void SyntaticAnalysis::productionExp4()
 Exp5 -> const | id | true | false | [ [ ( id | const) ]  ] | ( Exp )
 
  */
-void SyntaticAnalysis::productionExp5()
+Token *SyntaticAnalysis::productionExp5()
 {
+    Token *tokenExp5 = token;
     if (token->getTokenid() == TOKEN_ID_CONSTANT)
+    {
+        // [28] nao existe
         matchToken(TOKEN_ID_CONSTANT);
+    }
     else if (token->getTokenid() == TOKEN_ID_TRUE)
+    {
+        this->se->defineNewType(tokenExp5, TOKEN_TYPE_BOOLEAN);
         matchToken(TOKEN_ID_TRUE);
+    }
     else if (token->getTokenid() == TOKEN_ID_FALSE)
+    {
+        this->se->defineNewType(tokenExp5, TOKEN_TYPE_BOOLEAN);
         matchToken(TOKEN_ID_FALSE);
+    }
     else if (token->getTokenid() == TOKEN_ID_IDENTIFIER)
     {
         matchToken(TOKEN_ID_IDENTIFIER);
+        // 29
+        this->se->isTokenNotHasDeclaration(tokenExp5);
         if (token->getTokenid() == TOKEN_ID_OPEN_BRACKET)
         {
             matchToken(TOKEN_ID_OPEN_BRACKET);
-            if (token->getTokenid() == TOKEN_ID_IDENTIFIER)
-            {
-                matchToken(TOKEN_ID_IDENTIFIER);
-            }
-            else
-            {
-                matchToken(TOKEN_ID_CONSTANT);
-            }
+            this->se->ifTokenTypehasDiff(token, TOKEN_TYPE_INTEGER);
+            this->se->ifTokenVectorInRange(tokenExp5, token);
+            matchToken(TOKEN_ID_CONSTANT);
             matchToken(TOKEN_ID_CLOSE_BRACKET);
         }
     }
     else
     {
+        // relizar ajuste
         matchToken(TOKEN_ID_OPEN_PARANTHESES);
-        productionExp();
+        Token a = productionExp();
+        Token *result = new Token();
+        result->setTokenID(a.getTokenid());
+        result->setLexeme(a.getLexeme());
+        result->setTokenType(a.getTokenType());
+        result->setTokenSize(a.getTokeSize());
+        result->setTokenClass(a.getTokenClass());
+        result->setMaxTam(a.getMaxTam());
+
         matchToken(TOKEN_ID_CLOSE_PARANTHESES);
+        tokenExp5 = result;
     }
+    return tokenExp5;
 }

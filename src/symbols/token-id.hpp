@@ -28,7 +28,7 @@ enum TokenID
     TOKEN_ID_OR,  // Or
     TOKEN_ID_NOT, // Not
 
-    TOKEN_ID_ENQUALS,         // ==
+    TOKEN_ID_EQUALS,         // ==
     TOKEN_ID_ASSIGNMENT,       // =
     TOKEN_ID_GREATER_THEN,     // >
     TOKEN_ID_GREATER_EQUAL_TO, // >=

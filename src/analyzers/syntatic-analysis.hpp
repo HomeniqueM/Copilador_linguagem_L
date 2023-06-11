@@ -17,11 +17,14 @@
 #include "../error/l_exception.cpp"
 #include "../symbols/token-type.hpp"
 #include "../analyzers/lexical-analysis.hpp"
+#include "../analyzers/semantic-analysis.hpp"
 
 class SyntaticAnalysis
 {
 private:
     LexerAnalysis *la;
+    SemanticAnalysis *se;
+    SymbolTable *st;
     Token *token;
     void setToken(Token *token);
     void matchToken(TokenID expectedToken);
@@ -39,14 +42,14 @@ private:
     void productionL();
     void productionE();
     void productionE1();
-    void productionExp();
-    void productionExp1();
-    void productionExp2();
-    void productionExp3();
-    void productionExp4();
-    void productionExp5();
+    Token productionExp();
+    Token productionExp1();
+    Token productionExp2();
+    Token productionExp3();
+    Token productionExp4();
+    Token* productionExp5();
 
 public:
-    SyntaticAnalysis(LexerAnalysis *la);
+    SyntaticAnalysis(LexerAnalysis *la, SemanticAnalysis *se , SymbolTable *st);
     void Start(Token *token);
 };

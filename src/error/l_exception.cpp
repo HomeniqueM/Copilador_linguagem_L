@@ -16,11 +16,11 @@
 enum class ErrorCode
 {
     // Erros solicitados
-    INVALIDCHARACTER, // Pdf 01
-    INVALIDLEX,       // PDF 01
-    UNEXPECTED_EOF,   // PDF 01
-    UNEXPECTED_TOKEN, // PDF 02
-    UNDECLARED_IDENTIFIER, // PDF 03
+    INVALIDCHARACTER,            // Pdf 01
+    INVALIDLEX,                  // PDF 01
+    UNEXPECTED_EOF,              // PDF 01
+    UNEXPECTED_TOKEN,            // PDF 02
+    UNDECLARED_IDENTIFIER,       // PDF 03
     IDENTIFIER_ALREADY_DECLARED, // PDF 03
     MISMATCHED_IDENTIFIER,
     INCOMPATIBLE_TYPES,
@@ -34,13 +34,10 @@ enum class ErrorCode
     OVERFLOW_ACCURACY_LENGTH,
     ENCEEDED_LIMIT_IDENTIFIER_MAX_SIZE,
     FILE_OPENNING_FAIL,
+    // Adicionado Erros do Semantico
+    IDENTIFIER_NO_DECLARED,
+    MISMATCHED_IDENTIFIER_CLASS,
     UNKNOWN
-};
-
-// Mapeamento de códigos de erro para mensagens de erro
-const std::map<ErrorCode, std::string_view> errorMessages = {
-    {ErrorCode::INVALIDCHARACTER, "character invalido"},
-    {ErrorCode::UNEXPECTED_CHARACTER, "character nao esperado"},
 };
 
 /**
@@ -113,14 +110,20 @@ private:
         case ErrorCode::UNDECLARED_IDENTIFIER:
             oss << "identificador nao declarado";
             break;
-        case ErrorCode::IDENTIFIER_ALREADY_DECLARED:
-            oss << "identificador ja declarado";
-            break;
         case ErrorCode::MISMATCHED_IDENTIFIER:
             oss << "classe de identificador incompatível";
             break;
+        case ErrorCode::IDENTIFIER_NO_DECLARED:
+            oss << "Identificador nao declarado";
+            break;
+        case ErrorCode::IDENTIFIER_ALREADY_DECLARED:
+            oss << " Identificador ja declarado ";
+            break;
+        case ErrorCode::MISMATCHED_IDENTIFIER_CLASS:
+            oss << "Classe de identificador incompatível";
+            break;
         case ErrorCode::INCOMPATIBLE_TYPES:
-            oss << "ipos incompativeis.";
+            oss << "Tipos incompativeis";
             break;
         default:
             oss << "Unknown error";
