@@ -1,3 +1,1 @@
-
-boolean b = true; 
-writeln(b , "ggggg");
+boolean c = 2;

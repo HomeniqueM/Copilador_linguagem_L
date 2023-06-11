@@ -329,6 +329,8 @@ void SyntaticAnalysis::productionA()
     // regra 9
     // se  id.tipo != Exp1.tipo e !(id.tipo == real e Exp1.tipo == inteiro)
     this->se->ifTokenTypeHasEqualsorIntandReal(tokenId, tokenExp.getTokenType());
+
+    cg->atributionCommand(tokenId,&tokenExp);
 }
 
 /**
@@ -638,6 +640,11 @@ Token SyntaticAnalysis::productionExp4()
         tokenExp4 = tokenExp5->clone();
         // [27 && 28]
         this->se->TokenReplaceType(&tokenExp4);
+        if(tokenExp4.getTokenType()==TOKEN_TYPE_INTEGER){
+            cg->cvtToInt(&tokenExp4);
+        }else{
+            cg->cvtToReal(&tokenExp4);
+        }
         matchToken(TOKEN_ID_CLOSE_PARANTHESES);
     }
     return tokenExp4;

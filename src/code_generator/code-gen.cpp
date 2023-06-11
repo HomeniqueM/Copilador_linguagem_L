@@ -179,6 +179,7 @@ void CodeGen::storeConstOnTmp(Token *t,Token *constant)
     {
         long addr = this->NewTmp(constant);
         t->setTokenAddr(addr);
+        this->startText();
         if(constant->getTokenid()==TOKEN_ID_TRUE){
             this->programFile << "\tmov al, 1"<<"\n";
             this->programFile << format("\tmov [qword M+%ld], al", addr) << "\n";
@@ -490,10 +491,10 @@ void CodeGen::cvtToReal(Token *t)
 // converte valor real para inteiro
 void CodeGen::cvtToInt(Token *t)
 {
-    this->programFile << format("mov xmm0, [qword M+%ld]", t->getTokenAddr()) << "\n";
+    this->programFile << format("movss xmm0, [qword M+%ld]", t->getTokenAddr()) << "\n";
     long tmpAddr = this->NewTmp(t);
     t->setTokenAddr(tmpAddr);
-    this->programFile << "cvtsi2ss rax, xmm0"
+    this->programFile << "cvtss2si rax, xmm0"
              << "\n";
     this->programFile << format("mov [qword M+%d], rax", tmpAddr);
 }
@@ -517,7 +518,7 @@ void CodeGen::write(Token *t)
         this->programFile <<"\tmov rax, 1"<<"\n";
         this->programFile << "\tmov rdi, 1"<<"\n";
         this->programFile << "\tsyscall"<<"\n";
-    }else if (t->getTokenType() == TOKEN_TYPE_CHAR)
+    }else if (t->getTokenType() == TOKEN_TYPE_CHAR )
     {
         bufferAddr = t->getTokenAddr();
         this->programFile << format("mov rsi, M+%ld", bufferAddr)<<"\n";
@@ -596,7 +597,7 @@ void CodeGen::write(Token *t)
         this->programFile <<"mov rdi, 1"<<"\n";
         this->programFile <<"syscall"<<"\n";
     }
-    else if(t->getTokenType() == TOKEN_TYPE_INTEGER)
+    else if(t->getTokenType() == TOKEN_TYPE_INTEGER||t->getTokenType() == TOKEN_TYPE_BOOLEAN)
     {
         bufferAddr = this->tmp_count;
         this->tmp_count += this->string_size;

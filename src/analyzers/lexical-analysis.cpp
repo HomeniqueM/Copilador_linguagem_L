@@ -481,7 +481,6 @@ StatePackage State20::handle(char c)
     StatePackage package = StatePackage();
     if (c == '\'')
     {
-        package.identifier = +c;
         this->completed = true;
     }
     else
