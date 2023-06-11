@@ -256,10 +256,8 @@ void SemanticAnalysis::rulle20(Token *tokenA, Token *tokenB, Token *operador)
             throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "13");
         }
     }
-    else
-    {
-        if (operador->getTokenid() == TOKEN_ID_ENQUALS && tokenA->getTokenType() == TOKEN_TYPE_STRING)
-        {
+    else{
+        if(operador->getTokenid() == TOKEN_ID_EQUALS && tokenA->getTokenType() == TOKEN_TYPE_STRING ){
             throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "14");
         }
     }

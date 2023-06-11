@@ -454,13 +454,13 @@ Token SyntaticAnalysis::productionExp()
     Token tokenExp1;
     // Regra 14;
     tokenExp = productionExp1();
-    while (token->getTokenid() == TOKEN_ID_ENQUALS || token->getTokenid() == TOKEN_ID_GREATER_THEN || token->getTokenid() == TOKEN_ID_GREATER_EQUAL_TO || token->getTokenid() == TOKEN_ID_LESS_THAN || token->getTokenid() == TOKEN_ID_LESS_EQUAL_TO || token->getTokenid() == TOKEN_ID_DIFFERENT)
+    while (token->getTokenid() == TOKEN_ID_EQUALS || token->getTokenid() == TOKEN_ID_GREATER_THEN || token->getTokenid() == TOKEN_ID_GREATER_EQUAL_TO || token->getTokenid() == TOKEN_ID_LESS_THAN || token->getTokenid() == TOKEN_ID_LESS_EQUAL_TO)
     {
         // Regra [21]
         operador = token->clone();
-        if (token->getTokenid() == TOKEN_ID_ENQUALS)
+        if (token->getTokenid() == TOKEN_ID_EQUALS)
         {
-            matchToken(TOKEN_ID_ENQUALS);
+            matchToken(TOKEN_ID_EQUALS);
         }
         else if (token->getTokenid() == TOKEN_ID_GREATER_THEN)
         {
