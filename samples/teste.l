@@ -1,5 +1,5 @@
-{final c = "Banana";}
-integer a = 527;
-{real b = 27.5;}
+integer a = 123546;
+real b = 27.5;
+final c = " ";
 
-writeln(b);
+writeln(a,c,b,c,"Banana");

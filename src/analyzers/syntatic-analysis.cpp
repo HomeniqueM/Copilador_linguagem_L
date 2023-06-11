@@ -441,7 +441,9 @@ void SyntaticAnalysis::productionE()
     E_tmp = productionE1();
     matchToken(TOKEN_ID_CLOSE_PARANTHESES);
 
-    cg->write(&E_tmp,lineBreak);
+    if(lineBreak){
+        cg->writeln();
+    }
 }
 
 /**
@@ -452,12 +454,14 @@ Token SyntaticAnalysis::productionE1()
 {
     Token tokenE1;
     tokenE1 = productionExp();
+    cg->write(&tokenE1);
     // Nao fiz a verificaçao de tipo logico,
     // E possivel escrever True or False (0|1)?
     while (token->getTokenid() == TOKEN_ID_COMMA)
     {
         matchToken(TOKEN_ID_COMMA);
         tokenE1 = productionExp();
+        cg->write(&tokenE1);
         // Nao fiz a verificaçao de tipo logico,
         // E possivel escrever True or False (0|1)?
     }

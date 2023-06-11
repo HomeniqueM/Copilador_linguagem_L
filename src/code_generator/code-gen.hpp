@@ -76,8 +76,8 @@ class CodeGen{
         void cvtToReal(Token *t);
         void cvtToInt(Token *t);
 
-        void write(Token *t,bool lineBreak);
-        void writeln(Token *t);
+        void write(Token *t);
+        void writeln();
         void readln(Token *t);
         long newTmpByTokenType(TokenType tt);
         int newLabel() {

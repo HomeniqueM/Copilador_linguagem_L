@@ -488,7 +488,7 @@ void CodeGen::cvtToInt(Token *t)
 /**
  * @brief Escreve no terminal
 */
-void CodeGen::write(Token *t,bool lineBreak)
+void CodeGen::write(Token *t)
 {
     long bufferAddr;
     int label1;
@@ -621,21 +621,23 @@ void CodeGen::write(Token *t,bool lineBreak)
         this->programFile <<"cmp rcx, 0"<<"\n";
         this->programFile <<format("jne Rot%d", label3)<<"\n";
         this->programFile <<format("mov rsi, M+%ld",bufferAddr)<<"\n";
-        this->programFile << "mov rdx, 1"<<"\n";
         this->programFile <<"mov rax, 1"<<"\n";
         this->programFile <<"mov rdi, 1"<<"\n";
         this->programFile <<"syscall"<<"\n";
     }
-    if(lineBreak){
-        long line_break = newTmpByTokenType(TOKEN_TYPE_CHAR);
-        this->programFile << "mov al, 0ah"<<"\n";
-        this->programFile << format("mov [qword M+%ld], al", line_break)<<"\n";
-        this->programFile << format("mov rsi, M+%ld", line_break)<<"\n";
-        this->programFile << "mov rdx, 1"<<"\n";
-        this->programFile << "mov rax, 1"<<"\n";
-        this->programFile << "mov rdi, 1"<<"\n";
-        this->programFile << "syscall"<<"\n";
-    }
+}
+/**
+ * @brief Escreve uma quebra de linha
+*/
+void CodeGen::writeln(){
+    long line_break = newTmpByTokenType(TOKEN_TYPE_CHAR);
+    this->programFile << "mov al, 0ah"<<"\n";
+    this->programFile << format("mov [qword M+%ld], al", line_break)<<"\n";
+    this->programFile << format("mov rsi, M+%ld", line_break)<<"\n";
+    this->programFile << "mov rdx, 1"<<"\n";
+    this->programFile << "mov rax, 1"<<"\n";
+    this->programFile << "mov rdi, 1"<<"\n";
+    this->programFile << "syscall"<<"\n";
 }
 /**
  * @brief Cria um temporário a partir do token type
