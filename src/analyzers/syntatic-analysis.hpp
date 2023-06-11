@@ -43,7 +43,7 @@ private:
     void productionT1();
     void productionL();
     void productionE();
-    void productionE1();
+    Token productionE1();
     Token productionExp();
     Token productionExp1();
     Token productionExp2();

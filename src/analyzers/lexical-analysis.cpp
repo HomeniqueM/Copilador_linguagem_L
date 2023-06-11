@@ -64,7 +64,6 @@ StatePackage StartState::handle(char c)
     }
     else if (c == '\'')
     {
-        package.identifier = +c;
         package.tokenType = TOKEN_TYPE_CHAR;
         package.tokenId = TOKEN_ID_CONSTANT;
 
@@ -72,7 +71,6 @@ StatePackage StartState::handle(char c)
     }
     else if (c == '"')
     {
-        package.identifier = +c;
         package.tokenType = TOKEN_TYPE_STRING;
         package.tokenId = TOKEN_ID_CONSTANT;
         nextState = std::make_shared<State21>();

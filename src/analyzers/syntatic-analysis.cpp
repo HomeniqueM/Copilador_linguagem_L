@@ -24,6 +24,8 @@ void SyntaticAnalysis::Start(Token *token)
 {
     setToken(token);
     productionS();
+
+    cg->end();
 }
 
 void SyntaticAnalysis::setToken(Token *token)
@@ -78,10 +80,12 @@ void SyntaticAnalysis::productionS()
 
         if (declaration)
         {
+            cg->startData();
             productionD();
         }
         else
-        {
+        {  
+            cg->startText();
             productionCMD();
         }
     }
@@ -109,6 +113,8 @@ void SyntaticAnalysis::productionD()
         Token *constante = token;
         matchToken(TOKEN_ID_CONSTANT);
         this->se->isTokenTypeEquals(constante, identifier, negate);
+
+        cg->DeclareConst(identifier,constante);
     }
     else
     {
@@ -165,15 +171,19 @@ void SyntaticAnalysis::productionD1()
 void SyntaticAnalysis::productionC()
 {
     bool neg = false;
+    Token *C_tmp = new Token;
     Token *tokenVar = token;
     matchToken(TOKEN_ID_IDENTIFIER);
 
     this->se->isTokenHasDeclarad(tokenVar, TOKEN_CLASS_VARIABLE);
 
+    cg->DeclareVariable(tokenVar);
+
     if (token->getTokenid() == TOKEN_ID_ASSIGNMENT)
     {
         // Regra [5]
         matchToken(TOKEN_ID_ASSIGNMENT);
+        Token *constant = token;
         if (token->getTokenid() == TOKEN_ID_FALSE)
         {
             // [31]
@@ -196,8 +206,12 @@ void SyntaticAnalysis::productionC()
             }
             //[4]
             this->se->isTokenTypeEquals(token, tokenVar, neg);
+            constant = token;
             matchToken(TOKEN_ID_CONSTANT);
         }
+        cg->storeConstOnTmp(C_tmp,constant);
+        cg->atributionCommand(tokenVar,C_tmp);
+
         // Operação de atribuição
         // real a = 5;
         // bool = true;
@@ -412,6 +426,8 @@ void SyntaticAnalysis::productionL()
  */
 void SyntaticAnalysis::productionE()
 {
+    bool lineBreak = false;
+    Token E_tmp;
     if (token->getTokenid() == TOKEN_ID_WRITE)
     {
         matchToken(TOKEN_ID_WRITE);
@@ -419,17 +435,20 @@ void SyntaticAnalysis::productionE()
     else
     {
         matchToken(TOKEN_ID_WRITELN);
+        lineBreak = true;
     }
     matchToken(TOKEN_ID_OPEN_PARANTHESES);
-    productionE1();
+    E_tmp = productionE1();
     matchToken(TOKEN_ID_CLOSE_PARANTHESES);
+
+    cg->write(&E_tmp,lineBreak);
 }
 
 /**
  * @brief: Analísa o caso da produção da Gramatica.
  * E1 -> Exp { , Exp }
  */
-void SyntaticAnalysis::productionE1()
+Token SyntaticAnalysis::productionE1()
 {
     Token tokenE1;
     tokenE1 = productionExp();
@@ -438,10 +457,11 @@ void SyntaticAnalysis::productionE1()
     while (token->getTokenid() == TOKEN_ID_COMMA)
     {
         matchToken(TOKEN_ID_COMMA);
-        productionExp();
+        tokenE1 = productionExp();
         // Nao fiz a verificaçao de tipo logico,
         // E possivel escrever True or False (0|1)?
     }
+    return tokenE1;
 }
 
 /**
@@ -665,6 +685,7 @@ Token *SyntaticAnalysis::productionExp5()
         result->setTokenSize(a.getTokeSize());
         result->setTokenClass(a.getTokenClass());
         result->setMaxTam(a.getMaxTam());
+        result->setTokenAddr(a.getTokenAddr());
 
         matchToken(TOKEN_ID_CLOSE_PARANTHESES);
         tokenExp5 = result;

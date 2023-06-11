@@ -15,6 +15,7 @@ Token Token::clone(){
     a.setTokenSize(this->_tokenSize); 
     a.setTokenClass(this->_tokenClass); 
     a.setMaxTam(this->maxTam);
+    a.setTokenAddr(this->_addr);
     return a;
 }
 
