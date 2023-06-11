@@ -189,12 +189,14 @@ void SyntaticAnalysis::productionC()
         {
             // [31]
             this->se->ifTokenTypeHasEqualsorIntandReal(tokenVar, TOKEN_TYPE_BOOLEAN);
+            this->se->defineNewType(constant, TOKEN_TYPE_BOOLEAN);
             matchToken(TOKEN_ID_FALSE);
         }
         else if (token->getTokenid() == TOKEN_ID_TRUE)
         {
             // [31]
             this->se->ifTokenTypeHasEqualsorIntandReal(tokenVar, TOKEN_TYPE_BOOLEAN);
+            this->se->defineNewType(constant, TOKEN_TYPE_BOOLEAN);
             matchToken(TOKEN_ID_TRUE);
         }
         else
@@ -659,12 +661,14 @@ Token *SyntaticAnalysis::productionExp5()
     {
         this->se->defineNewType(tokenExp5, TOKEN_TYPE_BOOLEAN);
         matchToken(TOKEN_ID_TRUE);
+        cg->storeConstOnTmp(tokenExp5,tokenExp5);
         //cg->storeConstOnTmp(tokenExp5,token);
     }
     else if (token->getTokenid() == TOKEN_ID_FALSE)
     {
         this->se->defineNewType(tokenExp5, TOKEN_TYPE_BOOLEAN);
         matchToken(TOKEN_ID_FALSE);
+        cg->storeConstOnTmp(tokenExp5,tokenExp5);
         //cg->storeConstOnTmp(tokenExp5,token);
     }
     else if (token->getTokenid() == TOKEN_ID_IDENTIFIER)

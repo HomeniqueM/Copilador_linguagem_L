@@ -623,6 +623,7 @@ Token *State01::makeAToken(SymbolTable *st, std::string lexeme, TokenType tokent
         result->setLexeme(lexeme);
         result->setTokenType(tokentype);
         result->setTokenID(tokenId);
+
     }
 
     return result;

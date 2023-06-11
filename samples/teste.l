@@ -1,3 +1,3 @@
-integer a = 527;
-bool b = true; 
-writeln(b);
+
+boolean b = true; 
+writeln(b , "ggggg");
