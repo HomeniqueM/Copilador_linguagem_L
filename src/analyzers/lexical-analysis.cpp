@@ -109,8 +109,9 @@ StatePackage StartState::handle(char c)
     {
         package.tokenType = TOKEN_TYPE_REAL;
         package.tokenId = TOKEN_ID_CONSTANT;
-        package.identifier = +'0';
-        package.identifier = +c;
+        std::string s = "0";
+        s.push_back(c);
+        package.identifier = s;
         nextState = std::make_shared<State12>();
     }
     // Token Especial para informar o fim do arquivo
