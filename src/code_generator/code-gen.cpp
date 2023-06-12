@@ -295,14 +295,14 @@ void CodeGen::sumOperation(Token *op1, Token *op2)
     {
         if (op1->getTokenType() == TOKEN_TYPE_REAL)
         {
-            this->programFile << format("mov xmm0, [qword M+%ld]", op1->getTokenAddr()) << "\n";
+            this->programFile << format("movss xmm0, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("mov rax, [qword M+%ld]", op2->getTokenAddr()) << "\n";
             this->programFile << "cvtsi2ss xmm1, rax"<< "\n";
         }
         else
         {
             this->programFile << format("mov rax, [qword M+%ld]", op1->getTokenAddr()) << "\n";
-            this->programFile << format("mov xmm1, [qword M+%ld]", op2->getTokenAddr()) << "\n";
+            this->programFile << format("movss xmm1, [qword M+%ld]", op2->getTokenAddr()) << "\n";
             this->programFile << "cvtsi2ss xmm0, rax"<< "\n";
         }
         this->programFile << "addss xmm0, xmm1"<< "\n";
@@ -339,14 +339,14 @@ void CodeGen::subOperation(Token *op1, Token *op2)
     {
         if (op1->getTokenType() == TOKEN_TYPE_REAL)
         {
-            this->programFile << format("mov xmm0, [qword M+%ld]", op1->getTokenAddr()) << "\n";
+            this->programFile << format("movss xmm0, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("mov rax, [qword M+%ld]", op2->getTokenAddr()) << "\n";
             this->programFile << "cvtsi2ss xmm1, rax"<< "\n";
         }
         else
         {
             this->programFile << format("mov rax, [qword M+%ld]", op1->getTokenAddr()) << "\n";
-            this->programFile << format("mov xmm1, [qword M+%ld]", op2->getTokenAddr()) << "\n";
+            this->programFile << format("movss xmm1, [qword M+%ld]", op2->getTokenAddr()) << "\n";
             this->programFile << "cvtsi2ss xmm0, rax" << "\n";
         }
         this->programFile << "subss xmm0, xmm1"<< "\n";
@@ -397,14 +397,14 @@ void CodeGen::multiplyOperation(Token *op1, Token *op2)
     {
         if (op1->getTokenType() == TOKEN_TYPE_REAL)
         {
-            this->programFile << format("mov xmm0, [qword M+%ld]", op1->getTokenAddr()) << "\n";
+            this->programFile << format("movss xmm0, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("mov rax, [qword M+%ld]", op2->getTokenAddr()) << "\n";
             this->programFile << "cvtsi2ss xmm1, rax"<< "\n";
         }
         else
         {
             this->programFile << format("mov rax, [qword M+%ld]", op1->getTokenAddr()) << "\n";
-            this->programFile << format("mov xmm1, [qword M+%ld]", op2->getTokenAddr()) << "\n";
+            this->programFile << format("movss xmm1, [qword M+%ld]", op2->getTokenAddr()) << "\n";
             this->programFile << "cvtsi2ss xmm0, rax"<< "\n";
         }
         this->programFile << "mulss xmm0, xmm1"<< "\n";
@@ -441,14 +441,14 @@ void CodeGen::divideOperation(Token *op1, Token *op2)
     {
         if (op1->getTokenType() == TOKEN_TYPE_REAL)
         {
-            this->programFile << format("mov xmm0, [qword M+%ld]", op1->getTokenAddr()) << "\n";
+            this->programFile << format("movss xmm0, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("mov rax, [qword M+%ld]", op2->getTokenAddr()) << "\n";
             this->programFile << "cvtsi2ss xmm1, rax"<< "\n";
         }
         else
         {
             this->programFile << format("mov rax, [qword M+%ld]", op1->getTokenAddr()) << "\n";
-            this->programFile << format("mov xmm1, [qword M+%ld]", op2->getTokenAddr()) << "\n";
+            this->programFile << format("movss xmm1, [qword M+%ld]", op2->getTokenAddr()) << "\n";
             this->programFile << "cvtsi2ss xmm0, rax" << "\n";
         }
         this->programFile << "divss xmm0, xmm1" << "\n";
@@ -863,12 +863,15 @@ void CodeGen::readln(Token *t)
 {
     if (t->getTokenType() == TOKEN_TYPE_STRING)
     {
+        long tmpbuff = newTmpByTokenType(TOKEN_TYPE_STRING);
+        t->setTokenAddr(tmpbuff);
+
         writeInProgramFile(format("mov rsi, M + %ld", t->getTokenAddr()));
-        writeInProgramFile("rdx, 100h");
-        writeInProgramFile("mov, rax, 0");
+        writeInProgramFile("mov rdx, 100h");
+        writeInProgramFile("mov rax, 0");
         writeInProgramFile("mov rdi, 0");
         writeInProgramFile("syscall");
-        writeInProgramFile((format("mov byte [M+%ld+rax-1], 0", t->getTokenAddr())));
+        writeInProgramFile(format("mov byte [M+%ld+rax-1], 0", t->getTokenAddr()));
     }
     else if (t->getTokenType() == TOKEN_TYPE_CHAR)
     {
@@ -947,8 +950,8 @@ void CodeGen::readln(Token *t)
 
         // Leitura da String
         writeInProgramFile(format("mov rsi, M + %ld", t->getTokenAddr()));
-        writeInProgramFile("rdx, 100h");
-        writeInProgramFile("mov, rax, 0");
+        writeInProgramFile("mov rdx, 100h");
+        writeInProgramFile("mov rax, 0");
         writeInProgramFile("mov rdi, 0");
         writeInProgramFile("syscall");
         writeInProgramFile((format("mov byte [M+%ld+rax-1], 0", t->getTokenAddr())));

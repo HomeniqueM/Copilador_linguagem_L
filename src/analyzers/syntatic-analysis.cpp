@@ -458,6 +458,7 @@ void SyntaticAnalysis::productionL()
     // E possivel ler True or False (0|1)?
     this->se->isTokenNotHasDeclaration(tokenID);
     matchToken(TOKEN_ID_CLOSE_PARANTHESES);
+    cg->readln(tokenID);
 }
 
 /**
