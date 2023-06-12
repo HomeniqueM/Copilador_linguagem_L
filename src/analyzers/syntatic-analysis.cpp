@@ -172,7 +172,6 @@ void SyntaticAnalysis::productionD1()
 void SyntaticAnalysis::productionC()
 {
     bool neg = false;
-    Token *C_tmp = new Token;
     Token *tokenVar = token;
     matchToken(TOKEN_ID_IDENTIFIER);
 
@@ -212,8 +211,14 @@ void SyntaticAnalysis::productionC()
             constant = token;
             matchToken(TOKEN_ID_CONSTANT);
         }
-        cg->storeConstOnTmp(C_tmp,constant);
-        cg->atributionCommand(tokenVar,C_tmp);
+        cg->storeConstOnTmp(constant,constant);
+        if(neg){
+            cg->invertExpression(constant);
+        }
+        if(tokenVar->getTokenType()==TOKEN_TYPE_REAL && constant->getTokenType()==TOKEN_TYPE_INTEGER){
+            cg->cvtToReal(constant);
+        }
+        cg->atributionCommand(tokenVar,constant);
 
         // Operação de atribuição
         // real a = 5;
@@ -329,7 +334,9 @@ void SyntaticAnalysis::productionA()
     // regra 9
     // se  id.tipo != Exp1.tipo e !(id.tipo == real e Exp1.tipo == inteiro)
     this->se->ifTokenTypeHasEqualsorIntandReal(tokenId, tokenExp.getTokenType());
-
+    if(tokenId->getTokenType()==TOKEN_TYPE_REAL && tokenExp.getTokenType()==TOKEN_TYPE_INTEGER){
+        cg->cvtToReal(&tokenExp);
+    }
     cg->atributionCommand(tokenId,&tokenExp);
 }
 
@@ -547,7 +554,7 @@ Token SyntaticAnalysis::productionExp()
 }
 
 /**
- * @brief: Analísa o caso da produção da Gramatica.
+ * @brief: Analisa o caso da produção da Gramatica.
  * Exp1 -> [ - ] Exp2 { ( + | - | or ) Exp2 }
  */
 Token SyntaticAnalysis::productionExp1()
@@ -563,6 +570,9 @@ Token SyntaticAnalysis::productionExp1()
         matchToken(TOKEN_ID_SUBTRACTION);
     }
     tokenExp1 = productionExp2();
+    if(isNeg){
+        cg->invertExpression(&tokenExp1);
+    }
     // Regra 15 Da Gramatica
     this->se->tokenIsIntergerOrReal(&tokenExp1, isNeg);
 

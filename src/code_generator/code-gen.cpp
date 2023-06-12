@@ -251,8 +251,9 @@ void CodeGen::invertExpression(Token *exp)
     long tmpAddr = this->NewTmp(exp);
     if (exp->getTokenType() == TOKEN_TYPE_INTEGER)
     {
-        this->programFile << format("mov eax, [qword M+%ld]", exp->getTokenAddr()) << "\n";
-        this->programFile << "neg eax"<< "\n";
+        this->programFile << format("mov ebx, [qword M+%ld]", exp->getTokenAddr()) << "\n";
+        this->programFile << "mov eax, -1"<<"\n";
+        this->programFile << "imul ebx"<< "\n";
         exp->setTokenAddr(tmpAddr);
         this->programFile << format("mov [qword M+%ld], eax", tmpAddr) << "\n";
     }
@@ -511,9 +512,8 @@ void CodeGen::cvtToReal(Token *t)
     this->programFile << format("mov rax, [qword M+%ld]", t->getTokenAddr()) << "\n";
     long tmpAddr = this->NewTmp(t);
     t->setTokenAddr(tmpAddr);
-    this->programFile << "cvtsi2ss xmm0, rax"
-             << "\n";
-    this->programFile << format("movss [qword M+%d], xmm0", tmpAddr);
+    this->programFile << "cvtsi2ss xmm0, rax"<< "\n";
+    this->programFile << format("movss [qword M+%d], xmm0", tmpAddr)<<"\n";
 }
 // converte valor real para inteiro
 void CodeGen::cvtToInt(Token *t)
