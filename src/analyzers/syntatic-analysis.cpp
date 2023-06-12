@@ -559,6 +559,7 @@ Token SyntaticAnalysis::productionExp1()
         tokenExp2 = productionExp2();
         // Regra [23]
         this->se->rulle23(&tokenExp1, &tokenExp2, &operador);
+        cg->defineOperation(&tokenExp1,&tokenExp2,&operador);
     }
     return tokenExp1;
 }
@@ -586,6 +587,7 @@ Token SyntaticAnalysis::productionExp2()
             matchToken(TOKEN_ID_AND);
         Token tokenAux = productionExp3();
         this->se->rulle25(&tokenEXP2, &tokenAux, &operatorToken);
+        cg->defineOperation(&tokenEXP2,&tokenAux,&operatorToken);
         // tokenEXP2 tokenAux
     }
     return tokenEXP2;

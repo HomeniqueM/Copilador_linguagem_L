@@ -1,5 +1,5 @@
-final a = 2;
-final c = "cocococo";
-final d = 'g';
-
-writeln(c ,c );
+integer a = 2;
+integer b = 3;
+integer c;
+c = (b/a)*(a+b);
+writeln(c);

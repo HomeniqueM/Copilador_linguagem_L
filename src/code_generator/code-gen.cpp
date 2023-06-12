@@ -108,7 +108,7 @@ void CodeGen::DeclareVariable(Token *t)
         this->programFile << "\tresd 1"
                  << "\n";
     }
-    else if (t->getTokenType() == TOKEN_TYPE_STRING)
+    else if (t->getTokenType() == TOKEN_TYPE_STRING) /*need fix*/
     {
         this->mem_count += this->string_size;
         this->programFile << "\tresb 100h"
@@ -130,10 +130,10 @@ void CodeGen::DeclareConst(Token *t, Token *constant)
         this->mem_count += this->number_size;
         this->programFile << format("\tdd %s", constant->getLexeme().c_str()) << "\n";
     }
-    else if (t->getTokenType() == TOKEN_TYPE_STRING)
+    else if (t->getTokenType() == TOKEN_TYPE_STRING) /*need fix*/
     {
         t->setTokenSize(constant->getLexeme().size());
-        this->mem_count += constant->getLexeme().size();
+        this->mem_count += this->string_size;
         this->programFile << format("\tdb \'%s\', %d", constant->getLexeme().c_str(),constant->getLexeme().size()) << "\n";
     }
 }
@@ -259,7 +259,7 @@ void CodeGen::sumOperation(Token *op1, Token *op2)
         {
             this->programFile << format("mov eax, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("mov ebx, [qword M+%ld]", op2->getTokenAddr()) << "\n";
-            this->programFile << "add eax,ebx";
+            this->programFile << "add eax,ebx"<<"\n";
             long tmpAddr = this->NewTmp(op1);
             op1->setTokenAddr(tmpAddr);
             this->programFile << format("mov [qword M+%ld], eax", tmpAddr) << "\n";
@@ -268,7 +268,7 @@ void CodeGen::sumOperation(Token *op1, Token *op2)
         {
             this->programFile << format("movss xmm0, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("movss xmm1, [qword M+%ld]", op2->getTokenAddr()) << "\n";
-            this->programFile << "addss xmm0,xmm1";
+            this->programFile << "addss xmm0,xmm1"<<"\n";
             long tmpAddr = this->NewTmp(op1);
             op1->setTokenAddr(tmpAddr);
             this->programFile << format("movss [qword M+%ld], xmm0", tmpAddr) << "\n";
@@ -280,18 +280,15 @@ void CodeGen::sumOperation(Token *op1, Token *op2)
         {
             this->programFile << format("mov xmm0, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("mov rax, [qword M+%ld]", op2->getTokenAddr()) << "\n";
-            this->programFile << "cvtsi2ss xmm1, rax"
-                     << "\n";
+            this->programFile << "cvtsi2ss xmm1, rax"<< "\n";
         }
         else
         {
             this->programFile << format("mov rax, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("mov xmm1, [qword M+%ld]", op2->getTokenAddr()) << "\n";
-            this->programFile << "cvtsi2ss xmm0, rax"
-                     << "\n";
+            this->programFile << "cvtsi2ss xmm0, rax"<< "\n";
         }
-        this->programFile << "addss xmm0, xmm1"
-                 << "\n";
+        this->programFile << "addss xmm0, xmm1"<< "\n";
         long tmpAddr = this->NewTmp(op1);
         op1->setTokenAddr(tmpAddr);
         this->programFile << format("movss [qword M+%ld], xmm0", tmpAddr) << "\n";
@@ -306,7 +303,7 @@ void CodeGen::subOperation(Token *op1, Token *op2)
         {
             this->programFile << format("mov eax, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("mov ebx, [qword M+%ld]", op2->getTokenAddr()) << "\n";
-            this->programFile << "sub eax,ebx";
+            this->programFile << "sub eax,ebx"<<"\n";
             long tmpAddr = this->NewTmp(op1);
             op1->setTokenAddr(tmpAddr);
             this->programFile << format("mov [qword M+%ld], eax", tmpAddr) << "\n";
@@ -315,7 +312,7 @@ void CodeGen::subOperation(Token *op1, Token *op2)
         {
             this->programFile << format("movss xmm0, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("movss xmm1, [qword M+%ld]", op2->getTokenAddr()) << "\n";
-            this->programFile << "subss xmm0,xmm1";
+            this->programFile << "subss xmm0,xmm1"<<"\n";
             long tmpAddr = this->NewTmp(op1);
             op1->setTokenAddr(tmpAddr);
             this->programFile << format("movss [qword M+%ld], xmm0", tmpAddr) << "\n";
@@ -327,18 +324,15 @@ void CodeGen::subOperation(Token *op1, Token *op2)
         {
             this->programFile << format("mov xmm0, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("mov rax, [qword M+%ld]", op2->getTokenAddr()) << "\n";
-            this->programFile << "cvtsi2ss xmm1, rax"
-                     << "\n";
+            this->programFile << "cvtsi2ss xmm1, rax"<< "\n";
         }
         else
         {
             this->programFile << format("mov rax, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("mov xmm1, [qword M+%ld]", op2->getTokenAddr()) << "\n";
-            this->programFile << "cvtsi2ss xmm0, rax"
-                     << "\n";
+            this->programFile << "cvtsi2ss xmm0, rax" << "\n";
         }
-        this->programFile << "subss xmm0, xmm1"
-                 << "\n";
+        this->programFile << "subss xmm0, xmm1"<< "\n";
         long tmpAddr = this->NewTmp(op1);
         op1->setTokenAddr(tmpAddr);
         this->programFile << format("movss [qword M+%ld], xmm0", tmpAddr) << "\n";
@@ -350,8 +344,8 @@ void CodeGen::orOperation(Token *op1,Token *op2){
     this->programFile << format("mov ebx, [qword M+%ld]", op1->getTokenAddr())<<"\n";
     this->programFile << format("mov ecx, [qword M+%ld]", op2->getTokenAddr())<<"\n";
     this->programFile << "imul ecx"<<"\n";
-    this->programFile << "add ebx, ecx";
-    this->programFile << "sub ebx, eax";
+    this->programFile << "add ebx, ecx"<<"\n";
+    this->programFile << "sub ebx, eax"<<"\n";
 
     long tmpAddr = this->tmp_count;
     this->tmp_count += this->char_size;
@@ -367,7 +361,7 @@ void CodeGen::multiplyOperation(Token *op1, Token *op2)
         {
             this->programFile << format("mov eax, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("mov ebx, [qword M+%ld]", op2->getTokenAddr()) << "\n";
-            this->programFile << "imul ebx";
+            this->programFile << "imul ebx"<<"\n";
             long tmpAddr = this->NewTmp(op1);
             op1->setTokenAddr(tmpAddr);
             this->programFile << format("mov [qword M+%ld], eax", tmpAddr) << "\n";
@@ -376,7 +370,7 @@ void CodeGen::multiplyOperation(Token *op1, Token *op2)
         {
             this->programFile << format("movss xmm0, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("movss xmm1, [qword M+%ld]", op2->getTokenAddr()) << "\n";
-            this->programFile << "mulss xmm0,xmm1";
+            this->programFile << "mulss xmm0,xmm1"<<"\n";
             long tmpAddr = this->NewTmp(op1);
             op1->setTokenAddr(tmpAddr);
             this->programFile << format("movss [qword M+%ld], xmm0", tmpAddr) << "\n";
@@ -388,18 +382,15 @@ void CodeGen::multiplyOperation(Token *op1, Token *op2)
         {
             this->programFile << format("mov xmm0, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("mov rax, [qword M+%ld]", op2->getTokenAddr()) << "\n";
-            this->programFile << "cvtsi2ss xmm1, rax"
-                     << "\n";
+            this->programFile << "cvtsi2ss xmm1, rax"<< "\n";
         }
         else
         {
             this->programFile << format("mov rax, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("mov xmm1, [qword M+%ld]", op2->getTokenAddr()) << "\n";
-            this->programFile << "cvtsi2ss xmm0, rax"
-                     << "\n";
+            this->programFile << "cvtsi2ss xmm0, rax"<< "\n";
         }
-        this->programFile << "mulss xmm0, xmm1"
-                 << "\n";
+        this->programFile << "mulss xmm0, xmm1"<< "\n";
         long tmpAddr = this->NewTmp(op1);
         op1->setTokenAddr(tmpAddr);
         this->programFile << format("movss [qword M+%ld], xmm0", tmpAddr) << "\n";
@@ -414,7 +405,7 @@ void CodeGen::divideOperation(Token *op1, Token *op2)
         {
             this->programFile << format("mov eax, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("mov ebx, [qword M+%ld]", op2->getTokenAddr()) << "\n";
-            this->programFile << "idiv ebx";
+            this->programFile << "idiv ebx"<<"\n";
             long tmpAddr = this->NewTmp(op1);
             op1->setTokenAddr(tmpAddr);
             this->programFile << format("mov [qword M+%ld], eax", tmpAddr) << "\n";
@@ -423,7 +414,7 @@ void CodeGen::divideOperation(Token *op1, Token *op2)
         {
             this->programFile << format("movss xmm0, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("movss xmm1, [qword M+%ld]", op2->getTokenAddr()) << "\n";
-            this->programFile << "divss xmm0,xmm1";
+            this->programFile << "divss xmm0,xmm1"<<"\n";
             long tmpAddr = this->NewTmp(op1);
             op1->setTokenAddr(tmpAddr);
             this->programFile << format("movss [qword M+%ld], xmm0", tmpAddr) << "\n";
@@ -435,18 +426,15 @@ void CodeGen::divideOperation(Token *op1, Token *op2)
         {
             this->programFile << format("mov xmm0, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("mov rax, [qword M+%ld]", op2->getTokenAddr()) << "\n";
-            this->programFile << "cvtsi2ss xmm1, rax"
-                     << "\n";
+            this->programFile << "cvtsi2ss xmm1, rax"<< "\n";
         }
         else
         {
             this->programFile << format("mov rax, [qword M+%ld]", op1->getTokenAddr()) << "\n";
             this->programFile << format("mov xmm1, [qword M+%ld]", op2->getTokenAddr()) << "\n";
-            this->programFile << "cvtsi2ss xmm0, rax"
-                     << "\n";
+            this->programFile << "cvtsi2ss xmm0, rax" << "\n";
         }
-        this->programFile << "divss xmm0, xmm1"
-                 << "\n";
+        this->programFile << "divss xmm0, xmm1" << "\n";
         long tmpAddr = this->NewTmp(op1);
         op1->setTokenAddr(tmpAddr);
         this->programFile << format("movss [qword M+%ld], xmm0", tmpAddr) << "\n";
@@ -463,9 +451,34 @@ void CodeGen::modOperation(Token *op1,Token *op2){
 
 }
 //Operação de and
-void CodeGen::andOperation(){
-
+void CodeGen::andOperation(Token *op1,Token *op2){
+    long tmpAddr = newTmpByTokenType(TOKEN_TYPE_BOOLEAN);
+    
+    writeInProgramFile(format("mov eax, [qword M + %d]", op2->getTokenAddr()));
+    writeInProgramFile(format("mov ebx, [qword M + %ld]", op1->getTokenAddr()));
+    writeInProgramFile("imul ebx");
+    op2->setTokenAddr(tmpAddr);
+    writeInProgramFile(format("mov [qword M + %ld], eax", op2->getTokenAddr()));
 }
+
+void CodeGen::defineOperation(Token *op1,Token *op2, Token *operation){
+    if(operation->getTokenid()==TOKEN_ID_ADDITION){
+        this->sumOperation(op1,op2);
+    }else if(operation->getTokenid()==TOKEN_ID_SUBTRACTION){
+        this->subOperation(op1,op2);
+    }else if(operation->getTokenid()==TOKEN_ID_OR){
+        this->orOperation(op1,op2);
+    }else if(operation->getTokenid()==TOKEN_ID_MULTIPLICATION){
+        this->multiplyOperation(op1,op2);
+    }else if(operation->getTokenid()==TOKEN_ID_DIVISION){
+        this->divideOperation(op1,op2);
+    }else if(operation->getTokenid()==TOKEN_ID_MODULO){
+        this->modOperation(op1,op2);
+    }else if(operation->getTokenid()==TOKEN_ID_AND){
+        this->andOperation(op1,op2);
+    }
+}
+
 // negação da expressão
 void CodeGen::negExpression(Token *exp)
 {
