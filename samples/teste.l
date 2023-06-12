@@ -1,3 +1,5 @@
 { Exemplo de Programa na linguagem L }
-
-if (2 <> 3) writeln("teste");
+real a;
+writeln("Digite um numero inteiro: ");
+readln(a);
+{writeln(a);}

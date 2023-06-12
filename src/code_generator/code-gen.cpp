@@ -890,12 +890,11 @@ void CodeGen::readln(Token *t)
         int label3 = newLabel();
 
         long tmpbuff = newTmpByTokenType(TOKEN_TYPE_STRING);
-        t->setTokenAddr(tmpbuff);
 
         // Leitura da String
-        writeInProgramFile(format("mov rsi, M + %ld", t->getTokenAddr()));
-        writeInProgramFile("rdx, 100h");
-        writeInProgramFile("mov, rax, 0");
+        writeInProgramFile(format("mov rsi, M + %ld", tmpbuff));
+        writeInProgramFile("mov rdx, 100h");
+        writeInProgramFile("mov rax, 0");
         writeInProgramFile("mov rdi, 0");
         writeInProgramFile("syscall");
         writeInProgramFile((format("mov byte [M+%ld+rax-1], 0", t->getTokenAddr())));
@@ -905,10 +904,10 @@ void CodeGen::readln(Token *t)
         writeInProgramFile("mov ecx, 10                 ;base 10");
         writeInProgramFile("mov dx, 1                   ;sinal");
 
-        writeInProgramFile(format("mov rsi, M + %ld", t->getTokenAddr()));
+        writeInProgramFile(format("mov rsi, M+%ld", tmpbuff));
         writeInProgramFile("mov bl,[rsi]                ;carrega caractere");
         writeInProgramFile("cmp bl, '-'                 ;sinal?");
-        writeInProgramFile(format("jne Rot%d                    ;se dif -, salta", label0));
+        writeInProgramFile(format("jne Rot%d            ;se dif -, salta", label0));
         writeInProgramFile("mov dx, -1                  ;senão, armazena -");
         writeInProgramFile("add rsi, 1                  ;inc. ponteiro string");
         writeInProgramFile("mov bl, [rsi]               ;carrega caractere");
@@ -938,6 +937,8 @@ void CodeGen::readln(Token *t)
 
         // Rotulo 3
         writeInProgramFile(format("Rot%d:", label3));
+
+        writeInProgramFile(format("mov [qword M+%ld], eax",t->getTokenAddr()));
     }
     else if (t->getTokenType() == TOKEN_TYPE_REAL)
     {
@@ -947,10 +948,9 @@ void CodeGen::readln(Token *t)
         int label3 = newLabel();
 
         long tmpbuff = newTmpByTokenType(TOKEN_TYPE_STRING);
-        t->setTokenAddr(tmpbuff);
 
         // Leitura da String
-        writeInProgramFile(format("mov rsi, M + %ld", t->getTokenAddr()));
+        writeInProgramFile(format("mov rsi, M + %ld", tmpbuff));
         writeInProgramFile("mov rdx, 100h");
         writeInProgramFile("mov rax, 0");
         writeInProgramFile("mov rdi, 0");
@@ -964,7 +964,7 @@ void CodeGen::readln(Token *t)
         writeInProgramFile("cvtsi2ss xmm3,rcx           ;base 10");
         writeInProgramFile("movss xmm2,xmm3             ;potência de 10");
         writeInProgramFile("mov rdx, 1                  ;sinal");
-        writeInProgramFile(format("mov rsi, M + %ld", t->getTokenAddr()));
+        writeInProgramFile(format("mov rsi, M+%ld", tmpbuff));
 
         writeInProgramFile("mov bl,[rsi]                ;carrega caractere");
         writeInProgramFile("cmp bl, '-'                 ;sinal?");
@@ -996,7 +996,6 @@ void CodeGen::readln(Token *t)
         writeInProgramFile(";calcula parte fracionária em xmm0");
         writeInProgramFile("add rsi, 1                      ;inc. ponteiro string");
         writeInProgramFile("cmp bl, 0Ah                     ;*verifica fim string");
-        writeInProgramFile("cmp bl, 0Ah                     ;*verifica fim string");
         writeInProgramFile(format("je Rot%d", label2));
         writeInProgramFile("sub bl, '0'                     ;converte caractere");
         writeInProgramFile("cvtsi2ss xmm1,rbx               ;conv real");
@@ -1013,6 +1012,8 @@ void CodeGen::readln(Token *t)
         writeInProgramFile("pop rcx                         ;desempilha sinal");
         writeInProgramFile("cvtsi2ss xmm1,rcx               ;conv sinal");
         writeInProgramFile("mulss xmm0,xmm1                 ;mult. sinal");
+
+        writeInProgramFile(format("movss [qword M+%ld], xmm0",t->getTokenAddr()));
 
     }
     else if (t->getTokenType() == TOKEN_TYPE_BOOLEAN)
