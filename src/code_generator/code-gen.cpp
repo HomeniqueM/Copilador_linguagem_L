@@ -828,7 +828,7 @@ void CodeGen::RelacionalOperator(Token *op1, Token *op2, TokenID op){
     }else if(op1->getTokenType() == TOKEN_TYPE_REAL){
         writeInProgramFile(format("movss xmm0, [qword M+%ld]", op1->getTokenAddr()));
         writeInProgramFile(format("movss xmm1, [qword M+%ld]", op2->getTokenAddr()));
-        writeInProgramFile("cmp xmm0, xmm1");
+        writeInProgramFile("comiss xmm0, xmm1");
 
         if(op==TOKEN_ID_EQUALS){
             writeInProgramFile(format("je Rot%d",label1));
