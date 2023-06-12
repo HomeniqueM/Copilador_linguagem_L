@@ -460,7 +460,8 @@ void CodeGen::divideOperation(Token *op1, Token *op2)
 //Operação de mod
 void CodeGen::modOperation(Token *op1,Token *op2){
     this->programFile << format("mov eax, [qword M+%ld]", op1->getTokenAddr())<<"\n";
-    this->programFile << format("mov ebx, [qword M+%ld]", op1->getTokenAddr())<<"\n";
+    this->programFile << "cdq"<<"\n";
+    this->programFile << format("mov ebx, [qword M+%ld]", op2->getTokenAddr())<<"\n";
     this->programFile << "idiv ebx"<<"\n";
     long tmpAddr = NewTmp(op1);
     op1->setTokenAddr(tmpAddr);
@@ -848,10 +849,10 @@ void CodeGen::RelacionalOperator(Token *op1, Token *op2, TokenID op){
     writeInProgramFile(format("mov cl, 0",tmpAddr));
     writeInProgramFile(format("mov [qword M+%ld], cl",tmpAddr));
     writeInProgramFile(format("jmp Rot%d",label2));
-    writeInProgramFile(format("Rot%d",label1));
+    writeInProgramFile(format("Rot%d:",label1));
     writeInProgramFile(format("mov cl, 1",tmpAddr));
     writeInProgramFile(format("mov [qword M+%ld], cl",tmpAddr));
-    writeInProgramFile(format("Rot%d",label2));
+    writeInProgramFile(format("Rot%d:",label2));
 
     op1->setTokenAddr(tmpAddr);
     op1->setTokenType(TOKEN_TYPE_BOOLEAN);

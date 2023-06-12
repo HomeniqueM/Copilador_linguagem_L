@@ -24,31 +24,37 @@ section .data
 section .data
 ;Declaração de Variável
 	resd 1
-;guardando valor constante 0.5 em temporário
-section .data
-	dd 0.5
+;guardando valor constante 5 em temporário
 section .text
+	mov eax, 5
+	mov [qword M+1], eax
+mov rax, [qword M+1]
+cvtsi2ss xmm0, rax
+movss [qword M+5], xmm0
 ;Comando de atribuição
 section .text
-	movss xmm0,[qword M+65549]
+	movss xmm0,[qword M+5]
 	movss [qword M+65545], xmm0
 section .text
-;guardando valor constante 0.2 em temporário
-section .data
-	dd 0.2
+;guardando valor constante 3 em temporário
 section .text
+	mov eax, 3
+	mov [qword M+9], eax
+mov rax, [qword M+9]
+cvtsi2ss xmm0, rax
+movss [qword M+13], xmm0
 ;Comando de atribuição
 section .text
-	movss xmm0,[qword M+65553]
+	movss xmm0,[qword M+13]
 	movss [qword M+65545], xmm0
 section .text
 ;guardando valor constante 1 em temporário
 section .text
 	mov eax, 1
-	mov [qword M+1], eax
+	mov [qword M+17], eax
 ;Comando de atribuição
 section .text
-	mov eax,[qword M+1]
+	mov eax,[qword M+17]
 	mov [qword M+65536], eax
 Rot0:
 mov al, [qword M+65536]
@@ -56,13 +62,13 @@ mov bl, [qword M+65541]
 cmp al,bl
 jle Rot4
 mov cl, 0
-mov [qword M+5], cl
+mov [qword M+21], cl
 jmp Rot5
-Rot4
+Rot4:
 mov cl, 1
-mov [qword M+5], cl
-Rot5
-mov al, [qword M+5]
+mov [qword M+21], cl
+Rot5:
+mov al, [qword M+21]
 cmp al, 1
 jne Rot3
 jmp Rot2
@@ -70,32 +76,32 @@ Rot1:
 ;guardando valor constante 1 em temporário
 section .text
 	mov eax, 1
-	mov [qword M+6], eax
+	mov [qword M+22], eax
 mov eax, [qword M+65536]
-mov ebx, [qword M+6]
+mov ebx, [qword M+22]
 add eax,ebx
-mov [qword M+10], eax
+mov [qword M+26], eax
 ;Comando de atribuição
 section .text
-	mov eax,[qword M+10]
+	mov eax,[qword M+26]
 	mov [qword M+65536], eax
 jmp Rot0
 Rot2:
 mov rax, [qword M+65536]
 cvtsi2ss xmm0, rax
-movss [qword M+14], xmm0
-movss xmm0, [qword M+14]
+movss [qword M+30], xmm0
+movss xmm0, [qword M+30]
 mov rax, [qword M+65541]
 cvtsi2ss xmm1, rax
 divss xmm0, xmm1
-movss [qword M+18], xmm0
+movss [qword M+34], xmm0
 ;Comando de atribuição
 section .text
-	movss xmm0,[qword M+18]
+	movss xmm0,[qword M+34]
 	movss [qword M+65545], xmm0
 ;Escrevendo na saida do terminal
 mov eax, [qword M+65536]
-mov rsi, M+22
+mov rsi, M+38
 mov rcx, 0
 mov rdi, 0
 cmp eax, 0
@@ -123,13 +129,13 @@ add rsi, 1
 sub rcx, 1
 cmp rcx, 0
 jne Rot8
-mov rsi, M+22
+mov rsi, M+38
 mov rax, 1
 mov rdi, 1
 syscall
 mov al, 0ah
-mov [qword M+278], al
-mov rsi, M+278
+mov [qword M+294], al
+mov rsi, M+294
 mov rdx, 1
 mov rax, 1
 mov rdi, 1
@@ -137,32 +143,33 @@ syscall
 ;guardando valor constante 2 em temporário
 section .text
 	mov eax, 2
-	mov [qword M+279], eax
+	mov [qword M+295], eax
 mov eax, [qword M+65536]
-mov ebx, [qword M+65536]
+cdq
+mov ebx, [qword M+295]
 idiv ebx
-mov [qword M+283], edx
+mov [qword M+299], edx
 ;guardando valor constante 0 em temporário
 section .text
 	mov eax, 0
-	mov [qword M+287], eax
-mov al, [qword M+283]
-mov bl, [qword M+287]
+	mov [qword M+303], eax
+mov al, [qword M+299]
+mov bl, [qword M+303]
 cmp al,bl
 je Rot11
 mov cl, 0
-mov [qword M+291], cl
+mov [qword M+307], cl
 jmp Rot12
-Rot11
+Rot11:
 mov cl, 1
-mov [qword M+291], cl
-Rot12
-mov al, [qword M + 291]
+mov [qword M+307], cl
+Rot12:
+mov al, [qword M + 307]
 cmp al, 0
 je Rot9
 ;Escrevendo na saida do terminal
 movss xmm0, [qword M+65545]
-mov rsi, M+292
+mov rsi, M+308
 mov rcx, 0
 mov rdi, 6
 mov rbx, 10 
@@ -215,19 +222,19 @@ Rot17:
 mov dl, 0
 mov [rsi], dl
 mov rdx, rsi
-mov rbx, M+292
+mov rbx, M+308
 sub rdx, rbx
-mov rsi, M+292
+mov rsi, M+308
 mov rax, 1
 mov rdi, 1
 syscall
-;guardando valor constante : Ola  em temporário
+;guardando valor constante : Ola'  em temporário
 section .data
-	db ': Ola ', 6
+	db ': Ola' ', 7
 section .text
 ;Escrevendo na saida do terminal
-	mov rsi, M+65557
-	mov rdx, 6
+	mov rsi, M+65549
+	mov rdx, 7
 	mov rax, 1
 	mov rdi, 1
 	syscall
@@ -238,8 +245,8 @@ mov rax, 1
 mov rdi, 1
 syscall
 mov al, 0ah
-mov [qword M+548], al
-mov rsi, M+548
+mov [qword M+564], al
+mov rsi, M+564
 mov rdx, 1
 mov rax, 1
 mov rdi, 1
