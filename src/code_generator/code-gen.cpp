@@ -833,13 +833,13 @@ void CodeGen::RelacionalOperator(Token *op1, Token *op2, TokenID op){
         if(op==TOKEN_ID_EQUALS){
             writeInProgramFile(format("je Rot%d",label1));
         }else if(op==TOKEN_ID_LESS_THAN){
-            writeInProgramFile(format("jl Rot%d",label1));
+            writeInProgramFile(format("jb Rot%d",label1));
         }else if(op==TOKEN_ID_LESS_EQUAL_TO){
-            writeInProgramFile(format("jle Rot%d",label1));
+            writeInProgramFile(format("jbe Rot%d",label1));
         }else if(op==TOKEN_ID_GREATER_THEN){
-            writeInProgramFile(format("jg Rot%d",label1));
+            writeInProgramFile(format("ja Rot%d",label1));
         }else if(op==TOKEN_ID_GREATER_EQUAL_TO){
-            writeInProgramFile(format("jge Rot%d",label1));
+            writeInProgramFile(format("jae Rot%d",label1));
         }else if(op==TOKEN_ID_DIFFERENT){
             writeInProgramFile(format("jne Rot%d",label1));
         }

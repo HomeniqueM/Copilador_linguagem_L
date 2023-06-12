@@ -4,40 +4,47 @@ M:
 	resb 10000h ;temporários
 section .text
 _start:
-section .data
-;Declaração de Variável
-	resb 100h
-;guardando valor constante 123456789012341567890123456789 em temporário
-section .data
-	db '123456789012341567890123456789', 30
 section .text
-;Comando de atribuição
+;guardando valor constante 2.0 em temporário
+section .data
+	dd 2.0
 section .text
-	mov rsi, qword M+65536
-	mov rdi, qword M+65792
-Rot0:
-	mov al, [rdi]
-	mov [rsi], al
-	cmp al, 0
-	je Rot1
-	add rdi, 1
-	add rsi, 1
-	jmp Rot0
-Rot1:
+;guardando valor constante 3.0 em temporário
+section .data
+	dd 3.0
+section .text
+mov al, [qword M+65536]
+mov bl, [qword M+65540]
+cmp al,bl
+jl Rot2
+mov cl, 0
+mov [qword M+0], cl
+jmp Rot3
+Rot2:
+mov cl, 1
+mov [qword M+0], cl
+Rot3:
+mov al, [qword M + 0]
+cmp al, 0
+je Rot0
+;guardando valor constante teste em temporário
+section .data
+	db 'teste', 5
 section .text
 ;Escrevendo na saida do terminal
-	mov rsi, M+65536
-	mov rdx, 30
+	mov rsi, M+65544
+	mov rdx, 5
 	mov rax, 1
 	mov rdi, 1
 	syscall
 mov al, 0ah
-mov [qword M+0], al
-mov rsi, M+0
+mov [qword M+1], al
+mov rsi, M+1
 mov rdx, 1
 mov rax, 1
 mov rdi, 1
 syscall
+Rot0:
 	mov rax, 60 ;chamada de saída
 	mov rdi, 0 ;código de saida sem erros
 	syscall ;chama o kernel

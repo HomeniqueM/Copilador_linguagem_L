@@ -1,2 +1,1 @@
-string a = "123456789012341567890123456789";
-writeln(a);
+if (2 < 3) writeln("teste");
