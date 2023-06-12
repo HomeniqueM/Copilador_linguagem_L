@@ -384,20 +384,35 @@ void SyntaticAnalysis::productionR1()
  * T -> if ( Exp ) T1 [ else T1 ]
  */
 void SyntaticAnalysis::productionT()
-{
+{   
     Token tokenExp;
+    bool hasElse = false;
+    int rot1 = cg->newLabel();
+    int rot2 = cg->newLabel();
     matchToken(TOKEN_ID_IF);
     matchToken(TOKEN_ID_OPEN_PARANTHESES);
     tokenExp = productionExp();
+    Token *result = new Token();
+    result->setTokenID(tokenExp.getTokenid());
+    result->setLexeme(tokenExp.getLexeme());
+    result->setTokenType(tokenExp.getTokenType());
+    result->setTokenSize(tokenExp.getTokeSize());
+    result->setTokenClass(tokenExp.getTokenClass());
+    result->setMaxTam(tokenExp.getMaxTam());
+    result->setTokenAddr(tokenExp.getTokenAddr());
     // [10]
     this->se->ifTokenTypehasDiff(&tokenExp, TOKEN_TYPE_BOOLEAN);
     matchToken(TOKEN_ID_CLOSE_PARANTHESES);
+    cg->initCondition(result,rot1);
     productionT1();
     if (token->getTokenid() == TOKEN_ID_ELSE)
     {
+        hasElse = true;
         matchToken(TOKEN_ID_ELSE);
+        cg->finalizeBlock(rot2,rot1);
         productionT1();
     }
+    cg->finalizeConditionalChain(hasElse,rot1,rot2);
 }
 
 /**
