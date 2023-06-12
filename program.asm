@@ -5,18 +5,18 @@ M:
 section .text
 _start:
 section .text
-;guardando valor constante 2.0 em temporário
+;guardando valor constante 2.5 em temporário
 section .data
-	dd 2.0
+	dd 2.5
 section .text
-;guardando valor constante 3.0 em temporário
+;guardando valor constante 3.5 em temporário
 section .data
-	dd 3.0
+	dd 3.5
 section .text
-mov al, [qword M+65536]
-mov bl, [qword M+65540]
-cmp al,bl
-jl Rot2
+movss xmm0, [qword M+65536]
+movss xmm1, [qword M+65540]
+cmp xmm0, xmm1
+jb Rot2
 mov cl, 0
 mov [qword M+0], cl
 jmp Rot3

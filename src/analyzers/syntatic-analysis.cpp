@@ -550,6 +550,7 @@ Token SyntaticAnalysis::productionExp()
         // Regra [20]
         this->se->rulle20(&tokenExp, &tokenExp1, &operador);
         cg->RelacionalOperator(&tokenExp,&tokenExp1,operador.getTokenid());
+        tokenExp.setTokenType(TOKEN_TYPE_BOOLEAN);
     }
     return tokenExp;
 }

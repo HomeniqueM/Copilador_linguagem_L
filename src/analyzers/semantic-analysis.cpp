@@ -287,7 +287,7 @@ void SemanticAnalysis::rulle20(Token *tokenA, Token *tokenB, Token *operador)
             throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "14");
         }
     }
-    tokenA->setTokenType(TOKEN_TYPE_BOOLEAN);
+   // tokenA->setTokenType(TOKEN_TYPE_BOOLEAN);
 }
 
 void SemanticAnalysis::setMaxTamVet(Token *tokenId, Token *tokenConst)
