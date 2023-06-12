@@ -109,6 +109,7 @@ StatePackage StartState::handle(char c)
     {
         package.tokenType = TOKEN_TYPE_REAL;
         package.tokenId = TOKEN_ID_CONSTANT;
+        package.identifier = +'0';
         package.identifier = +c;
         nextState = std::make_shared<State12>();
     }

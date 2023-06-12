@@ -3,9 +3,9 @@
 integer n;
 char nome = 'a';
 final MAXITER=10;
-real percentual=5;
+real percentual=.0e0;
 
-percentual=3;
+percentual=.1;
 
 
 for (n=1;n<=MAXITER;n=n+1) begin
