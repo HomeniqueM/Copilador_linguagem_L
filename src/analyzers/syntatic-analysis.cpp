@@ -340,15 +340,28 @@ void SyntaticAnalysis::productionA()
 */
 void SyntaticAnalysis::productionR()
 {
+    int rot1 = cg->newLabel();
+    int rot2 = cg->newLabel();
+    int rot3 = cg->newLabel();
+    int rot4 = cg->newLabel();
+
     matchToken(TOKEN_ID_FOR);
     matchToken(TOKEN_ID_OPEN_PARANTHESES);
     productionR1();
+    cg->writeRot(rot1);
     matchToken(TOKEN_ID_SEMICOLON);
-    productionExp();
+    Token exp=productionExp();
+    cg->compareForExpression(&exp,rot4);
+    cg->writeJump(rot3);
+    cg->writeRot(rot2);
     matchToken(TOKEN_ID_SEMICOLON);
     productionR1();
+    cg->writeJump(rot1);
+    cg->writeRot(rot3);
     matchToken(TOKEN_ID_CLOSE_PARANTHESES);
     productionT1();
+    cg->writeJump(rot2);
+    cg->writeRot(rot4);
 }
 
 /**
@@ -513,6 +526,7 @@ Token SyntaticAnalysis::productionExp()
         tokenExp1 = productionExp1();
         // Regra [20]
         this->se->rulle20(&tokenExp, &tokenExp1, &operador);
+        cg->RelacionalOperator(&tokenExp,&tokenExp1,operador.getTokenid());
     }
     return tokenExp;
 }
@@ -610,6 +624,9 @@ Token SyntaticAnalysis::productionExp3()
     tokenExp3 = productionExp4();
     // [26]
     this->se->tokenIsBoolean(&tokenExp3, isNot);
+    if(isNot){
+        cg->negExpression(&tokenExp3);
+    }
     return tokenExp3;
 }
 

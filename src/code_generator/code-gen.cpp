@@ -204,7 +204,7 @@ void CodeGen::atributionCommand(Token *id, Token *exp)
         this->programFile << format("\tmovss xmm0,[qword M+%ld]", exp->getTokenAddr()) << "\n";
         this->programFile << format("\tmovss [qword M+%ld], xmm0", id->getTokenAddr()) << "\n";
     }
-    else if (id->getTokenType() == TOKEN_TYPE_CHAR || id->getTokenType() == TOKEN_TYPE_BOOLEAN)
+    else if (id->getTokenType() == TOKEN_TYPE_CHAR)
     {
         this->programFile << format("\tmov al,[qword M+%ld]", exp->getTokenAddr()) << "\n";
         this->programFile << format("\tmov [qword M+%ld], al", id->getTokenAddr()) << "\n";
@@ -223,6 +223,26 @@ void CodeGen::atributionCommand(Token *id, Token *exp)
         this->programFile <<"\tadd rsi, 1\n";
         this->programFile << format("\tjmp Rot%d",label1)<<"\n";
         this->programFile << format("Rot%d:",label2)<<"\n";
+    }else if (id->getTokenType() == TOKEN_TYPE_BOOLEAN)
+    {
+        if (exp->getTokenType() == TOKEN_TYPE_BOOLEAN)
+        {
+            this->programFile << format("\tmov al,[qword M+%ld]", exp->getTokenAddr()) << "\n";
+            this->programFile << format("\tmov [qword M+%ld], al", id->getTokenAddr()) << "\n";
+        }
+        else
+        {
+            if (exp->getLexeme() == "True")
+            {
+            this->programFile << "\tmov al, 1" << "\n";
+            this->programFile << format("\tmov [qword M+%ld], al", id->getTokenAddr()) << "\n";
+            }
+            else
+            {
+            this->programFile << "\tmov al, 0" << "\n";
+            this->programFile << format("\tmov [qword M+%ld], al", id->getTokenAddr()) << "\n";
+            }
+        }
     }
 }
 // inverte valor da expressão
@@ -232,20 +252,16 @@ void CodeGen::invertExpression(Token *exp)
     if (exp->getTokenType() == TOKEN_TYPE_INTEGER)
     {
         this->programFile << format("mov eax, [qword M+%ld]", exp->getTokenAddr()) << "\n";
-        this->programFile << "neg eax"
-                 << "\n";
+        this->programFile << "neg eax"<< "\n";
         exp->setTokenAddr(tmpAddr);
         this->programFile << format("mov [qword M+%ld], eax", tmpAddr) << "\n";
     }
     else if (exp->getTokenType() == TOKEN_TYPE_REAL)
     {
         this->programFile << format("movss xmm0, [qword M+%ld]", exp->getTokenAddr()) << "\n";
-        this->programFile << "mov rax, -1"
-                 << "\n";
-        this->programFile << "cvtsi2ss xmm1, rax"
-                 << "\n";
-        this->programFile << "mulss xmm0, xmm1"
-                 << "\n";
+        this->programFile << "mov rax, -1"<< "\n";
+        this->programFile << "cvtsi2ss xmm1, rax"<< "\n";
+        this->programFile << "mulss xmm0, xmm1"<< "\n";
         exp->setTokenAddr(tmpAddr);
         this->programFile << format("movss [qword M+%ld], xmm0", tmpAddr) << "\n";
     }
@@ -484,10 +500,8 @@ void CodeGen::negExpression(Token *exp)
 {
     long tmpAddr = this->NewTmp(exp);
     this->programFile << format("mov al, [qword M+%ld]", exp->getTokenAddr()) << "\n";
-    this->programFile << "neg al"
-             << "\n";
-    this->programFile << "add al,1"
-             << "\n";
+    this->programFile << "neg al"<< "\n";
+    this->programFile << "add al,1"<< "\n";
     exp->setTokenAddr(tmpAddr);
     this->programFile << format("mov [qword M+%ld], al", tmpAddr) << "\n";
 }
@@ -531,7 +545,7 @@ void CodeGen::write(Token *t)
         this->programFile <<"\tmov rax, 1"<<"\n";
         this->programFile << "\tmov rdi, 1"<<"\n";
         this->programFile << "\tsyscall"<<"\n";
-    }else if (t->getTokenType() == TOKEN_TYPE_CHAR )
+    }else if (t->getTokenType() == TOKEN_TYPE_CHAR||t->getTokenType() == TOKEN_TYPE_BOOLEAN)
     {
         bufferAddr = t->getTokenAddr();
         this->programFile << format("mov rsi, M+%ld", bufferAddr)<<"\n";
@@ -610,7 +624,7 @@ void CodeGen::write(Token *t)
         this->programFile <<"mov rdi, 1"<<"\n";
         this->programFile <<"syscall"<<"\n";
     }
-    else if(t->getTokenType() == TOKEN_TYPE_INTEGER||t->getTokenType() == TOKEN_TYPE_BOOLEAN)
+    else if(t->getTokenType() == TOKEN_TYPE_INTEGER)
     {
         bufferAddr = this->tmp_count;
         this->tmp_count += this->string_size;
