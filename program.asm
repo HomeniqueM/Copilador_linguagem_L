@@ -16,7 +16,7 @@ section .text
 mov eax, [qword M+0]
 mov ebx, [qword M+4]
 cmp eax, ebx
-jg Rot2
+jne Rot2
 mov cl, 0
 mov [qword M+8], cl
 jmp Rot3

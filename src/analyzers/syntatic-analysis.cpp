@@ -520,7 +520,7 @@ Token SyntaticAnalysis::productionExp()
     Token tokenExp1;
     // Regra 14;
     tokenExp = productionExp1();
-    while (token->getTokenid() == TOKEN_ID_EQUALS || token->getTokenid() == TOKEN_ID_GREATER_THEN || token->getTokenid() == TOKEN_ID_GREATER_EQUAL_TO || token->getTokenid() == TOKEN_ID_LESS_THAN || token->getTokenid() == TOKEN_ID_LESS_EQUAL_TO)
+    while (token->getTokenid() == TOKEN_ID_EQUALS || token->getTokenid() == TOKEN_ID_GREATER_THEN || token->getTokenid() == TOKEN_ID_GREATER_EQUAL_TO || token->getTokenid() == TOKEN_ID_LESS_THAN || token->getTokenid() == TOKEN_ID_LESS_EQUAL_TO || token->getTokenid() == TOKEN_ID_DIFFERENT) 
     {
         // Regra [21]
         operador = token->clone();

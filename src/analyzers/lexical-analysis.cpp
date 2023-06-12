@@ -521,6 +521,7 @@ StatePackage State22::handle(char c)
     StatePackage package = StatePackage();
     if (c == '=')
     {
+        package.tokenId = TOKEN_ID_GREATER_EQUAL_TO;
         package.identifier = +c;
     }
     else
