@@ -133,7 +133,7 @@ void CodeGen::DeclareConst(Token *t, Token *constant)
     else if (t->getTokenType() == TOKEN_TYPE_STRING) /*need fix*/
     {
         t->setTokenSize(constant->getLexeme().size());
-        this->mem_count += this->string_size;
+        this->mem_count += constant->getLexeme().size()+1;
         this->programFile << format("\tdb \'%s\', %d", constant->getLexeme().c_str(),constant->getLexeme().size()) << "\n";
     }
 }
@@ -154,7 +154,7 @@ void CodeGen::storeConstOnTmp(Token *t,Token *constant)
     {
         t->setTokenAddr(this->mem_count);
         t->setTokenSize(constant->getLexeme().size());
-        this->mem_count += constant->getLexeme().size();
+        this->mem_count += constant->getLexeme().size()+1;
         this->startData();
         this->programFile << format("\tdb \'%s\', %d", constant->getLexeme().c_str(),constant->getLexeme().size()) << "\n";
         this->startText();
@@ -217,7 +217,7 @@ void CodeGen::atributionCommand(Token *id, Token *exp)
         this->programFile << format("Rot%d:",label1)<<"\n";
         this->programFile << "\tmov al, [rdi]\n";
         this->programFile << "\tmov [rsi], al\n";
-        this->programFile << "\tcmp al, '' \n";
+        this->programFile << "\tcmp al, 0\n";
         this->programFile << format("\tje Rot%d",label2)<<"\n";
         this->programFile <<"\tadd rdi, 1\n";
         this->programFile <<"\tadd rsi, 1\n";
