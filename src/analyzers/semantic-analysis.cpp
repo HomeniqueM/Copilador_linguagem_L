@@ -143,7 +143,7 @@ void SemanticAnalysis::verificacaoDeAtribuicao(Token *token, Token *tokenConst)
         if( !(token->getTokenType() == TOKEN_TYPE_REAL && tokenConst->getTokenType() == TOKEN_TYPE_INTEGER ) && !(token->getTokenType() == TOKEN_TYPE_CHAR && tokenConst->getTokenType() == TOKEN_TYPE_STRING) ){
             throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "8");
         }
-        else if( tokenConst->getLexeme().length() >= token->getMaxTam() && tokenConst->getTokenType() != TOKEN_TYPE_STRING )
+        else if( tokenConst->getTokeSize() >= token->getMaxTam() && tokenConst->getTokenType() == TOKEN_TYPE_STRING )
             throw LException(ErrorCode::IDENTIFIER_NO_DECLARED, la->getCurrentLine(), "4");
     }
 }
