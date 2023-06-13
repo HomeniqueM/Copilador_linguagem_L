@@ -1,4 +1,4 @@
 { Exemplo de Programa na linguagem L }
-string a;
+char a;
 readln(a);
 writeln(a);

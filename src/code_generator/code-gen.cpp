@@ -867,12 +867,11 @@ void CodeGen::readln(Token *t)
     {
         long tmpbuff = newTmpByTokenType(TOKEN_TYPE_STRING);
 
-        writeInProgramFile(format("mov rsi, M + %ld", t->getTokenAddr()));
+        writeInProgramFile(format("mov rsi, M + %ld", tmpbuff));
         writeInProgramFile("mov rdx, 100h");
         writeInProgramFile("mov rax, 0");
         writeInProgramFile("mov rdi, 0");
         writeInProgramFile("syscall");
-        writeInProgramFile(format("mov byte [M+%ld+rax-1], 0", t->getTokenAddr()));
 
         t->setTokenSize(256);
         int label1 = newLabel();
@@ -891,8 +890,9 @@ void CodeGen::readln(Token *t)
     }
     else if (t->getTokenType() == TOKEN_TYPE_CHAR)
     {
-        long tmpbuff = newTmpByTokenType(TOKEN_TYPE_STRING);
-        writeInProgramFile(format("mov rsi, M + %ld", t->getTokenAddr()));
+        long tmpbuff = newTmpByTokenType(TOKEN_TYPE_CHAR);
+        
+        writeInProgramFile(format("mov rsi, M + %ld", tmpbuff));
         writeInProgramFile("mov rdx, 1");
         writeInProgramFile("mov rax, 0");
         writeInProgramFile("mov rdi, 0");
@@ -916,7 +916,6 @@ void CodeGen::readln(Token *t)
         writeInProgramFile("mov rax, 0");
         writeInProgramFile("mov rdi, 0");
         writeInProgramFile("syscall");
-        writeInProgramFile((format("mov byte [M+%ld+rax-1], 0", t->getTokenAddr())));
 
         writeInProgramFile("mov eax, 0                  ;acumulador");
         writeInProgramFile("mov ebx, 0                  ;caractere");
@@ -974,7 +973,6 @@ void CodeGen::readln(Token *t)
         writeInProgramFile("mov rax, 0");
         writeInProgramFile("mov rdi, 0");
         writeInProgramFile("syscall");
-        writeInProgramFile((format("mov byte [M+%ld+rax-1], 0", t->getTokenAddr())));
 
         writeInProgramFile("mov rax, 0                  ;acumul. parte int.");
         writeInProgramFile("subss xmm0,xmm0             ;acumul. parte frac.");
