@@ -25,7 +25,7 @@ void SyntaticAnalysis::Start(Token *token)
 {
     setToken(token);
     productionS();
-
+    cg->startText();
     cg->end();
 }
 
@@ -246,6 +246,9 @@ void SyntaticAnalysis::productionC()
         this->se->isTokenHasDeclarad(tokenVar, TOKEN_CLASS_VETOR);
         this->se->setMaxTamVet(tokenVar, token);
         this->se->ifTokenTypehasDiff(token, TOKEN_TYPE_INTEGER);
+
+        cg->DeclareVet(tokenVar,token);
+
         matchToken(TOKEN_ID_CONSTANT);
         matchToken(TOKEN_ID_CLOSE_BRACKET);
         // Geração de Codigo 
@@ -327,15 +330,19 @@ void SyntaticAnalysis::productionA()
 {
     Token *tokenId = token;
     Token tokenExp;
+    Token *constant = new Token;
+    bool isVector = false;
     matchToken(TOKEN_ID_IDENTIFIER);
     // Ação Semantica [7]
     this->se->isTokenNotHasDeclarationAndNotHasConst(tokenId);
     if (token->getTokenid() == TOKEN_ID_OPEN_BRACKET)
     {
         matchToken(TOKEN_ID_OPEN_BRACKET);
+        isVector = true;
         // Ação Semantica [8]
         this->se->ifTokenTypehasDiff(token, TOKEN_TYPE_INTEGER);
         this->se->ifTokenVectorInRange(tokenId, token);
+        constant = token;
         matchToken(TOKEN_ID_CONSTANT);
         matchToken(TOKEN_ID_CLOSE_BRACKET);
     }
@@ -351,7 +358,11 @@ void SyntaticAnalysis::productionA()
     if(tokenId->getTokenType()==TOKEN_TYPE_REAL && tokenExp.getTokenType()==TOKEN_TYPE_INTEGER){
         cg->cvtToReal(&tokenExp);
     }
-    cg->atributionCommand(tokenId,&tokenExp);
+    if(isVector){
+        cg->vetAtribution(tokenId,constant,&tokenExp);
+    }else{
+        cg->atributionCommand(tokenId,&tokenExp);
+    }
 }
 
 /**
