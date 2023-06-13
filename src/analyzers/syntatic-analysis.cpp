@@ -354,7 +354,7 @@ void SyntaticAnalysis::productionA()
     tokenExp = productionExp();
     // Ação Semantica [9]
     // se  id.tipo != Exp1.tipo e !(id.tipo == real e Exp1.tipo == inteiro)
-    this->se->ifTokenTypeHasEqualsorIntandReal(tokenId, tokenExp.getTokenType());
+    this->se->verificacaoDeAtribuicao(tokenId,&tokenExp);
     if(tokenId->getTokenType()==TOKEN_TYPE_REAL && tokenExp.getTokenType()==TOKEN_TYPE_INTEGER){
         cg->cvtToReal(&tokenExp);
     }
