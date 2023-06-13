@@ -862,10 +862,10 @@ void CodeGen::RelacionalOperator(Token *op1, Token *op2, TokenID op){
  */
 void CodeGen::readln(Token *t)
 {
+    writeInProgramFile(";Leitura do teclado");
     if (t->getTokenType() == TOKEN_TYPE_STRING)
     {
         long tmpbuff = newTmpByTokenType(TOKEN_TYPE_STRING);
-        t->setTokenAddr(tmpbuff);
 
         writeInProgramFile(format("mov rsi, M + %ld", t->getTokenAddr()));
         writeInProgramFile("mov rdx, 100h");
@@ -873,14 +873,33 @@ void CodeGen::readln(Token *t)
         writeInProgramFile("mov rdi, 0");
         writeInProgramFile("syscall");
         writeInProgramFile(format("mov byte [M+%ld+rax-1], 0", t->getTokenAddr()));
+
+        t->setTokenSize(256);
+        int label1 = newLabel();
+        int label2 = newLabel();
+        this->programFile << format("\tmov rsi, qword M+%ld",t->getTokenAddr())<<"\n";
+        this->programFile << format("\tmov rdi, qword M+%ld",tmpbuff)<<"\n";
+        this->programFile << format("Rot%d:",label1)<<"\n";
+        this->programFile << "\tmov al, [rdi]\n";
+        this->programFile << "\tmov [rsi], al\n";
+        this->programFile << "\tcmp al, 0\n";
+        this->programFile << format("\tje Rot%d",label2)<<"\n";
+        this->programFile <<"\tadd rdi, 1\n";
+        this->programFile <<"\tadd rsi, 1\n";
+        this->programFile << format("\tjmp Rot%d",label1)<<"\n";
+        this->programFile << format("Rot%d:",label2)<<"\n";
     }
     else if (t->getTokenType() == TOKEN_TYPE_CHAR)
     {
+        long tmpbuff = newTmpByTokenType(TOKEN_TYPE_STRING);
         writeInProgramFile(format("mov rsi, M + %ld", t->getTokenAddr()));
         writeInProgramFile("mov rdx, 1");
         writeInProgramFile("mov rax, 0");
         writeInProgramFile("mov rdi, 0");
         writeInProgramFile("syscall");
+
+        writeInProgramFile(format("mov al,[qword M+%ld]",tmpbuff));
+        writeInProgramFile(format("mov [qword M+%ld], al", t->getTokenAddr()));
     }
     else if (t->getTokenType() == TOKEN_TYPE_INTEGER)
     {
@@ -892,7 +911,7 @@ void CodeGen::readln(Token *t)
         long tmpbuff = newTmpByTokenType(TOKEN_TYPE_STRING);
 
         // Leitura da String
-        writeInProgramFile(format("mov rsi, M + %ld", tmpbuff));
+        writeInProgramFile(format("mov rsi, M+%ld", tmpbuff));
         writeInProgramFile("mov rdx, 100h");
         writeInProgramFile("mov rax, 0");
         writeInProgramFile("mov rdi, 0");
@@ -950,7 +969,7 @@ void CodeGen::readln(Token *t)
         long tmpbuff = newTmpByTokenType(TOKEN_TYPE_STRING);
 
         // Leitura da String
-        writeInProgramFile(format("mov rsi, M + %ld", tmpbuff));
+        writeInProgramFile(format("mov rsi, M+%ld", tmpbuff));
         writeInProgramFile("mov rdx, 100h");
         writeInProgramFile("mov rax, 0");
         writeInProgramFile("mov rdi, 0");
@@ -995,6 +1014,7 @@ void CodeGen::readln(Token *t)
         writeInProgramFile(format("Rot%d:", label3));
         writeInProgramFile(";calcula parte fracionária em xmm0");
         writeInProgramFile("add rsi, 1                      ;inc. ponteiro string");
+        writeInProgramFile("mov bl, [rsi]                   ;carrega caractere");
         writeInProgramFile("cmp bl, 0Ah                     ;*verifica fim string");
         writeInProgramFile(format("je Rot%d", label2));
         writeInProgramFile("sub bl, '0'                     ;converte caractere");

@@ -1,5 +1,4 @@
 { Exemplo de Programa na linguagem L }
-real a;
-writeln("Digite um numero inteiro: ");
+string a;
 readln(a);
-{writeln(a);}
+writeln(a);
