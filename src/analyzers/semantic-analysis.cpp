@@ -136,6 +136,18 @@ void SemanticAnalysis::ifTokenTypeHasEqualsorIntandReal(Token *token, TokenType 
     }
 }
 
+void SemanticAnalysis::verificacaoDeAtribuicao(Token *token, Token *tokenConst)
+{
+    if (token->getTokenType() != tokenConst->getTokenType())
+    {
+        if( !(token->getTokenType() == TOKEN_TYPE_REAL && tokenConst->getTokenType() == TOKEN_TYPE_INTEGER ) && !(token->getTokenType() == TOKEN_TYPE_CHAR && tokenConst->getTokenType() == TOKEN_TYPE_STRING) ){
+            throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "8");
+        }
+        else if( tokenConst->getTokeSize() >= token->getMaxTam() && tokenConst->getTokenType() == TOKEN_TYPE_STRING )
+            throw LException(ErrorCode::IDENTIFIER_NO_DECLARED, la->getCurrentLine(), "4");
+    }
+}
+
 void SemanticAnalysis::TokenReplaceType(Token *token)
 {
     if (token->getTokenType() == TOKEN_TYPE_REAL)
@@ -300,5 +312,15 @@ void SemanticAnalysis::ifTokenVectorInRange(Token *tokenId, Token *tokenConst)
     if (stoi(tokenConst->getLexeme()) >= tokenId->getMaxTam())
     {
         throw LException(ErrorCode::IDENTIFIER_NO_DECLARED, la->getCurrentLine(), "15");
+    }
+}
+
+
+
+void SemanticAnalysis::tokenIsTypeEqualsErro(Token *token, TokenType tokenType)
+{
+    if (token->getTokenType() == tokenType )
+    {
+        throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "10");
     }
 }

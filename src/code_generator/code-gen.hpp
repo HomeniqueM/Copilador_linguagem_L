@@ -57,8 +57,10 @@ class CodeGen{
         void startProgram();
         void DeclareVariable(Token* t);
         void DeclareConst(Token* t, Token* constant);
+        void DeclareVet(Token *t, Token *size);
         void storeConstOnTmp(Token *t,Token *constant);
         void atributionCommand(Token *id, Token *exp);
+        void vetAtribution(Token *id, Token *pos, Token *exp);
         void invertExpression(Token *exp);
 
         void sumOperation(Token *op1, Token *op2);

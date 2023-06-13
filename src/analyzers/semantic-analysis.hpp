@@ -39,7 +39,9 @@ public:
     void TokenReplaceType(Token *token);
     void tokenIsBoolean(Token *token, bool isNeg);
     void tokenIsMultDivAndMod(Token *token);
+    void verificacaoDeAtribuicao(Token *token, Token *tokenConst);
     void tokenIsIntergerOrReal(Token *token, bool isNeg);
+    void tokenIsTypeEqualsErro(Token *token, TokenType tokenType);
     //void setMaxTamVet();
     void rulle20(Token *tokenA, Token *tokenB, Token *operador);
     void rulle23(Token *tokenA, Token *tokenB, Token *operador);
