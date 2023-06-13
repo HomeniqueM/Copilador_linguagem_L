@@ -1,5 +1,4 @@
 { Exemplo de Programa na linguagem L }
-char a[2];
+char a[50];
 a = "banana";
-
-write(a);
+writeln(a);

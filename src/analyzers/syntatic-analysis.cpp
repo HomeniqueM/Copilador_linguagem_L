@@ -246,15 +246,13 @@ void SyntaticAnalysis::productionC()
         this->se->isTokenHasDeclarad(tokenVar, TOKEN_CLASS_VETOR);
         this->se->setMaxTamVet(tokenVar, token);
         this->se->ifTokenTypehasDiff(token, TOKEN_TYPE_INTEGER);
-
+        // Geração de Codigo 
+        // Operação de vetor
+        // char a  [20];
         cg->DeclareVet(tokenVar,token);
 
         matchToken(TOKEN_ID_CONSTANT);
         matchToken(TOKEN_ID_CLOSE_BRACKET);
-        // Geração de Codigo 
-        // Operação de vetor
-        // char a  [20];
-        // 
     }
 }
 
