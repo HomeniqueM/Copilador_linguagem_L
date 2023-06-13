@@ -480,8 +480,8 @@ void SyntaticAnalysis::productionL()
     matchToken(TOKEN_ID_OPEN_PARANTHESES);
     Token *tokenID = token;
     matchToken(TOKEN_ID_IDENTIFIER);
-    // Ação Semantiva [5]
-    this->se->isTokenNotHasDeclaration(tokenID);
+    // Ação Semantiva [7]
+    this->se->isTokenNotHasDeclarationAndNotHasConst(tokenID);
     // Açao Semantica [11]
     this->se->tokenIsTypeEqualsErro(tokenID, TOKEN_TYPE_BOOLEAN);
     matchToken(TOKEN_ID_CLOSE_PARANTHESES);

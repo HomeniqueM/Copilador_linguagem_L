@@ -1,5 +1,5 @@
 { Exemplo de Programa na linguagem L }
-char a[2];
-a = "banana";
 
-write(a);
+char a[3];
+a[3] = '2';
+if( 'b' <> 'b' ) writeln("Cosso");
