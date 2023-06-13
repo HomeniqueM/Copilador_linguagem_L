@@ -1,5 +1,15 @@
 { Exemplo de Programa na linguagem L }
 
-real n[50];
-n[2]=20.0;
-writeln("test);
+integer n;
+char nome = 'a';
+final MAXITER=10;
+real percentual=.0e0;
+
+percentual=.0e5;
+
+
+for (n=1;n<=MAXITER;n=n+1) begin
+  percentual=real(n)/MAXITER;
+  writeln(n);
+  if (n mod 2 == 0) writeln(percentual,": Ola' ",nome);
+end

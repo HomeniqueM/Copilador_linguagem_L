@@ -330,7 +330,7 @@ void SyntaticAnalysis::productionA()
 {
     Token *tokenId = token;
     Token tokenExp;
-    Token *constant = new Token;
+    Token *constant = new Token();
     bool isVector = false;
     matchToken(TOKEN_ID_IDENTIFIER);
     // Ação Semantica [7]
@@ -359,6 +359,7 @@ void SyntaticAnalysis::productionA()
         cg->cvtToReal(&tokenExp);
     }
     if(isVector){
+        cg->storeConstOnTmp(constant,constant);
         cg->vetAtribution(tokenId,constant,&tokenExp);
     }else{
         cg->atributionCommand(tokenId,&tokenExp);
