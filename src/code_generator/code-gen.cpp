@@ -174,6 +174,7 @@ void CodeGen::DeclareConst(Token *t, Token *constant)
 }
 // comando de declaração de vetor
 void CodeGen::DeclareVet(Token *t, Token *size){
+    this->programFile << ";Declaração de vetor\n";
     t->setTokenAddr(this->mem_count);
     if (t->getTokenType() == TOKEN_TYPE_CHAR || t->getTokenType()== TOKEN_TYPE_BOOLEAN)
     {
@@ -296,6 +297,7 @@ void CodeGen::atributionCommand(Token *id, Token *exp)
 }
 //Comando de atribuição para vetor
 void CodeGen::vetAtribution(Token *id, Token *pos, Token *exp){
+    this->programFile<<";Comando de atribuição de vetor\n";
     if(id->getTokenType() == TOKEN_TYPE_INTEGER || id->getTokenType() == TOKEN_TYPE_REAL){
         writeInProgramFile(format("mov rcx, qword M+%ld",id->getTokenAddr()));
         writeInProgramFile(format("mov ebx, [qword M+%ld]",pos->getTokenAddr()));
@@ -801,21 +803,22 @@ void CodeGen::compareForExpression(Token *exp,int rot){
  * @brief Move o elemento de uma posição de um vetor para um temporário
 */
 void CodeGen::vectorAccess(Token *id, Token *exp, Token *t){
+    this->programFile << ";acesso ao vetor"<<"\n";
     long tmpAddr = NewTmp(t);
-    t->setTokenAddr(tmpAddr);
-    writeInProgramFile(format("mov rcx, qword M+%ld",id->getTokenAddr()));
-    writeInProgramFile(format("mov ebx, [qword M+%ld]",exp->getTokenAddr()));
+    writeInProgramFile(format("\tmov rcx, qword M+%ld",id->getTokenAddr()));
+    writeInProgramFile(format("\tmov ebx, [qword M+%ld]",exp->getTokenAddr()));
     if(id->getTokenType() == TOKEN_TYPE_INTEGER || id->getTokenType() == TOKEN_TYPE_REAL){
-        writeInProgramFile("add ebx, ebx");
-        writeInProgramFile("add ebx, ebx");
+        writeInProgramFile("\tadd ebx, ebx");
+        writeInProgramFile("\tadd ebx, ebx");
     }else if(id->getTokenType() == TOKEN_TYPE_STRING){
-        writeInProgramFile("mov eax, 100h");
-        writeInProgramFile("imul ebx");
-        writeInProgramFile("mov ebx,eax ");
+        writeInProgramFile("\tmov eax, 100h");
+        writeInProgramFile("\timul ebx");
+        writeInProgramFile("\tmov ebx,eax ");
     }
-    writeInProgramFile("add ecx, ebx");
-    writeInProgramFile("mov ecx, [rcx]");
-    writeInProgramFile(format("mov [qword M+%ld], ecx",tmpAddr));
+    writeInProgramFile("\tadd ecx, ebx");
+    writeInProgramFile("\tmov ecx, [rcx]");
+    t->setTokenAddr(tmpAddr);
+    writeInProgramFile(format("\tmov [qword M+%ld], ecx",tmpAddr));
 }
 /**
  * @brief Operadores relacionais

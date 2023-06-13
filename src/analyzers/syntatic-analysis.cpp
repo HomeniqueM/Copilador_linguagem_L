@@ -742,17 +742,16 @@ Token *SyntaticAnalysis::productionExp5()
         this->se->defineNewType(tokenExp5, TOKEN_TYPE_BOOLEAN);
         matchToken(TOKEN_ID_TRUE);
         cg->storeConstOnTmp(tokenExp5,tokenExp5);
-        //cg->storeConstOnTmp(tokenExp5,token);
     }
     else if (token->getTokenid() == TOKEN_ID_FALSE)
     {
         this->se->defineNewType(tokenExp5, TOKEN_TYPE_BOOLEAN);
         matchToken(TOKEN_ID_FALSE);
         cg->storeConstOnTmp(tokenExp5,tokenExp5);
-        //cg->storeConstOnTmp(tokenExp5,token);
     }
     else if (token->getTokenid() == TOKEN_ID_IDENTIFIER)
     {
+        Token tokenID = *token;
         matchToken(TOKEN_ID_IDENTIFIER);
         // 29
         this->se->isTokenNotHasDeclaration(tokenExp5);
@@ -761,6 +760,8 @@ Token *SyntaticAnalysis::productionExp5()
             matchToken(TOKEN_ID_OPEN_BRACKET);
             this->se->ifTokenTypehasDiff(token, TOKEN_TYPE_INTEGER);
             this->se->ifTokenVectorInRange(tokenExp5, token);
+            cg->storeConstOnTmp(tokenExp5,token);
+            cg->vectorAccess(&tokenID,tokenExp5,tokenExp5);
             matchToken(TOKEN_ID_CONSTANT);
             matchToken(TOKEN_ID_CLOSE_BRACKET);
         }
