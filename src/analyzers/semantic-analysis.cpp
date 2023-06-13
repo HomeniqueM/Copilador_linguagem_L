@@ -302,3 +302,13 @@ void SemanticAnalysis::ifTokenVectorInRange(Token *tokenId, Token *tokenConst)
         throw LException(ErrorCode::IDENTIFIER_NO_DECLARED, la->getCurrentLine(), "15");
     }
 }
+
+
+
+void SemanticAnalysis::tokenIsTypeEqualsErro(Token *token, TokenType tokenType)
+{
+    if (token->getTokenType() == tokenType )
+    {
+        throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "10");
+    }
+}
