@@ -46,4 +46,5 @@ public:
     void rulle25(Token *tokenA, Token *tokenB, Token *operador);
     void setMaxTamVet(Token *tokenId, Token *tokenConst);
     void ifTokenVectorInRange(Token *tokenId, Token *tokenConst);
+    void FinalVerify(Token *tokenConst, Token *tokenId, bool isneg);
 };

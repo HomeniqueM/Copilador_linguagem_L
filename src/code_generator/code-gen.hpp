@@ -68,7 +68,10 @@ class CodeGen{
         void multiplyOperation(Token *op1, Token *op2);
         void divideOperation(Token *op1, Token *op2);
         void modOperation(Token *op1,Token *op2);
-        void andOperation();
+        void andOperation(Token *op1,Token *op2);
+
+        void defineOperation(Token *op1,Token *op2, Token *operation);
+
         void startIF(Token *t, int begin);
 
         void writeInProgramFile(std::string s);

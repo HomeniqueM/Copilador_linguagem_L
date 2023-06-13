@@ -109,7 +109,9 @@ StatePackage StartState::handle(char c)
     {
         package.tokenType = TOKEN_TYPE_REAL;
         package.tokenId = TOKEN_ID_CONSTANT;
-        package.identifier = +c;
+        std::string s = "0";
+        s.push_back(c);
+        package.identifier = s;
         nextState = std::make_shared<State12>();
     }
     // Token Especial para informar o fim do arquivo
@@ -481,7 +483,6 @@ StatePackage State20::handle(char c)
     StatePackage package = StatePackage();
     if (c == '\'')
     {
-        package.identifier = +c;
         this->completed = true;
     }
     else
@@ -520,6 +521,7 @@ StatePackage State22::handle(char c)
     StatePackage package = StatePackage();
     if (c == '=')
     {
+        package.tokenId = TOKEN_ID_GREATER_EQUAL_TO;
         package.identifier = +c;
     }
     else
@@ -623,6 +625,7 @@ Token *State01::makeAToken(SymbolTable *st, std::string lexeme, TokenType tokent
         result->setLexeme(lexeme);
         result->setTokenType(tokentype);
         result->setTokenID(tokenId);
+
     }
 
     return result;

@@ -7,6 +7,7 @@
  */
 
 #include "syntatic-analysis.hpp"
+#include <iostream>
 
 SyntaticAnalysis::SyntaticAnalysis(LexerAnalysis *la, SemanticAnalysis *se, SymbolTable *st, CodeGen *cg)
 {
@@ -112,7 +113,7 @@ void SyntaticAnalysis::productionD()
         }
         Token *constante = token;
         matchToken(TOKEN_ID_CONSTANT);
-        this->se->isTokenTypeEquals(constante, identifier, negate);
+        this->se->FinalVerify(constante, identifier, negate);
 
         cg->DeclareConst(identifier,constante);
     }
@@ -171,7 +172,6 @@ void SyntaticAnalysis::productionD1()
 void SyntaticAnalysis::productionC()
 {
     bool neg = false;
-    Token *C_tmp = new Token;
     Token *tokenVar = token;
     matchToken(TOKEN_ID_IDENTIFIER);
 
@@ -188,12 +188,14 @@ void SyntaticAnalysis::productionC()
         {
             // [31]
             this->se->ifTokenTypeHasEqualsorIntandReal(tokenVar, TOKEN_TYPE_BOOLEAN);
+            this->se->defineNewType(constant, TOKEN_TYPE_BOOLEAN);
             matchToken(TOKEN_ID_FALSE);
         }
         else if (token->getTokenid() == TOKEN_ID_TRUE)
         {
             // [31]
             this->se->ifTokenTypeHasEqualsorIntandReal(tokenVar, TOKEN_TYPE_BOOLEAN);
+            this->se->defineNewType(constant, TOKEN_TYPE_BOOLEAN);
             matchToken(TOKEN_ID_TRUE);
         }
         else
@@ -209,8 +211,14 @@ void SyntaticAnalysis::productionC()
             constant = token;
             matchToken(TOKEN_ID_CONSTANT);
         }
-        cg->storeConstOnTmp(C_tmp,constant);
-        cg->atributionCommand(tokenVar,C_tmp);
+        cg->storeConstOnTmp(constant,constant);
+        if(neg){
+            cg->invertExpression(constant);
+        }
+        if(tokenVar->getTokenType()==TOKEN_TYPE_REAL && constant->getTokenType()==TOKEN_TYPE_INTEGER){
+            cg->cvtToReal(constant);
+        }
+        cg->atributionCommand(tokenVar,constant);
 
         // Operação de atribuição
         // real a = 5;
@@ -326,6 +334,10 @@ void SyntaticAnalysis::productionA()
     // regra 9
     // se  id.tipo != Exp1.tipo e !(id.tipo == real e Exp1.tipo == inteiro)
     this->se->ifTokenTypeHasEqualsorIntandReal(tokenId, tokenExp.getTokenType());
+    if(tokenId->getTokenType()==TOKEN_TYPE_REAL && tokenExp.getTokenType()==TOKEN_TYPE_INTEGER){
+        cg->cvtToReal(&tokenExp);
+    }
+    cg->atributionCommand(tokenId,&tokenExp);
 }
 
 /**
@@ -335,15 +347,28 @@ void SyntaticAnalysis::productionA()
 */
 void SyntaticAnalysis::productionR()
 {
+    int rot1 = cg->newLabel();
+    int rot2 = cg->newLabel();
+    int rot3 = cg->newLabel();
+    int rot4 = cg->newLabel();
+
     matchToken(TOKEN_ID_FOR);
     matchToken(TOKEN_ID_OPEN_PARANTHESES);
     productionR1();
+    cg->writeRot(rot1);
     matchToken(TOKEN_ID_SEMICOLON);
-    productionExp();
+    Token exp=productionExp();
+    cg->compareForExpression(&exp,rot4);
+    cg->writeJump(rot3);
+    cg->writeRot(rot2);
     matchToken(TOKEN_ID_SEMICOLON);
     productionR1();
+    cg->writeJump(rot1);
+    cg->writeRot(rot3);
     matchToken(TOKEN_ID_CLOSE_PARANTHESES);
     productionT1();
+    cg->writeJump(rot2);
+    cg->writeRot(rot4);
 }
 
 /**
@@ -366,20 +391,35 @@ void SyntaticAnalysis::productionR1()
  * T -> if ( Exp ) T1 [ else T1 ]
  */
 void SyntaticAnalysis::productionT()
-{
+{   
     Token tokenExp;
+    bool hasElse = false;
+    int rot1 = cg->newLabel();
+    int rot2 = cg->newLabel();
     matchToken(TOKEN_ID_IF);
     matchToken(TOKEN_ID_OPEN_PARANTHESES);
     tokenExp = productionExp();
+    Token *result = new Token();
+    result->setTokenID(tokenExp.getTokenid());
+    result->setLexeme(tokenExp.getLexeme());
+    result->setTokenType(tokenExp.getTokenType());
+    result->setTokenSize(tokenExp.getTokeSize());
+    result->setTokenClass(tokenExp.getTokenClass());
+    result->setMaxTam(tokenExp.getMaxTam());
+    result->setTokenAddr(tokenExp.getTokenAddr());
     // [10]
     this->se->ifTokenTypehasDiff(&tokenExp, TOKEN_TYPE_BOOLEAN);
     matchToken(TOKEN_ID_CLOSE_PARANTHESES);
+    cg->initCondition(result,rot1);
     productionT1();
     if (token->getTokenid() == TOKEN_ID_ELSE)
     {
+        hasElse = true;
         matchToken(TOKEN_ID_ELSE);
+        cg->finalizeBlock(rot2,rot1);
         productionT1();
     }
+    cg->finalizeConditionalChain(hasElse,rot1,rot2);
 }
 
 /**
@@ -418,6 +458,7 @@ void SyntaticAnalysis::productionL()
     // E possivel ler True or False (0|1)?
     this->se->isTokenNotHasDeclaration(tokenID);
     matchToken(TOKEN_ID_CLOSE_PARANTHESES);
+    cg->readln(tokenID);
 }
 
 /**
@@ -479,7 +520,7 @@ Token SyntaticAnalysis::productionExp()
     Token tokenExp1;
     // Regra 14;
     tokenExp = productionExp1();
-    while (token->getTokenid() == TOKEN_ID_EQUALS || token->getTokenid() == TOKEN_ID_GREATER_THEN || token->getTokenid() == TOKEN_ID_GREATER_EQUAL_TO || token->getTokenid() == TOKEN_ID_LESS_THAN || token->getTokenid() == TOKEN_ID_LESS_EQUAL_TO)
+    while (token->getTokenid() == TOKEN_ID_EQUALS || token->getTokenid() == TOKEN_ID_GREATER_THEN || token->getTokenid() == TOKEN_ID_GREATER_EQUAL_TO || token->getTokenid() == TOKEN_ID_LESS_THAN || token->getTokenid() == TOKEN_ID_LESS_EQUAL_TO || token->getTokenid() == TOKEN_ID_DIFFERENT) 
     {
         // Regra [21]
         operador = token->clone();
@@ -508,12 +549,14 @@ Token SyntaticAnalysis::productionExp()
         tokenExp1 = productionExp1();
         // Regra [20]
         this->se->rulle20(&tokenExp, &tokenExp1, &operador);
+        cg->RelacionalOperator(&tokenExp,&tokenExp1,operador.getTokenid());
+        tokenExp.setTokenType(TOKEN_TYPE_BOOLEAN);
     }
     return tokenExp;
 }
 
 /**
- * @brief: Analísa o caso da produção da Gramatica.
+ * @brief: Analisa o caso da produção da Gramatica.
  * Exp1 -> [ - ] Exp2 { ( + | - | or ) Exp2 }
  */
 Token SyntaticAnalysis::productionExp1()
@@ -529,6 +572,9 @@ Token SyntaticAnalysis::productionExp1()
         matchToken(TOKEN_ID_SUBTRACTION);
     }
     tokenExp1 = productionExp2();
+    if(isNeg){
+        cg->invertExpression(&tokenExp1);
+    }
     // Regra 15 Da Gramatica
     this->se->tokenIsIntergerOrReal(&tokenExp1, isNeg);
 
@@ -554,6 +600,7 @@ Token SyntaticAnalysis::productionExp1()
         tokenExp2 = productionExp2();
         // Regra [23]
         this->se->rulle23(&tokenExp1, &tokenExp2, &operador);
+        cg->defineOperation(&tokenExp1,&tokenExp2,&operador);
     }
     return tokenExp1;
 }
@@ -581,6 +628,7 @@ Token SyntaticAnalysis::productionExp2()
             matchToken(TOKEN_ID_AND);
         Token tokenAux = productionExp3();
         this->se->rulle25(&tokenEXP2, &tokenAux, &operatorToken);
+        cg->defineOperation(&tokenEXP2,&tokenAux,&operatorToken);
         // tokenEXP2 tokenAux
     }
     return tokenEXP2;
@@ -603,6 +651,9 @@ Token SyntaticAnalysis::productionExp3()
     tokenExp3 = productionExp4();
     // [26]
     this->se->tokenIsBoolean(&tokenExp3, isNot);
+    if(isNot){
+        cg->negExpression(&tokenExp3);
+    }
     return tokenExp3;
 }
 
@@ -635,6 +686,11 @@ Token SyntaticAnalysis::productionExp4()
         tokenExp4 = tokenExp5->clone();
         // [27 && 28]
         this->se->TokenReplaceType(&tokenExp4);
+        if(tokenExp4.getTokenType()==TOKEN_TYPE_INTEGER){
+            cg->cvtToInt(&tokenExp4);
+        }else{
+            cg->cvtToReal(&tokenExp4);
+        }
         matchToken(TOKEN_ID_CLOSE_PARANTHESES);
     }
     return tokenExp4;
@@ -652,16 +708,21 @@ Token *SyntaticAnalysis::productionExp5()
     {
         // [28] nao existe
         matchToken(TOKEN_ID_CONSTANT);
+        cg->storeConstOnTmp(tokenExp5,tokenExp5);
     }
     else if (token->getTokenid() == TOKEN_ID_TRUE)
     {
         this->se->defineNewType(tokenExp5, TOKEN_TYPE_BOOLEAN);
         matchToken(TOKEN_ID_TRUE);
+        cg->storeConstOnTmp(tokenExp5,tokenExp5);
+        //cg->storeConstOnTmp(tokenExp5,token);
     }
     else if (token->getTokenid() == TOKEN_ID_FALSE)
     {
         this->se->defineNewType(tokenExp5, TOKEN_TYPE_BOOLEAN);
         matchToken(TOKEN_ID_FALSE);
+        cg->storeConstOnTmp(tokenExp5,tokenExp5);
+        //cg->storeConstOnTmp(tokenExp5,token);
     }
     else if (token->getTokenid() == TOKEN_ID_IDENTIFIER)
     {
