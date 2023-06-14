@@ -1,3 +1,10 @@
+/**
+ * Pontificia Universidade Católica de Minas Gerais
+ * ICEI - Departamento de Ciência da Computação
+ * Disciplina de Compiladores
+ * Prof Alexei Machado
+ * @authors Guilherme Côsso Lima Pimenta, Homenique Vieira Martins, Iago Augusto Coelho Morgado
+*/
 #include <string>
 #include <fstream>
 #include "../symbols/token.hpp"
