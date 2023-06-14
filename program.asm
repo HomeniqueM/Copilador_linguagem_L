@@ -8,5 +8,4 @@ section .data
 ;Declaração de Variável
 	resb 1
 ;Declaração de vetor
-	resb 3
-section .text
+

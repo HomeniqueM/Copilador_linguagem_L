@@ -256,8 +256,25 @@ void CodeGen::atributionCommand(Token *id, Token *exp)
     }
     else if (id->getTokenType() == TOKEN_TYPE_CHAR)
     {
-        this->programFile << format("\tmov al,[qword M+%ld]", exp->getTokenAddr()) << "\n";
-        this->programFile << format("\tmov [qword M+%ld], al", id->getTokenAddr()) << "\n";
+        if(id->getTokenClass()==TOKEN_CLASS_VETOR){
+            id->setTokenSize(exp->getTokeSize());
+            int label1 = newLabel();
+            int label2 = newLabel();
+            this->programFile << format("\tmov rsi, qword M+%ld",id->getTokenAddr())<<"\n";
+            this->programFile << format("\tmov rdi, qword M+%ld",exp->getTokenAddr())<<"\n";
+            this->programFile << format("Rot%d:",label1)<<"\n";
+            this->programFile << "\tmov al, [rdi]\n";
+            this->programFile << "\tmov [rsi], al\n";
+            this->programFile << "\tcmp al, 0\n";
+            this->programFile << format("\tje Rot%d",label2)<<"\n";
+            this->programFile <<"\tadd rdi, 1\n";
+            this->programFile <<"\tadd rsi, 1\n";
+            this->programFile << format("\tjmp Rot%d",label1)<<"\n";
+            this->programFile << format("Rot%d:",label2)<<"\n";
+        }else{
+            this->programFile << format("\tmov al,[qword M+%ld]", exp->getTokenAddr()) << "\n";
+            this->programFile << format("\tmov [qword M+%ld], al", id->getTokenAddr()) << "\n";
+        }
     }else if(id->getTokenType() == TOKEN_TYPE_STRING){
         id->setTokenSize(exp->getTokeSize());
         int label1 = newLabel();
@@ -307,38 +324,13 @@ void CodeGen::vetAtribution(Token *id, Token *pos, Token *exp){
         writeInProgramFile("\tadd ecx, ebx");
         writeInProgramFile(format("\tmov eax, [qword M+%ld]",exp->getTokenAddr()));
         writeInProgramFile("\tmov [rcx], eax");
-    }else if(id->getTokenType()==TOKEN_TYPE_BOOLEAN ){
+    }else if(id->getTokenType()==TOKEN_TYPE_BOOLEAN || id->getTokenType()==TOKEN_TYPE_CHAR){
         writeInProgramFile(format("\tmov rcx, qword M+%ld",id->getTokenAddr()));
         writeInProgramFile(format("\tmov ebx, [qword M+%ld]",pos->getTokenAddr()));
 
         writeInProgramFile("\tadd ecx, ebx");
         writeInProgramFile(format("\tmov al, [qword M+%ld]",exp->getTokenAddr()));
-        writeInProgramFile("\tmov [rcx], bl");
-    }if(id->getTokenType()==TOKEN_TYPE_CHAR){
-        std::cout << exp->getTokenType()<<"\n";
-        if(exp->getTokenType()==TOKEN_TYPE_STRING){
-            id->setTokenSize(exp->getTokeSize());
-            int label1 = newLabel();
-            int label2 = newLabel();
-            this->programFile << format("\tmov rsi, qword M+%ld",id->getTokenAddr())<<"\n";
-            this->programFile << format("\tmov rdi, qword M+%ld",exp->getTokenAddr())<<"\n";
-            this->programFile << format("Rot%d:",label1)<<"\n";
-            this->programFile << "\tmov al, [rdi]\n";
-            this->programFile << "\tmov [rsi], al\n";
-            this->programFile << "\tcmp al, 0\n";
-            this->programFile << format("\tje Rot%d",label2)<<"\n";
-            this->programFile <<"\tadd rdi, 1\n";
-            this->programFile <<"\tadd rsi, 1\n";
-            this->programFile << format("\tjmp Rot%d",label1)<<"\n";
-            this->programFile << format("Rot%d:",label2)<<"\n";
-        }else{
-            writeInProgramFile(format("\tmov rcx, qword M+%ld",id->getTokenAddr()));
-            writeInProgramFile(format("\tmov ebx, [qword M+%ld]",pos->getTokenAddr()));
-
-            writeInProgramFile("\tadd ecx, ebx");
-            writeInProgramFile(format("\tmov al, [qword M+%ld]",exp->getTokenAddr()));
-            writeInProgramFile("\tmov [rcx], bl");
-        }
+        writeInProgramFile("\tmov [rcx], al");
     }
 }
 // inverte valor da expressão
@@ -651,7 +643,7 @@ void CodeGen::write(Token *t)
         this->programFile << "\tmov rdi, 1"<<"\n";
         this->programFile << "\tsyscall"<<"\n";
     }else if (t->getTokenType() == TOKEN_TYPE_CHAR){
-        if(t->getTokenClass()==TOKEN_CLASS_VETOR){
+        if(t->getTokeSize()>0){
             bufferAddr = t->getTokenAddr();
             this->programFile << format("\tmov rsi, M+%ld", bufferAddr)<<"\n";
             this->programFile << format("\tmov rdx, %d",t->getTokeSize())<<"\n";
@@ -860,15 +852,21 @@ void CodeGen::vectorAccess(Token *id, Token *exp, Token *t){
     if(id->getTokenType() == TOKEN_TYPE_INTEGER || id->getTokenType() == TOKEN_TYPE_REAL){
         writeInProgramFile("\tadd ebx, ebx");
         writeInProgramFile("\tadd ebx, ebx");
-    }else if(id->getTokenType() == TOKEN_TYPE_STRING){
+
+        writeInProgramFile("\tadd ecx, ebx");
+        writeInProgramFile("\tmov ecx, [rcx]");
+        t->setTokenAddr(tmpAddr);
+        writeInProgramFile(format("\tmov [qword M+%ld], ecx",tmpAddr));
+    }else if(id->getTokenType() == TOKEN_TYPE_CHAR||id->getTokenType() == TOKEN_TYPE_BOOLEAN){
         writeInProgramFile("\tmov eax, 100h");
         writeInProgramFile("\timul ebx");
         writeInProgramFile("\tmov ebx,eax ");
+
+        writeInProgramFile("\tadd ecx, ebx");
+        writeInProgramFile("\tmov cl, [rcx]");
+        t->setTokenAddr(tmpAddr);
+        writeInProgramFile(format("\tmov [qword M+%ld], cl",tmpAddr));
     }
-    writeInProgramFile("\tadd ecx, ebx");
-    writeInProgramFile("\tmov ecx, [rcx]");
-    t->setTokenAddr(tmpAddr);
-    writeInProgramFile(format("\tmov [qword M+%ld], ecx",tmpAddr));
 }
 /**
  * @brief Operadores relacionais
