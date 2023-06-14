@@ -115,7 +115,7 @@ void SyntaticAnalysis::productionD()
         }
         Token *constante = token;
         matchToken(TOKEN_ID_CONSTANT);
-        //Ação Semantica [3]
+        //Ação Semantica [20]
         this->se->FinalVerify(constante, identifier, negate);
 
         // Geração de Codico 
