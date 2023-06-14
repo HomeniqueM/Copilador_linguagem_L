@@ -1,5 +1,5 @@
-integer a = 123546;
-real b = 27.5;
-final c = " ";
+{ Exemplo de Programa na linguagem L }
 
-writeln(a,c,b,c,"Banana");
+char a[3];
+a[3] = '2';
+if( 'b' <> 'b' ) writeln("Cosso");

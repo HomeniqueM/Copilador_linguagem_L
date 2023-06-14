@@ -4,7 +4,7 @@
  * Disciplina de Compiladores
  * Prof Alexei Machado
  * @authors Guilherme Côsso Lima Pimenta, Homenique Vieira Martins, Iago Augusto Coelho Morgado
-*/
+ */
 #include <iostream>
 #include <string>
 #include <vector>
@@ -17,7 +17,8 @@
 #include "../analyzers/lexical-analysis.hpp"
 #include "../analyzers/semantic-analysis.hpp"
 
-SemanticAnalysis::SemanticAnalysis(LexerAnalysis *la){
+SemanticAnalysis::SemanticAnalysis(LexerAnalysis *la)
+{
     this->la = la;
 }
 
@@ -34,7 +35,7 @@ void SemanticAnalysis::isTokenHasDeclarad(Token *t, TokenClass classToken)
     }
     else
     {
-        throw LException(ErrorCode::IDENTIFIER_ALREADY_DECLARED, la->getCurrentLine(), "1");
+        throw LException(ErrorCode::IDENTIFIER_ALREADY_DECLARED, la->getCurrentLine(), t->getLexeme());
     }
 }
 
@@ -43,11 +44,11 @@ void SemanticAnalysis::isTokenNotHasDeclarationAndNotHasConst(Token *t)
 
     if (t->getTokenClass() == TOKEN_CLASS_UNDEFINED)
     {
-        throw LException(ErrorCode::IDENTIFIER_NO_DECLARED, la->getCurrentLine(), "2");
+        throw LException(ErrorCode::IDENTIFIER_NO_DECLARED, la->getCurrentLine(), t->getLexeme());
     }
     if (t->getTokenClass() == TOKEN_CLASS_CONSTANT)
     {
-        throw LException(ErrorCode::MISMATCHED_IDENTIFIER_CLASS, la->getCurrentLine(), "3");
+        throw LException(ErrorCode::MISMATCHED_IDENTIFIER_CLASS, la->getCurrentLine(), t->getLexeme());
     }
 }
 
@@ -56,19 +57,25 @@ void SemanticAnalysis::isTokenNotHasDeclaration(Token *t)
 
     if (t->getTokenClass() == TOKEN_CLASS_UNDEFINED)
     {
-        throw LException(ErrorCode::IDENTIFIER_NO_DECLARED, la->getCurrentLine(), "4");
+        throw LException(ErrorCode::IDENTIFIER_NO_DECLARED, la->getCurrentLine(), t->getLexeme());
     }
 }
 
 void SemanticAnalysis::isTokenTypeEquals(Token *tokenConst, Token *tokenId, bool isneg)
 {
-    if (isneg && (tokenConst->getTokenType() != TOKEN_TYPE_INTEGER && tokenConst->getTokenType() != TOKEN_TYPE_REAL))
+
+    if (isneg)
     {
-        throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "5");
+        if (tokenConst->getTokenType() != TOKEN_TYPE_INTEGER && tokenConst->getTokenType() != TOKEN_TYPE_REAL)
+        {
+            throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine());
+        }
     }
-    if (tokenId->getTokenType() == TOKEN_TYPE_INTEGER && tokenConst->getTokenType() != TOKEN_TYPE_INTEGER)
-    {
-        throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "6");
+    if (tokenConst->getTokenType() != tokenId->getTokenType()){ 
+        if( tokenId->getTokenType() != TOKEN_TYPE_REAL &&  tokenConst->getTokenType() != TOKEN_TYPE_INTEGER ){
+            throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine());
+        }
+
     }
     else
     {
@@ -76,6 +83,22 @@ void SemanticAnalysis::isTokenTypeEquals(Token *tokenConst, Token *tokenId, bool
         tokenIdSetType(tokenConst, tokenId);
     }
 }
+
+void SemanticAnalysis::FinalVerify(Token *tokenConst, Token *tokenId, bool isneg){
+    if (isneg)
+    {
+        if (tokenConst->getTokenType() != TOKEN_TYPE_INTEGER && tokenConst->getTokenType() != TOKEN_TYPE_REAL)
+        {
+            throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine());
+        }
+    }
+    else{
+                tokenIdSetType(tokenConst, tokenId);
+    }
+
+}
+
+
 
 void SemanticAnalysis::tokenIdSetType(Token *tokenConst, Token *tokenId)
 {
@@ -97,7 +120,7 @@ void SemanticAnalysis::ifTokenTypehasDiff(Token *token, TokenType typeToken)
 {
     if (token->getTokenType() != typeToken)
     {
-        throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "7");
+        throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine());
     }
 }
 
@@ -105,11 +128,23 @@ void SemanticAnalysis::ifTokenTypeHasEqualsorIntandReal(Token *token, TokenType 
 {
     if (token->getTokenType() != typeToken && (token->getTokenType() != TOKEN_TYPE_REAL && typeToken != TOKEN_TYPE_INTEGER))
     {
-        throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "8");
+        throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine());
     }
     else
     {
         // Comando redunfdante
+    }
+}
+
+void SemanticAnalysis::verificacaoDeAtribuicao(Token *token, Token *tokenConst)
+{
+    if (token->getTokenType() != tokenConst->getTokenType())
+    {
+        if( !(token->getTokenType() == TOKEN_TYPE_REAL && tokenConst->getTokenType() == TOKEN_TYPE_INTEGER ) && !(token->getTokenType() == TOKEN_TYPE_CHAR && tokenConst->getTokenType() == TOKEN_TYPE_STRING) ){
+            throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine());
+        }
+        else if( tokenConst->getTokeSize() >= token->getMaxTam() && tokenConst->getTokenType() == TOKEN_TYPE_STRING )
+            throw LException(ErrorCode::IDENTIFIER_NO_DECLARED, la->getCurrentLine(), token->getLexeme());
     }
 }
 
@@ -125,7 +160,7 @@ void SemanticAnalysis::TokenReplaceType(Token *token)
     }
     else
     {
-        throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "9");
+        throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine());
     }
 }
 
@@ -133,7 +168,7 @@ void SemanticAnalysis::tokenIsBoolean(Token *token, bool isNeg)
 {
     if (token->getTokenType() != TOKEN_TYPE_BOOLEAN && isNeg)
     {
-        throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "10");
+        throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine());
     }
 }
 
@@ -147,7 +182,7 @@ void SemanticAnalysis::tokenIsIntergerOrReal(Token *token, bool isNeg)
 {
     if (isNeg && token->getTokenType() != TOKEN_TYPE_INTEGER && token->getTokenType() != TOKEN_TYPE_REAL)
     {
-        throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "10");
+        throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine());
     }
 }
 
@@ -170,7 +205,7 @@ void SemanticAnalysis::rulle23(Token *tokenA, Token *tokenB, Token *operador)
     {
         if (!(tokenA->getTokenType() == TOKEN_TYPE_BOOLEAN && tokenB->getTokenType() == TOKEN_TYPE_BOOLEAN))
         {
-            throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "11");
+            throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine());
         }
     }
     else
@@ -184,14 +219,14 @@ void SemanticAnalysis::rulle23(Token *tokenA, Token *tokenB, Token *operador)
             }
             else
             {
-                throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "121");
+                throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine());
             }
         }
         else
         {
             if (!(tokenA->getTokenType() == TOKEN_TYPE_REAL || tokenA->getTokenType() == TOKEN_TYPE_INTEGER))
             {
-                throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "121");
+                throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine());
             }
         }
     }
@@ -203,15 +238,16 @@ void SemanticAnalysis::rulle25(Token *tokenA, Token *tokenB, Token *operador)
     {
         if (!(tokenA->getTokenType() == TOKEN_TYPE_BOOLEAN && tokenB->getTokenType() == TOKEN_TYPE_BOOLEAN))
         {
-            throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "11");
+            throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine());
         }
     }
     else if (operador->getTokenid() == TOKEN_ID_MODULO && tokenB->getTokenType() != TOKEN_TYPE_INTEGER)
     {
         // Printar token B
-        throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "12");
+        throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine());
     }
-    else{
+    else
+    {
 
         if (tokenA->getTokenType() != tokenB->getTokenType())
         {
@@ -222,14 +258,14 @@ void SemanticAnalysis::rulle25(Token *tokenA, Token *tokenB, Token *operador)
             }
             else
             {
-                throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "121");
+                throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine());
             }
         }
         else
         {
             if (!(tokenA->getTokenType() == TOKEN_TYPE_REAL || tokenA->getTokenType() == TOKEN_TYPE_INTEGER))
             {
-                throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "121");
+                throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine());
             }
         }
     }
@@ -253,15 +289,18 @@ void SemanticAnalysis::rulle20(Token *tokenA, Token *tokenB, Token *operador)
         if (!((tokenA->getTokenType() == TOKEN_TYPE_REAL || tokenA->getTokenType() == TOKEN_TYPE_INTEGER) &&
               (tokenB->getTokenType() == TOKEN_TYPE_REAL || tokenB->getTokenType() == TOKEN_TYPE_INTEGER)))
         {
-            throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "13");
+            throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine());
         }
     }
-    else{
-        if(operador->getTokenid() == TOKEN_ID_EQUALS && tokenA->getTokenType() == TOKEN_TYPE_STRING ){
-            throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine(), "14");
+    else
+    {
+        if ( tokenA->getTokenType() == TOKEN_TYPE_STRING)
+        {   
+            if(operador->getTokenid() != TOKEN_ID_EQUALS)
+                throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine());
         }
     }
-    tokenA->setTokenType(TOKEN_TYPE_BOOLEAN);
+   // tokenA->setTokenType(TOKEN_TYPE_BOOLEAN);
 }
 
 void SemanticAnalysis::setMaxTamVet(Token *tokenId, Token *tokenConst)
@@ -273,7 +312,16 @@ void SemanticAnalysis::ifTokenVectorInRange(Token *tokenId, Token *tokenConst)
 {
     if (stoi(tokenConst->getLexeme()) >= tokenId->getMaxTam())
     {
-        throw LException(ErrorCode::IDENTIFIER_NO_DECLARED, la->getCurrentLine(), "15");
+        throw LException(ErrorCode::IDENTIFIER_NO_DECLARED, la->getCurrentLine()," " + tokenId->getLexeme() +"[" + tokenConst->getLexeme()   + "] ");
     }
 }
 
+
+
+void SemanticAnalysis::tokenIsTypeEqualsErro(Token *token, TokenType tokenType)
+{
+    if (token->getTokenType() == tokenType )
+    {
+        throw LException(ErrorCode::INCOMPATIBLE_TYPES, la->getCurrentLine());
+    }
+}
